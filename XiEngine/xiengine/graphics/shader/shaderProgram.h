@@ -1,8 +1,9 @@
 #pragma once
 
+#include "ximath\ximath.h"
 #include "shader.h"
 
-namespace TDEngine
+namespace xiengine
 {
 	class ShaderProgram
 	{
@@ -26,11 +27,11 @@ namespace TDEngine
 		void loadInt(GLuint location, GLint value);
 		void loadFloat(GLuint location, GLfloat value);
 		void loadBoolean(GLuint location, bool value);
-		void loadVector2(GLuint location, float value);
-		void loadVector3(GLuint location, float value);
-		void loadVector4(GLuint location, float value);
-		void loadMatrix3(GLuint location, float value);
-		void loadMatrix4(GLuint location, float value);
+		void loadVector2(GLuint location, ximath::Vector2 value);
+		void loadVector3(GLuint location, ximath::Vector3 value);
+		void loadVector4(GLuint location, ximath::Vector4 value);
+		void loadMatrix3(GLuint location, ximath::Matrix3 value);
+		void loadMatrix4(GLuint location, ximath::Matrix4 value);
 
 	private:
 		GLuint shaderProgramID;

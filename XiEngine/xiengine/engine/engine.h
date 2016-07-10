@@ -4,12 +4,12 @@
 #include <GL/glew.h>
 #include <GLFW\glfw3.h>
 
-namespace TDEngine
+namespace xiengine
 {
-	class TDEngine
+	class XiEngine
 	{
 	public:
-		TDEngine();
+		XiEngine();
 
 		void start();
 

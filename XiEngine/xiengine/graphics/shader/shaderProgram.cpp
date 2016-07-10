@@ -1,9 +1,8 @@
 #include "shaderProgram.h"
 
 #include <iostream>
-#include "tdmaths\test.h"
 
-namespace TDEngine
+namespace xiengine
 {
 	ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) :
 		vertexShader(vertexShader), fragmentShader(fragmentShader)
@@ -14,7 +13,6 @@ namespace TDEngine
 	ShaderProgram::~ShaderProgram()
 	{
 		destroyShaderProgram();
-		tdmaths::doThat();
 	}
 
 	void ShaderProgram::initShaderProgram()
@@ -97,29 +95,44 @@ namespace TDEngine
 		glUniform1i(location, toLoad);
 	}
 
-	void ShaderProgram::loadVector2(GLuint location, float value)
+	void ShaderProgram::loadVector2(GLuint location, ximath::Vector2 v)
 	{
-		glUniform2f(location, value);
+		glUniform2f(location, v.x, v.y);
 	}
 
-	void ShaderProgram::loadVector3(GLuint location, float value)
+	void ShaderProgram::loadVector3(GLuint location, ximath::Vector3 v)
 	{
-		glUniform3f(location, value);
+		glUniform3f(location, v.x, v.y, v.z);
 	}
 
-	void ShaderProgram::loadVector4(GLuint location, float value)
+	void ShaderProgram::loadVector4(GLuint location, ximath::Vector4 v)
 	{
-		glUniform4f(location, value);
+		glUniform4f(location, v.x, v.y, v.z, v.w);
 	}
 
-	void ShaderProgram::loadMatrix3(GLuint location, float value)
+	void ShaderProgram::loadMatrix3(GLuint location, ximath::Matrix3 m)
 	{
-		glUniformMatrix3fv(location, value);
+		float arr[] = 
+		{
+			m[0][0], m[1][0], m[2][0],
+			m[0][1], m[1][1], m[2][1],
+			m[0][2], m[1][2], m[2][2]
+		};
+
+		glUniformMatrix3fv(location, 9, false, arr);
 	}
 
-	void ShaderProgram::loadMatrix4(GLuint location, float value)
+	void ShaderProgram::loadMatrix4(GLuint location, ximath::Matrix4 m)
 	{
-		glUniformMatrix4fv(location, value);
+		float arr[] =
+		{
+			m[0][0], m[1][0], m[2][0], m[3][0],
+			m[0][1], m[1][1], m[2][1], m[3][1],
+			m[0][2], m[1][2], m[2][2], m[3][2],
+			m[0][3], m[1][3], m[2][3], m[3][3]
+		};
+
+		glUniformMatrix4fv(location, 1, false, arr);
 	}
 
 

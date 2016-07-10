@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-namespace TDEngine
+namespace xiengine
 {
 	Shader::Shader(const std::string& shaderSource)
 	{

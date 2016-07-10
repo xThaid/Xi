@@ -2,7 +2,7 @@
 
 #include "../../utils/file.h"
 
-namespace TDEngine
+namespace xiengine
 {
 	TextureAsset::TextureAsset(File file)
 	{

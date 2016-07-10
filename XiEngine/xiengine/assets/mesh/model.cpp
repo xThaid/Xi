@@ -3,7 +3,7 @@
 #include "material.h"
 #include "shader.h"
 
-namespace TDEngine
+namespace xiengine
 {
 	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) :
 		vertices(vertices),

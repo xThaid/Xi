@@ -1,16 +1,16 @@
-#include "tdengine.h"
+#include "engine.h"
 
 #include <iostream>
 #include <chrono>
 
-namespace TDEngine
+namespace xiengine
 {
-	TDEngine::TDEngine()
+	XiEngine::XiEngine()
 	{
 	}
 
 
-	void TDEngine::start()
+	void XiEngine::start()
 	{
 		if (!init())
 			return;
@@ -18,7 +18,7 @@ namespace TDEngine
 		loop();
 	}
 
-	bool TDEngine::init() 
+	bool XiEngine::init() 
 	{
 		glfwInit();
 
@@ -49,7 +49,7 @@ namespace TDEngine
 		return true;
 	}
 
-	void TDEngine::loop()
+	void XiEngine::loop()
 	{
 		std::chrono::time_point<std::chrono::system_clock> lastTime = std::chrono::system_clock::now();
 		double delta = 0.0;
@@ -85,13 +85,13 @@ namespace TDEngine
 		}
 	}
 
-	void TDEngine::update(float delta)
+	void XiEngine::update(float delta)
 	{
 
 		glfwPollEvents();
 	}
 
-	void TDEngine::render()
+	void XiEngine::render()
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

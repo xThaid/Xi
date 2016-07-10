@@ -2,9 +2,10 @@
 
 #define GLEW_STATIC
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 #include <vector>
+
+#include "ximath\ximath.h"
 
 namespace TDEngine
 {
@@ -13,9 +14,9 @@ namespace TDEngine
 
 	struct Vertex
 	{
-		glm::vec3 position;
-		glm::vec3 normal;
-		glm::vec2 texCoords;
+		ximath::Vector3 position;
+		ximath::Vector3 normal;
+		ximath::Vector2 texCoords;
 	};
 
 	class Mesh
