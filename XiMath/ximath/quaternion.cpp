@@ -99,6 +99,7 @@ namespace ximath
 		result[2][0] = 2.0f * (xz - wy);
 		result[2][1] = 2.0f * (yz + wx);
 		result[2][2] = 1.0f - 2.0f * (xx + yy);
+		return result;
 	}
 
 	Matrix4 Quaternion::toMatrix4() const
