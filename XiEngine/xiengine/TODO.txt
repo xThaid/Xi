@@ -1,0 +1,3 @@
+-klasa files- fuszerka
+-system errorow
+-ximath przekraczanie za tablice
