@@ -26,9 +26,9 @@ namespace ximath
 
 	Matrix3::Matrix3(const Vector3 v1, const Vector3 v2, const Vector3 v3) 
 	{
-		data[0] = v1;
-		data[1] = v2;
-		data[2] = v3;
+		data[0] = Vector3(v1);
+		data[1] = Vector3(v2);
+		data[2] = Vector3(v3);
 	}
 
 	Matrix3::Matrix3(float data00, float data01, float data02,

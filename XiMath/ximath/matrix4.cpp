@@ -34,10 +34,10 @@ namespace ximath
 
 	Matrix4::Matrix4(const Vector4 v1, const Vector4 v2, const Vector4 v3, const Vector4 v4)
 	{
-		data[0] = v1;
-		data[1] = v2;
-		data[2] = v3;
-		data[3] = v4;
+		data[0] = Vector4(v1);
+		data[1] = Vector4(v2);
+		data[2] = Vector4(v3);
+		data[3] = Vector4(v4);
 	}
 
 	Matrix4::Matrix4(const Matrix3& m)
