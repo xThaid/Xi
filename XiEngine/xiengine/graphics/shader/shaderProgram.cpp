@@ -5,7 +5,13 @@
 namespace xiengine
 {
 	ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) :
-		vertexShader(vertexShader), fragmentShader(fragmentShader)
+		vertexShader(vertexShader), geometryShader(), fragmentShader(fragmentShader)
+	{
+		shaderProgramID = 0;
+	}
+
+	ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader) :
+		vertexShader(vertexShader), geometryShader(geometryShader), fragmentShader(fragmentShader)
 	{
 		shaderProgramID = 0;
 	}
@@ -18,13 +24,23 @@ namespace xiengine
 	void ShaderProgram::initShaderProgram()
 	{
 		GLuint vertexShaderID = vertexShader.compileShader(ShaderType::VERTEX);
+		GLuint geometryShaderID = geometryShader.compileShader(ShaderType::GEOMETRY);
 		GLuint fragmentShaderID = fragmentShader.compileShader(ShaderType::FRAGMENT);
 
 		GLint success;
 		GLchar infoLog[512];
 
 		shaderProgramID = glCreateProgram();
-		glAttachShader(shaderProgramID, vertexShaderID);
+
+		if (vertexShaderID != 0)
+			glAttachShader(shaderProgramID, vertexShaderID);
+
+		if (geometryShaderID != 0)
+			glAttachShader(shaderProgramID, geometryShaderID);
+
+		if (fragmentShaderID != 0)
+			glAttachShader(shaderProgramID, fragmentShaderID);
+
 		glAttachShader(shaderProgramID, fragmentShaderID);
 		glLinkProgram(shaderProgramID);
 		glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
@@ -34,9 +50,17 @@ namespace xiengine
 			std::cout << "SHADER PROGRAM LINKING FAILED\n" << infoLog << std::endl;//TODO error
 		}
 
-		glDetachShader(shaderProgramID, vertexShaderID);
-		glDetachShader(shaderProgramID, fragmentShaderID);
+		if (vertexShaderID != 0)
+			glDetachShader(shaderProgramID, vertexShaderID);
+
+		if (geometryShaderID != 0)
+			glDetachShader(shaderProgramID, geometryShaderID);
+
+		if (fragmentShaderID != 0)
+			glDetachShader(shaderProgramID, fragmentShaderID);
+
 		vertexShader.clean();
+		geometryShader.clean();
 		fragmentShader.clean();
 
 		bindAttributes();

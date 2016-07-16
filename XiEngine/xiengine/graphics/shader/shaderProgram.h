@@ -16,6 +16,7 @@ namespace xiengine
 		
 	protected:
 		ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
+		ShaderProgram(const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader);
 		virtual ~ShaderProgram();
 
 		virtual void bindAttributes() = 0;
@@ -37,6 +38,7 @@ namespace xiengine
 		GLuint shaderProgramID;
 
 		Shader vertexShader;
+		Shader geometryShader;
 		Shader fragmentShader;
 	};
 }

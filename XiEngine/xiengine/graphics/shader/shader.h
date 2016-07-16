@@ -12,12 +12,14 @@ namespace xiengine
 	enum ShaderType
 	{
 		VERTEX,
+		GEOMETRY,
 		FRAGMENT
 	};
 
 	class Shader
 	{
 	public:
+		Shader();
 		Shader(const std::string& shaderSource);
 		Shader(File file);
 		~Shader();
@@ -26,6 +28,7 @@ namespace xiengine
 		void clean();
 
 	private:
+		bool enabled;
 		GLuint shaderID;
 
 		const char* shaderSource;

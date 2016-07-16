@@ -6,12 +6,17 @@
 
 namespace xiengine
 {
-	Shader::Shader(const std::string& shaderSource)
+	Shader::Shader() : enabled(false), shaderID(0)
+	{
+
+	}
+
+	Shader::Shader(const std::string& shaderSource) : enabled(true), shaderID(0)
 	{
 		this->shaderSource = shaderSource.c_str();
 	}
 
-	Shader::Shader(File file)
+	Shader::Shader(File file) : enabled(true), shaderID(0)
 	{
 		File::loadFromFile(file.getPath(), shaderSource);
 	}
@@ -24,8 +29,12 @@ namespace xiengine
 	GLuint Shader::compileShader(ShaderType type)
 	{
 		if (type == ShaderType::VERTEX) shaderID = glCreateShader(GL_VERTEX_SHADER);
+		else if (type == ShaderType::GEOMETRY) shaderID = glCreateShader(GL_GEOMETRY_SHADER);
 		else if (type == ShaderType::FRAGMENT) shaderID = glCreateShader(GL_FRAGMENT_SHADER);
 		else return 0;
+
+		if (!enabled)
+			return 0;
 
 		GLint success;
 		GLchar infoLog[512];
@@ -36,7 +45,7 @@ namespace xiengine
 		if (!success)
 		{
 			glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-			std::cout << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;//TODO error
+			std::cout << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;
 		}
 
 		return shaderID;
