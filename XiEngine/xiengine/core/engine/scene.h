@@ -8,12 +8,13 @@ namespace xiengine
 
 	class Scene
 	{
-		friend class GraphicsEngine;
-
 	public:
 		Scene();
 
 	private:
 		std::vector<Entity> entities;
+
+
+		friend class GraphicsEngine;
 	};
 }

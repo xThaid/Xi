@@ -10,10 +10,6 @@ namespace xiengine
 	{
 	public:
 		File(const std::string& filePath);
-		~File();
-
-		void open();
-		void close();
 
 		std::string getPath();
 
@@ -22,7 +18,5 @@ namespace xiengine
 	private:
 		std::string path;
 		std::ifstream file;
-
-		bool open;
 	};
 }
