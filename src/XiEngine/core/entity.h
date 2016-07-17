@@ -11,7 +11,7 @@ namespace xiengine
 	public:
 
 	private:
-		std::vector<Entity*> childrens;
+		std::vector<Entity> childrens;
 		std::vector<ComponentBase> components;
 	};
 }

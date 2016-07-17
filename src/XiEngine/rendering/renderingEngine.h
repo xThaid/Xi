@@ -15,14 +15,13 @@ namespace xiengine
 	public:
 		RenderingEngine();
 
-		void makeContextCurrent(const Window& window);
+		void init();
 
-		void renderScene(Scene* scene);
+		void makeContextCurrent(Window* window);
+
+		void render(Scene* scene);
 		void renderEntity(Entity* entity);
-
-		static RenderingEngine* getInstance() { return &instance; }
-
 	private:
-		static RenderingEngine instance;
+
 	};
 }

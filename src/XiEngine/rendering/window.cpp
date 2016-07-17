@@ -36,6 +36,9 @@ namespace xiengine
 			return false;
 		}
 
+
+		glfwSwapInterval(1);
+
 		return true;
 	}
 

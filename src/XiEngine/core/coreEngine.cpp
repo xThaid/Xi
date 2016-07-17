@@ -4,17 +4,22 @@
 #include <chrono>
 
 #include "program.h"
-#include "engine\scene.h"
+#include "scene.h"
 
 namespace xiengine
 {
-	CoreEngine::CoreEngine(Window* window, Program* program) : 
+	CoreEngine::CoreEngine(Window* window, RenderingEngine* rendering, Program* program) : 
 		mainWindow(window),
-		rendering(RenderingEngine::getInstance()),
+		rendering(rendering),
 		program(program)
 	{
 		isRunning = false;
+
 		mainWindow->init(false);
+		rendering->makeContextCurrent(mainWindow);
+
+		rendering->init();
+
 		program->init();
 	}
 
@@ -82,7 +87,7 @@ namespace xiengine
 	void CoreEngine::render()
 	{
 		if(scene != nullptr)
-			rendering->renderScene(scene);
+			rendering->render(scene);
 
 		mainWindow->swapBuffers();
 	}

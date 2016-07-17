@@ -10,7 +10,7 @@ namespace xiengine
 	class CoreEngine
 	{
 	public:
-		CoreEngine(Window* window, Program* program);
+		CoreEngine(Window* window, RenderingEngine* engine, Program* program);
 
 		void start();
 		void stop();

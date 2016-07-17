@@ -13,16 +13,4 @@ namespace xiengine
 	{
 
 	}
-
-	int main()
-	{
-		//Window win(800, 600, "Test");
-		//Program program;
-
-		//CoreEngine eng(&win, &program);
-		//eng.start();
-
-		system("pause");
-		return 0;
-	}
 }
