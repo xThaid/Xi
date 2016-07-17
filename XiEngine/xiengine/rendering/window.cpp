@@ -1,10 +1,11 @@
 #include "window.h"
 
+#include <iostream>
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW\glfw3.h>
 
-#include <iostream>
 
 namespace xiengine
 {
@@ -35,6 +36,8 @@ namespace xiengine
 			std::cout << "Failed to create GLFW window" << std::endl;
 			return false;
 		}
+
+		return true;
 	}
 
 	void Window::swapBuffers() const
@@ -58,6 +61,6 @@ namespace xiengine
 
 	bool Window::shouldClose()
 	{
-		return glfwWindowShouldClose(window);
+		return glfwWindowShouldClose(window) == GL_TRUE;
 	}
 }

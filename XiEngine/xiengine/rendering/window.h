@@ -2,8 +2,11 @@
 
 #include <string>
 
+struct GLFWwindow;
+
 namespace xiengine
 {
+
 	class Window
 	{
 	public:
