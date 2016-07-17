@@ -8,6 +8,9 @@
 
 namespace xiengine
 {
+	class Scene;
+	class Entity;
+
 	class RenderingEngine
 	{
 	public:

@@ -1,3 +1,4 @@
+/*
 #include "model.h"
 
 #include "material.h"
@@ -5,14 +6,14 @@
 
 namespace xiengine
 {
-	Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) :
+	Model::Model(std::vector<Vertex>& vertices, std::vector<GLuint>& indices) :
 		vertices(vertices),
 		indices(indices)
 	{
 		setupVAO();
 	}
 
-	void Mesh::draw(Shader& shader)
+	void Model::draw(Shader& shader)
 	{
 		shader.enable();
 		
@@ -22,12 +23,12 @@ namespace xiengine
 		shader.disable();
 	}
 
-	void Mesh::setMaterial(Material* material)
+	void Model::setMaterial(Material* material)
 	{
 		this->material = material;
 	}
 
-	void Mesh::setupVAO()
+	void Model::setupVAO()
 	{
 		GLuint EBO;
 
@@ -54,3 +55,4 @@ namespace xiengine
 		glBindVertexArray(0);
 	}
 }
+*/

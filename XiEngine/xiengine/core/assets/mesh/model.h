@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #define GLEW_STATIC
@@ -38,3 +39,4 @@ namespace TDEngine
 		void setupVAO();
 	};
 }
+*/
