@@ -11,6 +11,8 @@ namespace xiengine
 	public:
 		Scene();
 
+		void update();
+
 	private:
 		std::vector<Entity> entities;
 
