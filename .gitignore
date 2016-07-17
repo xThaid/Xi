@@ -5,8 +5,8 @@
 
 /.git
 */.vs
-/Debug
-/Release
 */Debug
 */Release
+*/*/Debug
+*/*/Release
 */x64

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ximath\ximath.h"
+#include "ximath.h"
 #include "shader.h"
 
 namespace xiengine
