@@ -55,4 +55,9 @@ namespace xiengine
 			init(enabled);
 		}
 	}
+
+	bool Window::shouldClose()
+	{
+		return glfwWindowShouldClose(window);
+	}
 }

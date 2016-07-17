@@ -15,6 +15,8 @@ namespace xiengine
 
 		void setFullscreen(bool enabled);
 
+		bool shouldClose();
+
 		inline GLFWwindow* getWindow() const { return window; }
 
 		inline int getWidth() const { return width; }
