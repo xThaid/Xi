@@ -1,3 +1,20 @@
--klasa files- fuszerka
+1.CORE
+-scene
+-entity
+-components
+-assets
+-resource manager
+-
+
+
+2.RENDERING
+-mesh
+-textures
+-materials
+-lighting
+-shadows
+-framebuffers
+
+3.OTHERS
+-file class
 -logger
--resource loader
