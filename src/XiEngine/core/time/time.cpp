@@ -11,7 +11,7 @@ namespace xiengine
 	{
 		deltaTime = 0.0f;
 		elapsedTime = 0.0f;
-		previousTime = std::chrono::system_clock::now();
+		previousTime = std::chrono::high_resolution_clock::now();
 	}
 
 	float Time::getDeltaTime()
@@ -30,21 +30,24 @@ namespace xiengine
 
 	void Time::reset()
 	{
-		previousTime = std::chrono::system_clock::now();
+		previousTime = std::chrono::high_resolution_clock::now();
 		deltaTime = 0.0f;
 		elapsedTime = 0.0f;
 	}
 
-	void Time::update(bool invokeTimers)
+	void Time::update()
 	{
-		currentTime = std::chrono::system_clock::now();
+		Timer::invokeTimers();
+	}
+
+	void Time::updateDelta()
+	{
+		currentTime = std::chrono::high_resolution_clock::now();
 
 		std::chrono::duration<float, std::milli> delta = currentTime - previousTime;
-		deltaTime = delta.count();
+		deltaTime = delta.count() ;
+		elapsedTime += delta.count();
 
-		elapsedTime += (currentTime - previousTime).count();
-
-		if (invokeTimers)
-			Timer::invokeTimers();
+		previousTime = currentTime;
 	}
 }

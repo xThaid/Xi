@@ -14,6 +14,7 @@ namespace xiengine
 
 		void update();
 
+		void destroy();
 	private:
 		std::vector<Entity> entities;
 

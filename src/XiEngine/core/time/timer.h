@@ -21,6 +21,8 @@ namespace xiengine
 
 		void reset();
 
+		void changePeriod(int period);
+
 	private:
 		static std::vector<Timer*> timers;
 		static void invokeTimers();
@@ -33,7 +35,7 @@ namespace xiengine
 		int repeatCount;
 		int remainingCalls;
 
-		std::chrono::time_point<std::chrono::system_clock> previousTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
 
 		void invoke();
 	};

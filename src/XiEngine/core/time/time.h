@@ -13,11 +13,12 @@ namespace xiengine
 		static float getElapsedTime();
 
 		void reset();
-		void update(bool invokeTimers);
+		void update();
+		void updateDelta();
 
 	private:
-		std::chrono::time_point<std::chrono::system_clock> previousTime;
-		std::chrono::time_point<std::chrono::system_clock> currentTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
 		float deltaTime;
 		float elapsedTime;
 	};

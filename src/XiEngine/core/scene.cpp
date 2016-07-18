@@ -11,4 +11,9 @@ namespace xiengine
 	{
 
 	}
+
+	void Scene::destroy()
+	{
+
+	}
 }

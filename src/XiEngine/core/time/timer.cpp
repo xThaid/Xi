@@ -46,7 +46,7 @@ namespace xiengine
 	void Timer::start()
 	{
 		enabled = true;
-		previousTime = std::chrono::system_clock::now();
+		previousTime = std::chrono::high_resolution_clock::now();
 	}
 
 	void Timer::stop()
@@ -59,11 +59,16 @@ namespace xiengine
 		remainingCalls = repeatCount;
 	}
 
+	void Timer::changePeriod(int period)
+	{
+		this->period = period;
+	}
+
 	void Timer::invoke()
 	{
 		if (enabled)
 		{
-			std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+			std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
 			if ((now - previousTime) >= std::chrono::milliseconds(period))
 			{
 				previousTime = now;
