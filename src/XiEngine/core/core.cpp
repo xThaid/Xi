@@ -9,6 +9,8 @@
 #include "time\timer.h"
 #include "scene.h"
 
+#include "../utils/logger.h"
+
 namespace xiengine
 {
 	Core* Core::currentCore = nullptr;
@@ -24,7 +26,7 @@ namespace xiengine
 
 	void Core::start()
 	{
-
+		Logger::info("Starting Xi!");
 		if (!running)
 		{
 			init();
@@ -56,6 +58,9 @@ namespace xiengine
 		rendering->init();
 
 		program->init();
+
+		Logger::info("Initialization completed");
+		Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
 	}
 
 	void Core::destroy()
@@ -68,7 +73,6 @@ namespace xiengine
 
 		currentCore = nullptr;
 	}
-
 	
 	void Core::loop()
 	{
@@ -82,7 +86,7 @@ namespace xiengine
 
 		Timer fpsTimer([&updates, &frames]() -> void
 		{
-			std::cout << std::fixed << std::setprecision(10) << updates << " ups, " << frames << " fps   " << (Time::getDeltaTime()) << std::endl;
+			Logger::trace(std::to_string(updates) + "ups, " + std::to_string(frames) + "fps");
 			updates = 0;
 			frames = 0;
 

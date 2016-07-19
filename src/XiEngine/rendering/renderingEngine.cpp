@@ -2,11 +2,16 @@
 
 #include <iostream>
 
+#include "../utils/logger.h"
+
 namespace xiengine
 {
 	RenderingEngine::RenderingEngine()
 	{
-		glfwInit();
+		if (!glfwInit())
+			Logger::error("Failed to initialize GLFW");
+		else
+			Logger::debug("GLFW version: " + std::string(glfwGetVersionString()));
 	}
 
 	void RenderingEngine::init()
@@ -14,7 +19,9 @@ namespace xiengine
 		glewExperimental = GL_TRUE;
 		GLenum status = glewInit();
 		if (status != GLEW_OK)
-			std::cout << "Failed to initialize GLEW: " << glewGetErrorString(status) << std::endl;
+			Logger::error("Failed to initialize GLEW: " + std::string((char*) glewGetErrorString(status)));
+		else
+			Logger::debug("GLEW version: " + std::string((char*) glewGetString(GLEW_VERSION)));
 	}
 
 	void RenderingEngine::makeContextCurrent(Window* window)

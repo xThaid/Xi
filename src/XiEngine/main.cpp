@@ -5,11 +5,15 @@
 #include "core\core.h"
 #include "core\program.h"
 
+#include "utils\logger.h"
+
 using namespace xiengine;
 
-int main()
+int main(int argc, char* argv[])
 {
-	Window win(800, 600, "Test");
+	Logger::setLevel(Logger::LEVEL_TRACE);
+
+	Window win(800, 600, "Xi");
 
 	Core core(&win);
 	core.start();
