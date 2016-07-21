@@ -5,6 +5,8 @@
 
 #include "window.h"
 
+#include "shader\entityShader.h"
+
 namespace xiengine
 {
 	class Scene;
@@ -14,6 +16,7 @@ namespace xiengine
 	{
 	public:
 		RenderingEngine();
+		~RenderingEngine();
 
 		void init();
 
@@ -22,6 +25,8 @@ namespace xiengine
 		void render(Scene* scene);
 		void renderEntity(Entity* entity);
 	private:
+		EntityShader entityShader;
 
+		void destroy();
 	};
 }

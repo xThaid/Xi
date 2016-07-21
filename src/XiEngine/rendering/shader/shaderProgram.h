@@ -15,8 +15,8 @@ namespace xiengine
 		void stopShaderProgram();
 		
 	protected:
-		ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
-		ShaderProgram(const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader);
+		ShaderProgram(const Shader vertexShader, const Shader fragmentShader);
+		ShaderProgram(const Shader vertexShader, const Shader geometryShader, const Shader fragmentShader);
 		virtual ~ShaderProgram();
 
 		virtual void bindAttributes() = 0;

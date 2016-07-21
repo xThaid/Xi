@@ -1,8 +1,8 @@
 #include "shader.h"
 
-#include "..\..\utils\file.h"
+#include "../../utils/file.h"
 
-#include <iostream>
+#include "../../utils/logger.h"
 
 namespace xiengine
 {
@@ -45,7 +45,7 @@ namespace xiengine
 		if (!success)
 		{
 			glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-			std::cout << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;
+			Logger::warn("Shader compilation failed: \n" + std::string(infoLog));
 		}
 
 		return shaderID;

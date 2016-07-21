@@ -26,7 +26,7 @@ namespace xiengine
 
 	void Core::start()
 	{
-		Logger::info("Starting Xi!");
+		Logger::info("Starting Xi...!");
 		if (!running)
 		{
 			init();
@@ -37,6 +37,7 @@ namespace xiengine
 
 	void Core::stop()
 	{
+		Logger::info("Shutting down Xi...!");
 		if (running)
 		{
 			destroy();
@@ -60,7 +61,6 @@ namespace xiengine
 		program->init();
 
 		Logger::info("Initialization completed");
-		Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
 	}
 
 	void Core::destroy()

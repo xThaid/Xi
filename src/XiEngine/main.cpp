@@ -11,7 +11,7 @@ using namespace xiengine;
 
 int main(int argc, char* argv[])
 {
-	Logger::setLevel(Logger::LEVEL_TRACE);
+	Logger::setLevel(Logger::LEVEL_INFO);
 
 	Window win(800, 600, "Xi");
 

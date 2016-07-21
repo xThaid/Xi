@@ -14,14 +14,29 @@ namespace xiengine
 			Logger::debug("GLFW version: " + std::string(glfwGetVersionString()));
 	}
 
+	RenderingEngine::~RenderingEngine()
+	{
+		destroy();
+	}
+
 	void RenderingEngine::init()
 	{
 		glewExperimental = GL_TRUE;
 		GLenum status = glewInit();
 		if (status != GLEW_OK)
-			Logger::error("Failed to initialize GLEW: " + std::string((char*) glewGetErrorString(status)));
+			Logger::error("Failed to initialize GLEW: " + std::string((char*)glewGetErrorString(status)));
 		else
-			Logger::debug("GLEW version: " + std::string((char*) glewGetString(GLEW_VERSION)));
+			Logger::debug("GLEW version: " + std::string((char*)glewGetString(GLEW_VERSION)));
+
+		glEnable(GL_DEPTH_TEST);
+
+
+		Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
+	}
+
+	void RenderingEngine::destroy()
+	{
+		glfwTerminate();
 	}
 
 	void RenderingEngine::makeContextCurrent(Window* window)
@@ -32,7 +47,7 @@ namespace xiengine
 
 	void RenderingEngine::render(Scene* scene)
 	{
-		glClearColor(0.0f, 0.3f, 0.6f, 1.0f);
+		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 

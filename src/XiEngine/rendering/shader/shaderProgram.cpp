@@ -1,16 +1,16 @@
 #include "shaderProgram.h"
 
-#include <iostream>
+#include "../../utils/logger.h"
 
 namespace xiengine
 {
-	ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader) :
+	ShaderProgram::ShaderProgram(const Shader vertexShader, const Shader fragmentShader) :
 		vertexShader(vertexShader), geometryShader(), fragmentShader(fragmentShader)
 	{
 		shaderProgramID = 0;
 	}
 
-	ShaderProgram::ShaderProgram(const Shader& vertexShader, const Shader& geometryShader, const Shader& fragmentShader) :
+	ShaderProgram::ShaderProgram(const Shader vertexShader, const Shader geometryShader, const Shader fragmentShader) :
 		vertexShader(vertexShader), geometryShader(geometryShader), fragmentShader(fragmentShader)
 	{
 		shaderProgramID = 0;
@@ -47,7 +47,7 @@ namespace xiengine
 		if (!success)
 		{
 			glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
-			std::cout << "SHADER PROGRAM LINKING FAILED\n" << infoLog << std::endl;//TODO error
+			Logger::warn("Shader program linking failed: \n" + std::string(infoLog));
 		}
 
 		if (vertexShaderID != 0)
@@ -96,7 +96,7 @@ namespace xiengine
 		GLuint result = glGetUniformLocation(shaderProgramID, name.c_str());
 
 		if (result == -1)
-			std::cout << "COULD NOT FIND UNIFORM VARIABLE: " << name << std::endl; //TODO error
+			Logger::warn("Could not find uniform variable: " + name);
 
 		return result;
 	}

@@ -31,7 +31,6 @@ namespace xiengine
 		GLuint shaderID;
 
 		const char* shaderSource;
-
 	};
 }
 			
