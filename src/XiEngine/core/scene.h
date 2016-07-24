@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "entity.h"
+#include "entity/entity.h"
 
 namespace xiengine
 {

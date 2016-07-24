@@ -6,11 +6,13 @@
 
 namespace xiengine
 {
-	class TransformComponent : ComponentBase
+	class TransformComponent : public ComponentBase
 	{
 	public:
 		ximath::Vector3 position;
 		ximath::Quaternion rotation;
 		ximath::Vector3 scale;
+
+		ComponentType getType()
 	};
 }
