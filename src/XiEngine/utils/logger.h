@@ -23,6 +23,12 @@ namespace xiengine
 		static void debug(const std::string& message);
 		static void trace(const std::string& message);
 
+		static void errorIf(bool statement, const std::string& message);
+		static void warnIf(bool statement, const std::string& message);
+		static void infoIf(bool statement, const std::string& message);
+		static void debugIf(bool statement, const std::string& message);
+		static void traceIf(bool statement, const std::string& message);
+
 	private:
 		static time_t startTime;
 

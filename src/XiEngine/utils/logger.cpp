@@ -56,6 +56,36 @@ namespace xiengine
 		if (TRACE) log(LEVEL_TRACE, message);
 	}
 
+	void Logger::errorIf(bool statement, const std::string& message)
+	{
+		if (statement)
+			error(message);
+	}
+
+	void Logger::warnIf(bool statement, const std::string& message)
+	{
+		if (statement)
+			warn(message);
+	}
+
+	void Logger::infoIf(bool statement, const std::string& message)
+	{
+		if (statement)
+			info(message);
+	}
+
+	void Logger::debugIf(bool statement, const std::string& message)
+	{
+		if (statement)
+			debug(message);
+	}
+
+	void Logger::traceIf(bool statement, const std::string& message)
+	{
+		if (statement)
+			trace(message);
+	}
+
 	void Logger::log(int level, const std::string& message)
 	{
 		std::string out;
