@@ -4,6 +4,9 @@
 #include <chrono>
 #include <iomanip>
 
+
+#include "../rendering/renderingEngine.h"
+#include "resource\resourceManager.h"
 #include "program.h"
 #include "time\time.h"
 #include "time\timer.h"
@@ -47,16 +50,17 @@ namespace xiengine
 
 	void Core::init()
 	{
-		rendering = new RenderingEngine();
+		renderingEngine = new RenderingEngine();
+		resourceManager = new ResourceManager();
 		time = new Time();
 
 		scene = nullptr;
 		currentCore = this;
 
 		mainWindow->init(false);
-		rendering->makeContextCurrent(mainWindow);
+		renderingEngine->makeContextCurrent(mainWindow);
 
-		rendering->init();
+		renderingEngine->init();
 
 		program->init();
 
@@ -65,7 +69,8 @@ namespace xiengine
 
 	void Core::destroy()
 	{
-		delete rendering;
+		delete renderingEngine;
+		delete resourceManager;
 		delete time;
 
 		if (scene != nullptr)
@@ -154,7 +159,7 @@ namespace xiengine
 	void Core::render()
 	{
 		if(scene != nullptr)
-			rendering->render(scene);
+			renderingEngine->render(scene);
 
 		mainWindow->swapBuffers();
 	}
@@ -178,6 +183,11 @@ namespace xiengine
 	Scene* Core::getCurrentScene()
 	{
 		return currentCore->scene;
+	}
+
+	ResourceManager* Core::getCurrentResourceManager()
+	{
+		return currentCore->resourceManager;
 	}
 
 }

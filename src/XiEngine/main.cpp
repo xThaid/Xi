@@ -6,8 +6,6 @@
 #include "core\core.h"
 #include "core\program.h"
 
-#include "core\entity\component\modelComponent.h"
-
 #include "utils\logger.h"
 
 using namespace xiengine;

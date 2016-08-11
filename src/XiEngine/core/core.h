@@ -1,11 +1,14 @@
 #pragma once
 
-#include "../rendering/renderingEngine.h"
-
 namespace xiengine
 {
-	class Scene;
+	class Window;
+	class RenderingEngine;
+	class ResourceManager;
 	class Program;
+
+	class Scene;
+	
 	class Time;
 
 	class Core
@@ -27,12 +30,14 @@ namespace xiengine
 
 		static Core* getCurrentCore();
 		static Scene* getCurrentScene();
+		static ResourceManager* getCurrentResourceManager();
 
 	private:
 		static Core* currentCore;
 
 		Window* mainWindow;
-		RenderingEngine* rendering;
+		RenderingEngine* renderingEngine;
+		ResourceManager* resourceManager;
 		Program* program;
 		Time* time;
 

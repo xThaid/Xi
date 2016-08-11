@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
+
 namespace xiengine
 {
-	class materialAsset
+	class Resource
 	{
+	public:
 
 	};
 }

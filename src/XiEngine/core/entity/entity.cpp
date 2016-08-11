@@ -16,7 +16,7 @@ namespace xiengine
 	void Entity::addComponent(ComponentBase& component)
 	{
 		//SPRAWDZIC CZY JUZ NIE MA CZASEM
-		components.push_back(component);
+		components.push_back(&component);
 	}
 
 	ComponentBase* Entity::getComponent(std::string& componentName)

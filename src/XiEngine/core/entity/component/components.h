@@ -1,5 +1,5 @@
 #pragma once
 
 #include "transformComponent.h"
-#include "modelComponent.h"
+#include "modelRendererComponent.h"
 #include "cameraComponent.h"

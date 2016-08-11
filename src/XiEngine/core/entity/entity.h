@@ -25,8 +25,8 @@ namespace xiengine
 		Entity* parent;
 
 		std::vector<Entity> childrens;
-		std::vector<ComponentBase> components;
+		std::vector<ComponentBase*> components;
 
-		Transform transform;
+		TransformComponent transform;
 	};
 }

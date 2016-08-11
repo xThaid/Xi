@@ -13,6 +13,6 @@ namespace xiengine
 		ximath::Quaternion rotation;
 		ximath::Vector3 scale;
 
-		ComponentType getType()
+		ComponentType getType();
 	};
 }
