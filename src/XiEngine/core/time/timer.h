@@ -12,8 +12,8 @@ namespace xiengine
 	{
 		friend class Time;
 	public:
-		Timer(std::function<void(void)> action, int period);
-		Timer(std::function<void(void)> action, int period, int repeatCount);
+		Timer(std::function<void(void)> action, unsigned int period);
+		Timer(std::function<void(void)> action, unsigned int period, unsigned int repeatCount);
 		~Timer();
 
 		void start();
@@ -30,10 +30,10 @@ namespace xiengine
 		bool enabled;
 
 		std::function<void(void)> action;
-		int period;
+		unsigned int period;
 
-		int repeatCount;
-		int remainingCalls;
+		unsigned int repeatCount;
+		unsigned int remainingCalls;
 
 		std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
 

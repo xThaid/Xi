@@ -15,7 +15,7 @@ namespace xiengine
 			timer->invoke();
 	}
 
-	Timer::Timer(std::function<void(void)> action, int period) :
+	Timer::Timer(std::function<void(void)> action, unsigned int period) :
 		action(action),
 		period(period),
 		repeatCount(0),
@@ -25,7 +25,7 @@ namespace xiengine
 		timers.push_back(this);
 	}
 
-	Timer::Timer(std::function<void(void)> action, int period, int repeatCount) :
+	Timer::Timer(std::function<void(void)> action, unsigned int period, unsigned int repeatCount) :
 		action(action),
 		period(period),
 		repeatCount(repeatCount),
