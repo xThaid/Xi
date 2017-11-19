@@ -6,14 +6,14 @@
 #include "core\core.h"
 #include "core\program.h"
 
-#include "core\entity\component\modelComponent.h"
-
 #include "utils\logger.h"
 
 using namespace xiengine;
 
 int main(int argc, char* argv[])
 {
+	std::cout << "Czesc" << std::endl;
+
 	Logger::setLevel(Logger::LEVEL_TRACE);
 
 	Window win(800, 600, "Xi");
