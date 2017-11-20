@@ -1,20 +1,16 @@
 #include "file.h"
 
+#include "logger.h"
+
 File::File(const std::string& filePath)
 {
 	path = filePath;
-		
-	file = std::ifstream();
+
+	if (!exist())
+		Logger::warn("File " + path + " doesn't exist");
 }
 
-
-std::string File::getPath()
-{
-	return path;
-}
-
-
-const bool File::loadFromFile(const std::string& pathToFile, const char* buffer)
+std::string File::loadText()
 {
 	std::ifstream file;
 
@@ -22,18 +18,20 @@ const bool File::loadFromFile(const std::string& pathToFile, const char* buffer)
 
 	try
 	{
-		file.open(pathToFile);
+		file.open(path);
 		std::stringstream stream;
 		stream << file.rdbuf();
 		file.close();
-		buffer = stream.str().c_str();
+		return stream.str();
 	}
 	catch (std::ifstream::failure e)
 	{
-		//TODO error
-
-		return false;
+		return "";
 	}
+}
 
-	return true;
+bool File::exist()
+{
+	std::ifstream f(path);
+	return f.good();
 }

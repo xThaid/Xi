@@ -81,9 +81,9 @@ void Camera::setMouseSensitivity(float sensitivity)
 
 void Camera::updateVectors()
 {
-	front.x = cos(ximath::radians(yaw)) * cos(ximath::radians(pitch));
-	front.y = sin(ximath::radians(pitch));
-	front.z = sin(ximath::radians(yaw)) * cos(ximath::radians(pitch));
+	front.x = (float) (cos(ximath::radians(yaw)) * cos(ximath::radians(pitch)));
+	front.y = (float) sin(ximath::radians(pitch));
+	front.z = (float) (sin(ximath::radians(yaw)) * cos(ximath::radians(pitch)));
 	front.normalize();
 
 	right = ximath::cross(front, up).normalized();

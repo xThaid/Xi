@@ -2,8 +2,8 @@
 
 #include "math\ximath.h"
 
-const int SPEED = 2.5f;
-const int SENSITIVITY = 0.1;
+const float SPEED = 2.5f;
+const float SENSITIVITY = 0.1f;
 
 enum CameraMovement {
 	FORWARD,

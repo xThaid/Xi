@@ -1,19 +1,5 @@
-1.CORE
--scene
--entity
--components
--assets
--resource manager
--
+-zapisywac macierze jako tablice
+-szybsze uniformy w shaderach
 
-
-2.RENDERING
--mesh
--textures
--materials
--lighting
--shadows
--framebuffers
-
-3.OTHERS
--file class
+-sprawdzic funkcje perspective, ortho, lookAt
+-lerp slerp sprawdzenie

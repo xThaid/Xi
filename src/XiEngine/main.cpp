@@ -11,8 +11,6 @@
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Czesc" << std::endl;
-
 	Logger::setLevel(Logger::LEVEL_TRACE);
 
 	Window win(800, 600, "Xi");

@@ -71,8 +71,6 @@ void Core::destroy()
 	
 void Core::loop()
 {
-	const int milliSeconds = 1000;
-
 	double upsDelta = 0.0;
 	double fpsDelta = 0.0;
 
@@ -106,7 +104,7 @@ void Core::loop()
 			}
 			else
 			{
-				upsDelta += delta.count() * upsLimit / milliSeconds;
+				upsDelta += delta.count() * upsLimit / 1000;
 				if (upsDelta >= 1.0)
 				{
 					update();
@@ -122,7 +120,7 @@ void Core::loop()
 			}
 			else
 			{
-				fpsDelta += delta.count() * fpsLimit / milliSeconds;
+				fpsDelta += delta.count() * fpsLimit / 1000;
 				if (fpsDelta >= 1.0)
 				{
 					render();

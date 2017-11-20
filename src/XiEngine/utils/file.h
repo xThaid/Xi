@@ -9,11 +9,9 @@ class File
 public:
 	File(const std::string& filePath);
 
-	std::string getPath();
-
-	static const bool loadFromFile(const std::string& filePath, const char* buffer);
-
+	std::string loadText();
 private:
 	std::string path;
-	std::ifstream file;
+
+	bool exist();
 };

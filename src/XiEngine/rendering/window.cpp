@@ -35,8 +35,7 @@ bool Window::init()
 		return false;
 	}
 
-
-	glfwSwapInterval(1);
+	//glfwSwapInterval(1); //vsync
 
 	return true;
 }
@@ -44,7 +43,7 @@ bool Window::init()
 void Window::swapBuffers() const
 {
 	if(window != nullptr)
-	glfwSwapBuffers(window);
+		glfwSwapBuffers(window);
 }
 
 void Window::setFullscreen(bool enabled) 
