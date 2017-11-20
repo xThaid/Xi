@@ -1,32 +1,23 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <glad/glad.h> 
 #include <GLFW\glfw3.h>
 
 #include "window.h"
 
-#include "shader\entityShader.h"
+class Scene;
+class Entity;
 
-namespace xiengine
+class RenderingEngine
 {
-	class Scene;
-	class Entity;
+public:
+	RenderingEngine(Window* window);
+	~RenderingEngine();
 
-	class RenderingEngine
-	{
-	public:
-		RenderingEngine();
-		~RenderingEngine();
+	void init();
 
-		void init();
+	void render(Scene* scene);
+private:
 
-		void makeContextCurrent(Window* window);
-
-		void render(Scene* scene);
-		void renderEntity(Entity* entity);
-	private:
-		EntityShader entityShader;
-
-		void destroy();
-	};
-}
+	void destroy();
+};

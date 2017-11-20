@@ -4,39 +4,36 @@
 #include <vector>
 #include <functional>
 
-namespace xiengine
+typedef void(*Action)();
+
+class Timer
 {
-	typedef void(*Action)();
+	friend class Time;
+public:
+	Timer(std::function<void(void)> action, int period);
+	Timer(std::function<void(void)> action, int period, int repeatCount);
+	~Timer();
 
-	class Timer
-	{
-		friend class Time;
-	public:
-		Timer(std::function<void(void)> action, int period);
-		Timer(std::function<void(void)> action, int period, int repeatCount);
-		~Timer();
+	void start();
+	void stop();
 
-		void start();
-		void stop();
+	void reset();
 
-		void reset();
+	void changePeriod(int period);
 
-		void changePeriod(int period);
-
-	private:
-		static std::vector<Timer*> timers;
-		static void invokeTimers();
+private:
+	static std::vector<Timer*> timers;
+	static void invokeTimers();
 		
-		bool enabled;
+	bool enabled;
 
-		std::function<void(void)> action;
-		int period;
+	std::function<void(void)> action;
+	int period;
 
-		int repeatCount;
-		int remainingCalls;
+	int repeatCount;
+	int remainingCalls;
 
-		std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
 
-		void invoke();
-	};
-}
+	void invoke();
+};

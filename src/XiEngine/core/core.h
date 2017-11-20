@@ -2,52 +2,49 @@
 
 #include "../rendering/renderingEngine.h"
 
-namespace xiengine
+class Scene;
+class Program;
+class Time;
+
+class Core
 {
-	class Scene;
-	class Program;
-	class Time;
+	friend class Time;
 
-	class Core
-	{
-		friend class Time;
+public:
+	Core(Window* window);
 
-	public:
-		Core(Window* window);
+	void start();
+	void stop();
 
-		void start();
-		void stop();
+	inline void setUPSLimit(int upsLimit) { this->upsLimit = upsLimit; }
+	inline void setFPSLimit(int fpsLimit) { this->fpsLimit = fpsLimit; }
 
-		inline void setUPSLimit(int upsLimit) { this->upsLimit = upsLimit; }
-		inline void setFPSLimit(int fpsLimit) { this->fpsLimit = fpsLimit; }
+	inline bool isRunning() { return running; }
 
-		inline bool isRunning() { return running; }
+	static void setCurrentScene(Scene* scene);
 
-		static void setCurrentScene(Scene* scene);
+	static Core* getCurrentCore();
+	static Scene* getCurrentScene();
 
-		static Core* getCurrentCore();
-		static Scene* getCurrentScene();
+private:
+	static Core* currentCore;
 
-	private:
-		static Core* currentCore;
+	Window* mainWindow;
+	RenderingEngine* rendering;
+	Program* program;
+	Time* time;
 
-		Window* mainWindow;
-		RenderingEngine* rendering;
-		Program* program;
-		Time* time;
+	Scene* scene;
 
-		Scene* scene;
+	bool running;
+	int upsLimit;
+	int fpsLimit;
 
-		bool running;
-		int upsLimit;
-		int fpsLimit;
+	void init();
+	void destroy();
 
-		void init();
-		void destroy();
-
-		void loop();
+	void loop();
 		
-		void update();
-		void render();
-	};
-}
+	void update();
+	void render();
+};

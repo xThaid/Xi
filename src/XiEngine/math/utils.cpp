@@ -5,12 +5,12 @@
 
 namespace ximath
 {
-	float radiansToDegrees(float rad)
+	float degrees(float rad)
 	{
 		return (rad * 180.0f) /(float) M_PI;
 	}
 
-	float degreesToRadians(float deg)
+	float radians(float deg)
 	{
 		return (deg * (float) M_PI) / 180.0f;
 	}

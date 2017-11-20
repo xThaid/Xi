@@ -4,55 +4,40 @@
 
 #include "../utils/logger.h"
 
-namespace xiengine
+RenderingEngine::RenderingEngine(Window * window)
 {
-	RenderingEngine::RenderingEngine()
-	{
-		if (!glfwInit())
-			Logger::error("Failed to initialize GLFW");
-		else
-			Logger::debug("GLFW version: " + std::string(glfwGetVersionString()));
-	}
+	if (!glfwInit())
+		Logger::error("Failed to initialize GLFW");
+	else
+		Logger::debug("GLFW version: " + std::string(glfwGetVersionString()));
 
-	RenderingEngine::~RenderingEngine()
-	{
-		destroy();
-	}
+	window->init();
+	glfwMakeContextCurrent(window->getWindow());
 
-	void RenderingEngine::init()
-	{
-		glewExperimental = GL_TRUE;
-		GLenum status = glewInit();
-		if (status != GLEW_OK)
-			Logger::error("Failed to initialize GLEW: " + std::string((char*)glewGetErrorString(status)));
-		else
-			Logger::debug("GLEW version: " + std::string((char*)glewGetString(GLEW_VERSION)));
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+		Logger::error("Failed to initialize GLAD");
 
-		glEnable(GL_DEPTH_TEST);
+	Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
+}
 
 
-		Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
-	}
+RenderingEngine::~RenderingEngine()
+{
+	destroy();
+}
 
-	void RenderingEngine::destroy()
-	{
-		glfwTerminate();
-	}
+void RenderingEngine::init()
+{
+	glEnable(GL_DEPTH_TEST);
+}
 
-	void RenderingEngine::makeContextCurrent(Window* window)
-	{
-		glfwMakeContextCurrent(window->getWindow());
-		glViewport(0, 0, window->getWidth(), window->getHeight());
-	}
+void RenderingEngine::destroy()
+{
+	glfwTerminate();
+}
 
-	void RenderingEngine::render(Scene* scene)
-	{
-		glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-
-	void RenderingEngine::renderEntity(Entity* entity)
-	{
-
-	}
+void RenderingEngine::render(Scene* scene)
+{
+	glClearColor(0.2f, 0.3f, 0.6f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

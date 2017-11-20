@@ -3,15 +3,12 @@
 #include "core.h"
 #include "scene.h"
 
-namespace xiengine
+void Program::init()
 {
-	void Program::init()
-	{
-		Core::getCurrentCore()->setCurrentScene(new Scene());
-	}
+	Core::getCurrentCore()->setCurrentScene(new Scene());
+}
 
-	void Program::update()
-	{
+void Program::update()
+{
 
-	}
 }

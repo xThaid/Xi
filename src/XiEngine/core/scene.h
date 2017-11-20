@@ -1,24 +1,17 @@
 #pragma once
 
 #include <vector>
-#include "entity/entity.h"
 
-namespace xiengine
+
+class Scene
 {
-	class Entity;
+public:
+	Scene();
 
-	class Scene
-	{
-	public:
-		Scene();
+	void update();
 
-		void update();
+	void destroy();
+private:
+	//std::vector<Entity> entities;
 
-		void destroy();
-	private:
-		std::vector<Entity> entities;
-
-
-		friend class GraphicsEngine;
-	};
-}
+};

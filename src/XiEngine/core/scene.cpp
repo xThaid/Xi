@@ -1,19 +1,16 @@
 #include "scene.h"
 
-namespace xiengine
+Scene::Scene()
 {
-	Scene::Scene()
-	{
 
-	}
+}
 
-	void Scene::update()
-	{
+void Scene::update()
+{
 
-	}
+}
 
-	void Scene::destroy()
-	{
+void Scene::destroy()
+{
 
-	}
 }

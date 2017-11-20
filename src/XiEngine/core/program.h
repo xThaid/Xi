@@ -1,11 +1,8 @@
 #pragma once
 
-namespace xiengine
+class Program
 {
-	class Program
-	{
-	public:
-		void init();
-		void update();
-	};
-}
+public:
+	void init();
+	void update();
+};

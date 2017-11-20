@@ -2,7 +2,7 @@
 
 namespace ximath
 {
-	float inline radiansToDegrees(float rad);
-	float inline degreesToRadians(float deg);
+	float inline degrees(float rad);
+	float inline radians(float deg);
 
 }

@@ -8,7 +8,6 @@
 
 #include "utils\logger.h"
 
-using namespace xiengine;
 
 int main(int argc, char* argv[])
 {

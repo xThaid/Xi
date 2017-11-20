@@ -4,19 +4,16 @@
 #include <fstream>
 #include <sstream>
 
-namespace xiengine
+class File
 {
-	class File
-	{
-	public:
-		File(const std::string& filePath);
+public:
+	File(const std::string& filePath);
 
-		std::string getPath();
+	std::string getPath();
 
-		static const bool loadFromFile(const std::string& filePath, const char* buffer);
+	static const bool loadFromFile(const std::string& filePath, const char* buffer);
 
-	private:
-		std::string path;
-		std::ifstream file;
-	};
-}
+private:
+	std::string path;
+	std::ifstream file;
+};
