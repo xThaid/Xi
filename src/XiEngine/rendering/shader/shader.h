@@ -40,14 +40,13 @@ public:
 	void bindAttribute(const GLuint attribute, const std::string& name);
 	GLuint getUniformLocation(const std::string& name);
 
-	void loadInt(GLuint location, GLint value);
-	void loadFloat(GLuint location, GLfloat value);
-	void loadBoolean(GLuint location, bool value);
-	void loadVector2(GLuint location, ximath::Vector2 value);
-	void loadVector3(GLuint location, ximath::Vector3 value);
-	void loadVector4(GLuint location, ximath::Vector4 value);
-	void loadMatrix3(GLuint location, ximath::Matrix3 value);
-	void loadMatrix4(GLuint location, ximath::Matrix4 value);
+	void loadInt(const std::string& name, GLint value);
+	void loadFloat(const std::string& name, GLfloat value);
+	void loadBoolean(const std::string& name, bool value);
+	void loadVector2(const std::string& name, xim::Vector2& value);
+	void loadVector3(const std::string& name, xim::Vector3& value);
+	void loadVector4(const std::string& name, xim::Vector4& value);
+	void loadMatrix4(const std::string& name, xim::Matrix4& value);
 
 private:
 	GLuint shaderProgramID;

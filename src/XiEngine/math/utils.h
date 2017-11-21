@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-namespace ximath
+namespace xim
 {
 	inline float degrees(float rad)
 	{

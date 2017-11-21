@@ -1,6 +1,6 @@
 #include "camera.h"
 
-Camera::Camera(ximath::Vector3 position = ximath::Vector3(0.0f, 0.0f, 0.0f), float yaw = 0.0f, float pitch = 0.0f)
+Camera::Camera(xim::Vector3 position = xim::Vector3(0.0f, 0.0f, 0.0f), float yaw = 0.0f, float pitch = 0.0f)
 {
 	this->position = position;
 	this->yaw = yaw;
@@ -9,14 +9,14 @@ Camera::Camera(ximath::Vector3 position = ximath::Vector3(0.0f, 0.0f, 0.0f), flo
 	cameraSpeed = SPEED;
 	mouseSensitivity = SENSITIVITY;
 
-	up = ximath::Vector3(0.0f, 1.0f, 0.0f);
+	up = xim::Vector3(0.0f, 1.0f, 0.0f);
 
 	updateVectors();
 }
 
-ximath::Matrix4 Camera::getViewMatrix()
+xim::Matrix4 Camera::getViewMatrix()
 {
-	return ximath::lookAt(position, position + front, up);
+	return xim::lookAt(position, position + front, up);
 }
 
 void Camera::processKeyboard(CameraMovement direction, float deltaTime)
@@ -48,7 +48,7 @@ void Camera::processMouse(float xDelta, float yDelta)
 	updateVectors();
 }
 
-void Camera::setPosition(ximath::Vector3 position)
+void Camera::setPosition(xim::Vector3 position)
 {
 	this->position = position;
 }
@@ -81,10 +81,10 @@ void Camera::setMouseSensitivity(float sensitivity)
 
 void Camera::updateVectors()
 {
-	front.x = (float) (cos(ximath::radians(yaw)) * cos(ximath::radians(pitch)));
-	front.y = (float) sin(ximath::radians(pitch));
-	front.z = (float) (sin(ximath::radians(yaw)) * cos(ximath::radians(pitch)));
+	front.data[0] = (float) (cos(xim::radians(yaw)) * cos(xim::radians(pitch)));
+	front.data[1] = (float) sin(xim::radians(pitch));
+	front.data[2] = (float) (sin(xim::radians(yaw)) * cos(xim::radians(pitch)));
 	front.normalize();
 
-	right = ximath::cross(front, up).normalized();
+	right = xim::cross(front, up).normalized();
 }

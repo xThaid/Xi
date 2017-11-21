@@ -8,6 +8,7 @@
 
 #include "utils\logger.h"
 
+#include "testing.h"
 
 int main(int argc, char* argv[])
 {

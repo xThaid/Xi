@@ -1,5 +1,4 @@
--zapisywac macierze jako tablice
 -szybsze uniformy w shaderach
 
 -sprawdzic funkcje perspective, ortho, lookAt
--lerp slerp sprawdzenie
+

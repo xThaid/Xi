@@ -1,215 +1,89 @@
 #include "matrix4.h"
 
-#include <stdexcept>
 #include <math.h>
 
 #include "vector3.h"
-#include "matrix3.h"
-#include "quaternion.h"
+#include "vector4.h"
 
-namespace ximath
+namespace xim
 {
-	const Matrix4 Matrix4::identity = Matrix4(
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-	);
-
 	Matrix4::Matrix4()
 	{
-		data[0] = Vector4();
-		data[1] = Vector4();
-		data[2] = Vector4();
-		data[3] = Vector4();
+		data[0] = 1.0f; data[4] = 0.0f; data[8]  = 0.0f; data[12] = 0.0f;
+		data[1] = 0.0f; data[5] = 1.0f; data[9]  = 0.0f; data[13] = 0.0f;
+		data[2] = 0.0f; data[6] = 0.0f; data[10] = 1.0f; data[14] = 0.0f;
+		data[3] = 0.0f; data[7] = 0.0f; data[11] = 0.0f; data[15] = 1.0f;
 	}
 
-	Matrix4::Matrix4(float value)
+	void Matrix4::copy(const Matrix4& m)
 	{
-		data[0] = Vector4(value, 0.0f, 0.0f, 0.0f);
-		data[1] = Vector4(0.0f, value, 0.0f, 0.0f);
-		data[2] = Vector4(0.0f, 0.0f, value, 0.0f);
-		data[3] = Vector4(0.0f, 0.0f, 0.0f, value);
-	}
-
-	Matrix4::Matrix4(const Vector4 v1, const Vector4 v2, const Vector4 v3, const Vector4 v4)
-	{
-		data[0] = Vector4(v1);
-		data[1] = Vector4(v2);
-		data[2] = Vector4(v3);
-		data[3] = Vector4(v4);
-	}
-
-	Matrix4::Matrix4(const Matrix3& m)
-	{
-		data[0] = Vector4(m[0][0], m[0][1], m[0][2], 0.0f);
-		data[1] = Vector4(m[1][0], m[1][1], m[1][2], 0.0f);
-		data[2] = Vector4(m[2][0], m[2][1], m[2][2], 0.0f);
-		data[3] = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-	}
-
-	Matrix4::Matrix4(float data00, float data01, float data02,
-		float data10, float data11, float data12,
-		float data20, float data21, float data22)
-	{
-		data[0] = Vector4(data00, data01, data02, 0.0f);
-		data[1] = Vector4(data10, data11, data12, 0.0f);
-		data[2] = Vector4(data20, data21, data22, 0.0f);
-		data[3] = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-	}
-
-	Matrix4::Matrix4(float data00, float data01, float data02, float data03,
-		float data10, float data11, float data12, float data13,
-		float data20, float data21, float data22, float data23,
-		float data30, float data31, float data32, float data33)
-	{
-		data[0] = Vector4(data00, data01, data02, data03);
-		data[1] = Vector4(data10, data11, data12, data13);
-		data[2] = Vector4(data20, data21, data22, data23);
-		data[2] = Vector4(data30, data31, data32, data33);
-	}
-
-	Matrix4& Matrix4::operator+=(const Matrix4& m)
-	{
-		data[0] += m.data[0];
-		data[1] += m.data[1];
-		data[2] += m.data[2];
-		data[3] += m.data[3];
-		return *this;
-	}
-
-	Matrix4& Matrix4::operator-=(const Matrix4& m)
-	{
-		data[0] -= m.data[0];
-		data[1] -= m.data[1];
-		data[2] -= m.data[2];
-		data[3] -= m.data[3];
-		return *this;
+		data[0] = m.data[0]; data[4] = m.data[4]; data[8] = m.data[8]; data[12] = m.data[12];
+		data[1] = m.data[1]; data[5] = m.data[5]; data[9] = m.data[9]; data[13] = m.data[13];
+		data[2] = m.data[2]; data[6] = m.data[6]; data[10] = m.data[10]; data[14] = m.data[14];
+		data[3] = m.data[3]; data[7] = m.data[7]; data[11] = m.data[11]; data[15] = m.data[15];
 	}
 
 	Matrix4& Matrix4::operator*=(const Matrix4& m)
 	{
-		const Matrix4 copyOfThis(*this);
-		multiplicationHelper(copyOfThis, m, this);
+		Matrix4 result = (*this) * m;
+		copy(result);
 		return *this;
-	}
-
-	Matrix4& Matrix4::operator*=(const Matrix3& m)
-	{
-		const Matrix4 copyOfThis(*this);
-		multiplicationHelper(copyOfThis, m, this);
-		return *this;
-	}
-
-	Matrix4& Matrix4::operator*=(const float& value)
-	{
-		data[0] *= value;
-		data[1] *= value;
-		data[2] *= value;
-		data[3] *= value;
-		return *this;
-	}
-
-	Matrix4& Matrix4::operator/=(const float& value)
-	{
-		data[0] /= value;
-		data[1] /= value;
-		data[2] /= value;
-		data[3] /= value;
-		return *this;
-	}
-
-	Matrix4 Matrix4::operator+(const Matrix4& m) const
-	{
-		return Matrix4(data[0] + m.data[0], data[1] + m.data[1], data[2] + m.data[2], data[3] + m.data[3]);
-	}
-
-	Matrix4 Matrix4::operator-(const Matrix4& m) const
-	{
-		return Matrix4(data[0] - m.data[0], data[1] - m.data[1], data[2] - m.data[2], data[3] - m.data[3]);
 	}
 
 	Matrix4 Matrix4::operator*(const Matrix4& m) const
 	{
 		Matrix4 result;
-		multiplicationHelper(*this, m, &result);
+		
+		result.data[0] = data[0] * m.data[0] + data[4] * m.data[1] + data[8] * m.data[2] + data[12] * m.data[3];
+		result.data[1] = data[1] * m.data[0] + data[5] * m.data[1] + data[9] * m.data[2] + data[13] * m.data[3];
+		result.data[2] = data[2] * m.data[0] + data[6] * m.data[1] + data[10] * m.data[2] + data[14] * m.data[3];
+		result.data[3] = data[3] * m.data[0] + data[7] * m.data[1] + data[11] * m.data[2] + data[15] * m.data[3];
+
+		result.data[4] = data[0] * m.data[4] + data[4] * m.data[5] + data[8] * m.data[6] + data[12] * m.data[7];
+		result.data[5] = data[1] * m.data[4] + data[5] * m.data[5] + data[9] * m.data[6] + data[13] * m.data[7];
+		result.data[6] = data[2] * m.data[4] + data[6] * m.data[5] + data[10] * m.data[6] + data[14] * m.data[7];
+		result.data[7] = data[3] * m.data[4] + data[7] * m.data[5] + data[11] * m.data[6] + data[15] * m.data[7];
+
+		result.data[8] = data[0] * m.data[8] + data[4] * m.data[9] + data[8] * m.data[10] + data[12] * m.data[11];
+		result.data[9] = data[1] * m.data[8] + data[5] * m.data[9] + data[9] * m.data[10] + data[13] * m.data[11];
+		result.data[10] = data[2] * m.data[8] + data[6] * m.data[9] + data[10] * m.data[10] + data[14] * m.data[11];
+		result.data[11] = data[3] * m.data[8] + data[7] * m.data[9] + data[11] * m.data[10] + data[15] * m.data[11];
+
+		result.data[12] = data[0] * m.data[12] + data[4] * m.data[13] + data[8] * m.data[14] + data[12] * m.data[15];
+		result.data[13] = data[1] * m.data[12] + data[5] * m.data[13] + data[9] * m.data[14] + data[13] * m.data[15];
+		result.data[14] = data[2] * m.data[12] + data[6] * m.data[13] + data[10] * m.data[14] + data[14] * m.data[15];
+		result.data[15] = data[3] * m.data[12] + data[7] * m.data[13] + data[11] * m.data[14] + data[15] * m.data[15];
+
 		return result;
 	}
 
-	Matrix4 Matrix4::operator*(const Matrix3& m) const
+	Vector3 Matrix4::operator*(const Vector3& v) const
 	{
-		Matrix4 result;
-		multiplicationHelper(*this, m, &result);
-		return result;
-	}
-
-	Matrix4 Matrix4::operator*(const float& value) const
-	{
-		return Matrix4(data[0] * value, data[1] * value, data[2] * value, data[3] * value);
-	}
-
-	Matrix4 Matrix4::operator/(const float& value) const
-	{
-		return Matrix4(data[0] / value, data[1] / value, data[2] / value, data[3] / value);
-	}
-
-	Matrix4 Matrix4::operator-() const
-	{
-		return Matrix4(-data[0], -data[1], -data[2], -data[3]);
+		Vector4 result = *this * Vector4(v, 1.0f);
+		return result.xyz();
 	}
 
 	Vector4 Matrix4::operator*(const Vector4& v) const
 	{
 		Vector4 result;
-		for (int i = 0; i < 4; i++)
-			result[i] = dot(v, data[i]);
-
+	
+		result.data[0] = data[0] * v.data[0] + data[4] * v.data[1] + data[8] * v.data[2] + data[12] * v.data[3];
+		result.data[1] = data[1] * v.data[0] + data[5] * v.data[1] + data[9] * v.data[2] + data[13] * v.data[3];
+		result.data[2] = data[2] * v.data[0] + data[6] * v.data[1] + data[10] * v.data[2] + data[14] * v.data[3];
+		result.data[3] = data[3] * v.data[0] + data[7] * v.data[1] + data[11] * v.data[2] + data[15] * v.data[3];
+		
 		return result;
-	}
-
-	Vector4& Matrix4::operator[](const unsigned int i)
-	{
-		if (i < 4)
-			return data[i];
-
-		throw std::out_of_range("out of range // TODO");
-	}
-
-	const Vector4& Matrix4::operator[](const unsigned int i) const
-	{
-		if (i < 4)
-			return data[i];
-
-		throw std::out_of_range("out of range // TODO");
-	}
-
-	Vector4 Matrix4::getColumn(const unsigned int i) const
-	{
-		if (i < 4)
-			return Vector4(data[0][i], data[1][i], data[2][i], data[3][i]);
-
-		throw std::out_of_range("out of range // TODO");
-	}
-
-	bool Matrix4::operator==(const Matrix4& m) const
-	{
-		return (data[0] == m.data[0] && data[1] == m.data[1] && data[2] == m.data[2] && data[3] == m.data[3]);
-	}
-
-	bool Matrix4::operator!=(const Matrix4& m) const
-	{
-		return !(data[0] == m.data[0] && data[1] == m.data[1] && data[2] == m.data[2] && data[3] == m.data[3]);
 	}
 
 	Matrix4& Matrix4::transpose()
 	{
 		float temp;
-		temp = data[0][1]; data[0][1] = data[1][0]; data[1][0] = temp;
-		temp = data[0][2]; data[0][2] = data[2][0]; data[2][0] = temp;
-		temp = data[0][3]; data[0][3] = data[3][0]; data[3][0] = temp;
-		temp = data[1][2]; data[1][2] = data[2][1]; data[2][1] = temp;
-		temp = data[1][3]; data[1][3] = data[3][1]; data[3][1] = temp;
-		temp = data[2][3]; data[2][3] = data[3][2]; data[3][2] = temp;
+		temp = data[1]; data[1] = data[4]; data[4] = temp;
+		temp = data[2]; data[2] = data[8]; data[8] = temp;
+		temp = data[3]; data[3] = data[12]; data[12] = temp;
+		temp = data[6]; data[6] = data[9]; data[9] = temp;
+		temp = data[7]; data[7] = data[13]; data[13] = temp;
+		temp = data[11]; data[11] = data[14]; data[14] = temp;
 		return *this;
 	}
 
@@ -226,11 +100,9 @@ namespace ximath
 
 	Matrix4& Matrix4::translate(const Vector3& v)
 	{
-		Vector4 temp(v, 1.0f);
-		data[0][3] = data[0].dotProduct(temp);
-		data[1][3] = data[1].dotProduct(temp);
-		data[2][3] = data[2].dotProduct(temp);
-		data[3][3] = data[3].dotProduct(temp);
+		data[12] = data[0] * v.data[0] + data[4] * v.data[1] + data[8] * v.data[2] + data[12];
+		data[13] = data[1] * v.data[0] + data[5] * v.data[1] + data[9] * v.data[2] + data[13];
+		data[14] = data[2] * v.data[0] + data[6] * v.data[1] + data[10] * v.data[2] + data[14];
 		return *this;
 	}
 
@@ -241,11 +113,21 @@ namespace ximath
 
 	Matrix4& Matrix4::scale(const Vector3& v)
 	{
-		Vector4 temp(v, 1.0f);
-		data[0] = data[0] * temp;
-		data[1] = data[1] * temp;
-		data[2] = data[2] * temp;
-		data[3] = data[3] * temp;
+		data[0] = data[0] * v.data[0];
+		data[1] = data[1] * v.data[0];
+		data[2] = data[2] * v.data[0];
+		data[3] = data[3] * v.data[0];
+
+		data[4] = data[4] * v.data[1];
+		data[5] = data[5] * v.data[1];
+		data[6] = data[6] * v.data[1];
+		data[7] = data[7] * v.data[1];
+		
+		data[8] = data[8] * v.data[2];
+		data[9] = data[9] * v.data[2];
+		data[10] = data[10] * v.data[2];
+		data[11] = data[11] * v.data[2];
+
 		return *this;
 	}
 
@@ -279,26 +161,6 @@ namespace ximath
 	{
 		Matrix4 m = rotationMatrix(angle, v);
 		(*this) *= m;
-		return (*this) *= m;
-	}
-
-	Matrix4& Matrix4::rotate(const Matrix3& m)
-	{
-		(*this) *= m;
-		return *this;
-	}
-
-	Matrix4& Matrix4::rotate(const EulerAngles& angles)
-	{
-
-		(*this) *= Quaternion::fromEulerAngles(angles).toMatrix4();
-		return *this;
-	}
-
-	Matrix4& Matrix4::rotate(const Quaternion& quat)
-	{
-		Matrix4 m = quat.toMatrix4();
-		(*this) *= m;
 		return *this;
 	}
 
@@ -306,21 +168,36 @@ namespace ximath
 	{
 		float c = cosf(angle);
 		float s = sinf(angle);
-		return Matrix4(1.0f, 0.0f, 0.0f, 0.0f, c, -s, 0.0f, s, c);
+		Matrix4 result;
+		result.data[5] = c;
+		result.data[6] = s;
+		result.data[9] = -s;
+		result.data[10] = c;
+		return result;
 	}
 
 	Matrix4 Matrix4::rotationYMatrix(float angle)
 	{
 		float c = cosf(angle);
 		float s = sinf(angle);
-		return Matrix4(c, 0.0f, s, 0.0f, 1, 0.0f, -s, 0, c);
+		Matrix4 result;
+		result.data[0] = c;
+		result.data[2] = -s;
+		result.data[8] = s;
+		result.data[10] = c;
+		return result;
 	}
 
 	Matrix4 Matrix4::rotationZMatrix(float angle)
 	{
 		float c = cosf(angle);
 		float s = sinf(angle);
-		return Matrix4(c, -s, 0.0f, s, c, 0.0f, 0.0f, 0.0f, 1.0f);
+		Matrix4 result;
+		result.data[0] = c;
+		result.data[1] = s;
+		result.data[4] = -s;
+		result.data[5] = c;
+		return result;
 	}
 
 	Matrix4 Matrix4::rotationMatrix(float angle, float x, float y, float z)
@@ -338,17 +215,17 @@ namespace ximath
 
 		Matrix4 result;
 
-		result[0][0] = c + temp[0] * axis[0];
-		result[0][1] = 0 + temp[0] * axis[1] - axis[2] * s;
-		result[0][2] = 0 + temp[0] * axis[2] + axis[1] * s;
+		result.data[0] = c + temp.data[0] * axis.data[0];
+		result.data[1] = 0 + temp.data[0] * axis.data[1] + axis.data[2] * s;
+		result.data[2] = 0 + temp.data[0] * axis.data[2] - axis.data[1] * s;
 
-		result[1][0] = 0 + temp[1] * axis[0] + axis[2] * s;
-		result[1][1] = c + temp[1] * axis[1];
-		result[1][2] = 0 + temp[1] * axis[2] - axis[0] * s;
+		result.data[4] = 0 + temp.data[1] * axis.data[0] - axis.data[2] * s;
+		result.data[5] = c + temp.data[1] * axis.data[1];
+		result.data[6] = 0 + temp.data[1] * axis.data[2] + axis.data[0] * s;
 
-		result[2][0] = 0 + temp[2] * axis[0] - axis[1] * s;
-		result[2][1] = 0 + temp[2] * axis[1] + axis[0] * s;
-		result[2][2] = c + temp[2] * axis[2];
+		result.data[8] = 0 + temp.data[2] * axis.data[0] + axis.data[1] * s;
+		result.data[9] = 0 + temp.data[2] * axis.data[1] - axis.data[0] * s;
+		result.data[10] = c + temp.data[2] * axis.data[2];
 
 		return result;
 	}
@@ -360,10 +237,10 @@ namespace ximath
 
 	Matrix4 Matrix4::translationMatrix(Vector3 v)
 	{
-		Matrix4 m(identity);
-		m[0][3] = v.x;
-		m[1][3] = v.y;
-		m[2][3] = v.z;
+		Matrix4 m;
+		m.data[12] = v.data[0];
+		m.data[13] = v.data[1];
+		m.data[14] = v.data[2];
 
 		return m;
 	}
@@ -376,53 +253,24 @@ namespace ximath
 	Matrix4 Matrix4::scaleMatrix(Vector3 v)
 	{
 		Matrix4 m;
-		m[0][0] = v.x;
-		m[1][1] = v.y;
-		m[2][2] = v.z;
-		m[3][3] = 1.0f;
-
+		m.data[0] = v.data[0];
+		m.data[5] = v.data[1];
+		m.data[10] = v.data[2];
 		return m;
-	}
-
-	void Matrix4::multiplicationHelper(const Matrix4& m1, const	Matrix4& m2, Matrix4* m_out)
-	{
-		Matrix4& out = *m_out;
-
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-				out[i][j] = m2.getColumn(j).dotProduct(m1[i]);
-		}
-	}
-
-	void Matrix4::multiplicationHelper(const Matrix4& m1, const	Matrix3& m2, Matrix4* m_out)
-	{
-		Matrix4& out = *m_out;
-
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 3; j++)
-				out[i][j] = Vector4(m2.getColumn(j), 0.0f).dotProduct(m1[i]);
-			out[i][3] = m1[i][3];
-		}
-	}
-
-	Matrix4 operator*(const float& value, const Matrix4& m)
-	{
-		return m * value;
 	}
 
 	Matrix4 perspective(float fovy, float aspect, float znear, float zfar)
 	{
 		Matrix4 m;
-		const float tg = tanf(fovy / 2.0f);
-		const float dist = znear - zfar;
+		float tg = tanf(fovy / 2.0f);
+		float dist = zfar - znear;
 
-		m[0][0] = 1.0f / (tg * aspect);
-		m[1][1] = 1.0f / tg;
-		m[2][2] = (-znear - zfar) / dist;
-		m[2][3] = 2.0f * zfar * znear / dist;
-		m[3][2] = 1.0f;
+		m.data[0] = 1.0f / (tg * aspect);
+		m.data[5] = 1.0f / tg;
+		m.data[10] = -(zfar + znear) / dist;
+		m.data[11] = -1.0f;
+		m.data[14] = -2.0f * zfar * znear / dist;
+		m.data[15] = 0.0f;
 
 		return m;
 	}
@@ -430,26 +278,41 @@ namespace ximath
 	Matrix4 ortho(float left, float right, float bottom, float top, float znear, float zfar)
 	{
 		Matrix4 m;
-		m[0][0] = 2.0f / (right - left);
-		m[0][3] = -((right + left) / (right - left));
-		m[1][1] = 2.0f / (top - bottom);
-		m[1][3] = -((top + bottom) / (top - bottom));
-		m[2][2] = -2.0f / (zfar - znear);
-		m[2][3] = -((zfar + znear) / (zfar - znear));
-		m[3][3] = 1.0f;
+		m.data[0] = 2.0f / (right - left);
+		m.data[5] = 2.0f / (top - bottom);
+		m.data[10] = -2.0f / (zfar - znear);
+		m.data[12] = -((right + left) / (right - left));
+		m.data[13] = -((top + bottom) / (top - bottom));
+		m.data[14] = -((zfar + znear) / (zfar - znear));
+		m.data[15] = 1.0f;
 
 		return m;
 	}
 
-	Matrix4 lookAt(const Vector3& eye, const Vector3& at, const Vector3& up)
+	Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
 	{
-		Vector3 zAxis = (eye - at).normalized();
+		Vector3 zAxis = (eye - target).normalized();
 		Vector3 xAxis = up.crossProduct(zAxis).normalized();
 		Vector3 yAxis = zAxis.crossProduct(xAxis);
 
-		return Matrix4(xAxis.x, yAxis.x, zAxis.x, 0.0f,
-			xAxis.y, yAxis.y, zAxis.y, 0.0f,
-			xAxis.z, yAxis.z, zAxis.z, 0.0f,
-			-xAxis.dotProduct(eye), -yAxis.dotProduct(eye), -zAxis.dotProduct(eye), 1.0f);
+		Matrix4 res;
+		res.data[0] = xAxis.data[0];
+		res.data[4] = xAxis.data[1];
+		res.data[8] = xAxis.data[2];
+
+		res.data[1] = yAxis.data[0];
+		res.data[5] = yAxis.data[1];
+		res.data[9] = yAxis.data[2];
+
+		res.data[2] = zAxis.data[0];
+		res.data[6] = zAxis.data[1];
+		res.data[10] = zAxis.data[2];
+
+		res.data[12] = -eye.dotProduct(xAxis);
+		res.data[13] = -eye.dotProduct(yAxis);
+		res.data[14] = -eye.dotProduct(zAxis);
+		res.data[15] = 1.0f;
+
+		return res;
 	}
 }

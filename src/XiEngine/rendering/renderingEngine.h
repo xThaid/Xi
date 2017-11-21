@@ -7,7 +7,6 @@
 #include "shader\shader.h"
 
 class Scene;
-class Entity;
 
 class RenderingEngine
 {
@@ -16,12 +15,15 @@ public:
 	~RenderingEngine();
 
 	void init();
+	void changeViewport(int width, int height);
 
 	void render(Scene* scene);
 private:
+	int viewportWidth, viewportHeight;
+
 	Shader* basicShader;
 
-	unsigned int VBO, VAO;
+	unsigned int VBO, VAO,EBO;
 
 	void setUp();
 	void destroy();

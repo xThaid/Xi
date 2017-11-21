@@ -1,39 +1,34 @@
 #pragma once
 
-namespace ximath
+namespace xim
 {
 	class Vector2
 	{
 	public:
-		float x, y;
+		float data[2];
 
 		Vector2();
 		explicit Vector2(float value);
 		explicit Vector2(float x, float y);
 
+		inline float x() { return data[0]; }
+		inline float y() { return data[1]; }
+
+		inline const float* getPointer() { return &data[0]; }
+
 		void set(float x, float y);
 
 		Vector2& operator+=(const Vector2& v);
 		Vector2& operator-=(const Vector2& v);
-		Vector2& operator*=(const Vector2& v);
-		Vector2& operator*=(const float& value);
-		Vector2& operator/=(const Vector2& v);
-		Vector2& operator/=(const float& value);
+		Vector2& operator*=(const float& scalar);
+		Vector2& operator/=(const float& scalar);
 
 		Vector2 operator+(const Vector2& v) const;
 		Vector2 operator-(const Vector2& v) const;
-		Vector2 operator*(const Vector2& v) const;
-		Vector2 operator*(const float& value) const;
-		Vector2 operator/(const Vector2& v) const;
-		Vector2 operator/(const float& value) const;
+		Vector2 operator*(const float& scalar) const;
+		Vector2 operator/(const float& scalar) const;
 
 		Vector2 operator-() const;
-
-		float& operator[](const unsigned int i);
-		const float& operator[](const unsigned int i) const;
-
-		bool operator==(const Vector2& v) const;
-		bool operator!=(const Vector2& v) const;
 
 		float length() const;
 		float lengthSquared() const;
@@ -44,8 +39,6 @@ namespace ximath
 		float dotProduct(const Vector2& v) const;
 	};
 
-	Vector2 operator*(const float& value, const Vector2& v);
-	
 	Vector2 normal(const Vector2& v);
 
 	float dot(const Vector2& v1, const Vector2& v2);

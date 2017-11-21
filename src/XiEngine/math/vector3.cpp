@@ -1,159 +1,118 @@
 #include "vector3.h"
 
 #include <math.h>
-#include <stdexcept>
 
 #include "vector2.h"
 
-namespace ximath
+namespace xim
 {
-	const Vector3 Vector3::axisX = Vector3(1.0f, 0.0f, 0.0f);
-	const Vector3 Vector3::axisY = Vector3(0.0f, 1.0f, 0.0f);
-	const Vector3 Vector3::axisZ = Vector3(0.0f, 0.0f, 1.0f);
+	Vector3::Vector3()
+	{
+		data[0] = 0.0f;
+		data[1] = 0.0f;
+		data[2] = 0.0f;
+	}
 
-	Vector3::Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
-	Vector3::Vector3(float value) : x(value), y(value) {}
-	Vector3::Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
-	Vector3::Vector3(const Vector2& v, float z) : x(v.x), y(v.y), z(z) {}
+	Vector3::Vector3(float value)
+	{
+		data[0] = value;
+		data[1] = value;
+		data[2] = value;
+	}
+
+	Vector3::Vector3(float x, float y, float z)
+	{
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+	}
+
+	Vector3::Vector3(const Vector2& v, float z)
+	{
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = z;
+	}
 	
 	void Vector3::set(float x, float y, float z)
 	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
 	}
 
-	Vector2 Vector3::xy() const
-	{
-		return Vector2(x, y);
-	}
-	
 	Vector3& Vector3::operator+=(const Vector3& v)
 	{
-		x += v.x;
-		y += v.y;
-		z += v.z;
+		data[0] += v.data[0];
+		data[1] += v.data[1];
+		data[2] += v.data[2];
 		return *this;
 	}
 	
 	Vector3& Vector3::operator-=(const Vector3& v)
 	{
-		x -= v.x;
-		y -= v.y;
-		z -= v.z;
+		data[0] -= v.data[0];
+		data[1] -= v.data[1];
+		data[2] -= v.data[2];
 		return *this;
 	}
 	
-	Vector3& Vector3::operator*=(const Vector3& v)
+	Vector3& Vector3::operator*=(const float& scalar)
 	{
-		x *= v.x;
-		y *= v.y;
-		z *= v.z;
+		data[0] *= scalar;
+		data[1] *= scalar;
+		data[2] *= scalar;
 		return *this;
 	}
 	
-	Vector3& Vector3::operator*=(const float& value)
+	Vector3& Vector3::operator/=(const float& scalar)
 	{
-		x *= value;
-		y *= value;
-		z *= value;
-		return *this;
-	}
-	
-	Vector3& Vector3::operator/=(const Vector3& v)
-	{
-		x /= v.x;
-		y /= v.y;
-		z /= v.z;
-		return *this;
-	}
-	
-	Vector3& Vector3::operator/=(const float& value)
-	{
-		x /= value;
-		y /= value;
-		z /= value;
+		data[0] /= scalar;
+		data[1] /= scalar;
+		data[2] /= scalar;
 		return *this;
 	}
 	
 	Vector3 Vector3::operator+(const Vector3& v) const
 	{
-		return Vector3(x + v.x, y + v.y, z + v.z);
+		return Vector3(data[0] + v.data[0], data[1] + v.data[1], data[2] + v.data[2]);
 	}
 	
 	Vector3 Vector3::operator-(const Vector3& v) const
 	{
-		return Vector3(x - v.x, y - v.y, z - v.z);
+		return Vector3(data[0] - v.data[0], data[1] - v.data[1], data[2] - v.data[2]);
 	}
 	
-	Vector3 Vector3::operator*(const Vector3& v) const
+	Vector3 Vector3::operator*(const float& scalar) const
 	{
-		return Vector3(x * v.x, y * v.y, z * v.z);
-	}
-	
-	Vector3 Vector3::operator*(const float& value) const
-	{
-		return Vector3(x * value, y * value, z * value);
-	}
-	
-	Vector3 Vector3::operator/(const Vector3& v) const
-	{
-		return Vector3(x / v.x, y / v.y, z / v.z);
+		return Vector3(data[0] * scalar, data[1] * scalar, data[2] * scalar);
 	}
 
-	Vector3 Vector3::operator/(const float& value) const
+	Vector3 Vector3::operator/(const float& scalar) const
 	{
-		return Vector3(x / value, y / value, z / value);
+		return Vector3(data[0] / scalar, data[1] / scalar, data[2] / scalar);
 	}
 	
 	Vector3 Vector3::operator-() const
 	{
-		return Vector3(-x, -y, -z);
-	}
-
-	float& Vector3::operator[](const unsigned int i)
-	{
-		if (i == 0) return x;
-		if (i == 1) return y;
-		if (i == 2) return z;
-
-		throw std::out_of_range("out of range // TODO");
-	}
-
-	const float& Vector3::operator[](const unsigned int i) const
-	{
-		if (i == 0) return x;
-		if (i == 1) return y;
-		if (i == 2) return z;
-
-		throw std::out_of_range("out of range // TODO");
-	}
-	
-	bool Vector3::operator==(const Vector3& v) const
-	{
-		return (x == v.x && y == v.y && z == v.z);
-	}
-	
-	bool Vector3::operator!=(const Vector3& v) const
-	{
-		return !(x == v.x && y == v.y && z == v.z);
+		return Vector3(-data[0], -data[1], -data[2]);
 	}
 	
 	float Vector3::length() const
 	{
-		return static_cast<float>(sqrt(lengthSquared()));
+		return sqrtf(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
 	}
 	
 	float Vector3::lengthSquared() const
 	{
-		return x * x + y * y + z * z;
+		return data[0] * data[0] + data[1] * data[1] + data[2] * data[2];
 	}
 	
 	Vector3& Vector3::normalize()
 	{
-		float length = this->length();
-		if (length != 0.0f)
-			return (*this) /= length;
+		float len = length();
+		if (len != 0.0f)
+			return (*this) /= len;
 		return *this;
 	}
 	
@@ -165,17 +124,12 @@ namespace ximath
 	
 	float Vector3::dotProduct(const Vector3& v) const
 	{
-		return (x * v.x + y * v.y + z * v.z);
+		return data[0] * v.data[0] + data[1] * v.data[1] + data[2] * v.data[2];
 	}
 	
 	Vector3 Vector3::crossProduct(const Vector3& v) const
 	{
-		return Vector3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
-	}
-
-	Vector3 operator*(const float& value, const Vector3& v)
-	{
-		return v * value;
+		return Vector3(data[1] * v.data[2] - data[2] * v.data[1], data[2] * v.data[0] - data[0] * v.data[2], data[0] * v.data[1] - data[1] * v.data[0]);
 	}
 
 	Vector3 normal(const Vector3& v)

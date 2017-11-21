@@ -15,14 +15,14 @@ enum CameraMovement {
 class Camera
 {
 public:
-	Camera(ximath::Vector3 position, float yaw, float pitch);
+	Camera(xim::Vector3 position, float yaw, float pitch);
 
-	ximath::Matrix4 getViewMatrix();
+	xim::Matrix4 getViewMatrix();
 
 	void processKeyboard(CameraMovement direction, float deltaTime);
 	void processMouse(float xDelta, float yDelta);
 
-	void setPosition(ximath::Vector3 position);
+	void setPosition(xim::Vector3 position);
 	void setAngles(float yaw, float pitch);
 	void setYaw(float yaw);
 	void setPitch(float pitch);
@@ -37,11 +37,11 @@ private:
 	float cameraSpeed;
 	float mouseSensitivity;
 
-	ximath::Vector3 position;
+	xim::Vector3 position;
 
-	ximath::Vector3 front;
-	ximath::Vector3 right;
-	ximath::Vector3 up;
+	xim::Vector3 front;
+	xim::Vector3 right;
+	xim::Vector3 up;
 
 	void updateVectors();
 };

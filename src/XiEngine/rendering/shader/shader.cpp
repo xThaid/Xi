@@ -155,60 +155,40 @@ GLuint Shader::getUniformLocation(const std::string& name)
 	return result;
 }
 
-void Shader::loadInt(GLuint location, GLint value)
+void Shader::loadInt(const std::string& name, GLint value)
 {
-	glUniform1i(location, value);
+	glUniform1i(getUniformLocation(name), value);
 }
 
-void Shader::loadFloat(GLuint location, GLfloat value)
+void Shader::loadFloat(const std::string& name, GLfloat value)
 {
-	glUniform1f(location, value);
+	glUniform1f(getUniformLocation(name), value);
 }
 
-void Shader::loadBoolean(GLuint location, bool value)
+void Shader::loadBoolean(const std::string& name, bool value)
 {
 	GLuint toLoad = 0;
 	if (value) toLoad = 1;
 
-	glUniform1i(location, toLoad);
+	glUniform1i(getUniformLocation(name), toLoad);
 }
 
-void Shader::loadVector2(GLuint location, ximath::Vector2 v)
+void Shader::loadVector2(const std::string& name, xim::Vector2& v)
 {
-	glUniform2f(location, v.x, v.y);
+	glUniform2fv(getUniformLocation(name), 1, v.getPointer());
 }
 
-void Shader::loadVector3(GLuint location, ximath::Vector3 v)
+void Shader::loadVector3(const std::string& name, xim::Vector3& v)
 {
-	glUniform3f(location, v.x, v.y, v.z);
+	glUniform3fv(getUniformLocation(name), 1, v.getPointer());
 }
 
-void Shader::loadVector4(GLuint location, ximath::Vector4 v)
+void Shader::loadVector4(const std::string& name, xim::Vector4& v)
 {
-	glUniform4f(location, v.x, v.y, v.z, v.w);
+	glUniform4fv(getUniformLocation(name), 1, v.getPointer());
 }
 
-void Shader::loadMatrix3(GLuint location, ximath::Matrix3 m)
+void Shader::loadMatrix4(const std::string& name, xim::Matrix4& m)
 {
-	float arr[] = 
-	{
-		m[0][0], m[1][0], m[2][0],
-		m[0][1], m[1][1], m[2][1],
-		m[0][2], m[1][2], m[2][2]
-	};
-
-	glUniformMatrix3fv(location, 9, false, arr);
-}
-
-void Shader::loadMatrix4(GLuint location, ximath::Matrix4 m)
-{
-	float arr[] =
-	{
-		m[0][0], m[1][0], m[2][0], m[3][0],
-		m[0][1], m[1][1], m[2][1], m[3][1],
-		m[0][2], m[1][2], m[2][2], m[3][2],
-		m[0][3], m[1][3], m[2][3], m[3][3]
-	};
-
-	glUniformMatrix4fv(location, 1, false, arr);
+	glUniformMatrix4fv(getUniformLocation(name), 1, false, m.getPointer());
 }

@@ -1,48 +1,38 @@
 #pragma once
 
-namespace ximath
+namespace xim
 {
 	class Vector2;
 
 	class Vector3
 	{
 	public:
-		static const Vector3 axisX;
-		static const Vector3 axisY;
-		static const Vector3 axisZ;
-
-		float x, y, z;
+		float data[3];
 
 		Vector3();
 		explicit Vector3(float value);
 		explicit Vector3(float x, float y, float z);
 		explicit Vector3(const Vector2& v, float z);
 
-		void set(float x, float y, float z);
+		inline float x() { return data[0]; }
+		inline float y() { return data[1]; }
+		inline float z() { return data[2]; }
 
-		Vector2 xy() const;
+		inline const float* getPointer() { return &data[0]; }
+
+		void set(float x, float y, float z);
 
 		Vector3& operator+=(const Vector3& v);
 		Vector3& operator-=(const Vector3& v);
-		Vector3& operator*=(const Vector3& v);
-		Vector3& operator*=(const float& value);
-		Vector3& operator/=(const Vector3& v);
-		Vector3& operator/=(const float& value);
+		Vector3& operator*=(const float& scalar);
+		Vector3& operator/=(const float& scalar);
 
 		Vector3 operator+(const Vector3& v) const;
 		Vector3 operator-(const Vector3& v) const;
-		Vector3 operator*(const Vector3& v) const;
 		Vector3 operator*(const float& value) const;
-		Vector3 operator/(const Vector3& v) const;
 		Vector3 operator/(const float& value) const;
 
 		Vector3 operator-() const;
-
-		float& operator[](const unsigned int i);
-		const float& operator[](const unsigned int i) const;
-
-		bool operator==(const Vector3& v) const;
-		bool operator!=(const Vector3& v) const;
 
 		float length() const;
 		float lengthSquared() const;
@@ -53,8 +43,6 @@ namespace ximath
 		float dotProduct(const Vector3& v) const;
 		Vector3 crossProduct(const Vector3& v) const;
 	};
-
-	Vector3 operator*(const float& value, const Vector3& v);
 
 	Vector3 normal(const Vector3& v);
 
