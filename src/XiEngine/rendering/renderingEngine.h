@@ -26,5 +26,6 @@ private:
 	unsigned int VBO, VAO,EBO;
 
 	void setUp();
+	void cleanUp();
 	void destroy();
 };

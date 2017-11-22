@@ -14,16 +14,12 @@ Time::Time()
 
 float Time::getDeltaTime()
 {
-	Core* core = Core::getCurrentCore();
-	if (core != nullptr) return core->time->deltaTime;
-	return 0.0f;
+	return Core::getCurrentCore()->time->deltaTime;
 }
 
 float Time::getElapsedTime()
 {
-	Core* core = Core::getCurrentCore();
-	if (core != nullptr) return core->time->elapsedTime;
-	return 0.0f;
+	return Core::getCurrentCore()->time->elapsedTime;
 }
 
 void Time::reset()
@@ -42,7 +38,7 @@ void Time::updateDelta()
 {
 	currentTime = std::chrono::high_resolution_clock::now();
 
-	std::chrono::duration<float, std::milli> delta = currentTime - previousTime;
+	std::chrono::duration<float> delta = currentTime - previousTime;
 	deltaTime = delta.count() ;
 	elapsedTime += delta.count();
 

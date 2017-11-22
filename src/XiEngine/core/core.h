@@ -9,6 +9,7 @@ class Time;
 class Core
 {
 	friend class Time;
+	friend class Input;
 
 public:
 	Core(Window* window);
@@ -32,7 +33,9 @@ private:
 	Window* mainWindow;
 	RenderingEngine* rendering;
 	Program* program;
+
 	Time* time;
+	Input* input;
 
 	Scene* scene;
 

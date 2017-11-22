@@ -1,6 +1,13 @@
 #include "camera.h"
 
-Camera::Camera(xim::Vector3 position = xim::Vector3(0.0f, 0.0f, 0.0f), float yaw = 0.0f, float pitch = 0.0f)
+#include "utils\logger.h"
+
+Camera::Camera()
+	: Camera(xim::Vector3(), -90.0f, 0.0f)
+{
+}
+
+Camera::Camera(xim::Vector3 position, float yaw, float pitch)
 {
 	this->position = position;
 	this->yaw = yaw;
@@ -57,16 +64,19 @@ void Camera::setAngles(float yaw, float pitch)
 {
 	this->yaw = yaw;
 	this->pitch = pitch;
+	updateVectors();
 }
 
 void Camera::setYaw(float yaw)
 {
 	this->yaw = yaw;
+	updateVectors();
 }
 
 void Camera::setPitch(float pitch)
 {
 	this->pitch = pitch;
+	updateVectors();
 }
 
 void Camera::setCameraSpeed(float speed)
@@ -81,9 +91,9 @@ void Camera::setMouseSensitivity(float sensitivity)
 
 void Camera::updateVectors()
 {
-	front.data[0] = (float) (cos(xim::radians(yaw)) * cos(xim::radians(pitch)));
-	front.data[1] = (float) sin(xim::radians(pitch));
-	front.data[2] = (float) (sin(xim::radians(yaw)) * cos(xim::radians(pitch)));
+	front.data[0] = cosf(xim::radians(yaw)) * cosf(xim::radians(pitch));
+	front.data[1] = sinf(xim::radians(pitch));
+	front.data[2] = sinf(xim::radians(yaw)) * cosf(xim::radians(pitch));
 	front.normalize();
 
 	right = xim::cross(front, up).normalized();

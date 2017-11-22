@@ -15,6 +15,7 @@ enum CameraMovement {
 class Camera
 {
 public:
+	Camera();
 	Camera(xim::Vector3 position, float yaw, float pitch);
 
 	xim::Matrix4 getViewMatrix();

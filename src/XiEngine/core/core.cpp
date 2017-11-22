@@ -7,6 +7,7 @@
 #include "program.h"
 #include "time\time.h"
 #include "time\timer.h"
+#include "../input.h"
 #include "scene.h"
 
 #include "../utils/logger.h"
@@ -40,13 +41,18 @@ void Core::stop()
 	{
 		destroy();
 		running = false;
+		exit(0);
 	}
 }
 
 void Core::init()
 {
 	rendering = new RenderingEngine(mainWindow);
+	
+	program = new Program();
+
 	time = new Time();
+	input = new Input(mainWindow);
 
 	scene = nullptr;
 	currentCore = this;
@@ -61,7 +67,11 @@ void Core::init()
 void Core::destroy()
 {
 	delete rendering;
+
+	delete program;
+
 	delete time;
+	delete input;
 
 	if (scene != nullptr)
 		delete scene;
@@ -130,8 +140,6 @@ void Core::loop()
 			}
 		}
 
-		glfwPollEvents();
-
 		if (mainWindow->shouldClose())
 			stop();
 	}
@@ -140,8 +148,14 @@ void Core::loop()
 void Core::update()
 {
 	time->updateDelta();
+	input->update();
+
+	program->update();
+
 	if(scene != nullptr)
 		scene->update();
+
+	glfwPollEvents();
 }
 
 void Core::render()
@@ -155,10 +169,7 @@ void Core::render()
 void Core::setCurrentScene(Scene* scene)
 {
 	if (currentCore->scene != nullptr)
-	{
-		currentCore->scene->destroy();
 		delete scene;
-	}
 
 	currentCore->scene = scene;
 }
