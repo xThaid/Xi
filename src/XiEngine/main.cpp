@@ -7,8 +7,7 @@
 #include "core\program.h"
 
 #include "utils\logger.h"
-
-#include "testing.h"
+#include "utils\test.h"
 
 int main(int argc, char* argv[])
 {

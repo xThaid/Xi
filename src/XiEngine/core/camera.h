@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math\ximath.h"
+#include "../math/ximath.h"
 
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;

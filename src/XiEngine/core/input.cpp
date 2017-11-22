@@ -1,8 +1,7 @@
 #include "input.h"
 
-#include "rendering\window.h"
-#include "core/core.h"
-#include "utils\logger.h"
+#include "../rendering/window.h"
+#include "core.h"
 
 Input::Input(Window* window)
 {

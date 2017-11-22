@@ -2,7 +2,7 @@
 
 #include "glad\glad.h"
 
-#include "../../math/ximath.h"
+#include "../math/ximath.h"
 
 #include <string>
 

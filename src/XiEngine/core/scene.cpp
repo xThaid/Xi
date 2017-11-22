@@ -1,6 +1,6 @@
 #include "scene.h"
 
-#include "../camera.h"
+#include "camera.h"
 
 Scene::Scene()
 {

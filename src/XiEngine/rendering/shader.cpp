@@ -1,7 +1,7 @@
 #include "shader.h"
 
-#include "../../utils/logger.h"
-#include "../../utils/file.h"
+#include "../utils/logger.h"
+#include "../utils/file.h"
 
 
 ShaderFile::ShaderFile(const std::string& path, int type)

@@ -1,6 +1,6 @@
-#include "testing.h"
+#include "test.h"
 
-#include "math\ximath.h"
+#include "../math\ximath.h"
 
 #include <iostream>
 #include <assert.h>

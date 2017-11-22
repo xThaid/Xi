@@ -2,7 +2,7 @@
 
 #include "../utils/logger.h"
 #include "../core/scene.h"
-#include "../camera.h"
+#include "../core/camera.h"
 
 RenderingEngine::RenderingEngine(Window * window)
 {

@@ -2,10 +2,10 @@
 
 #include "core.h"
 #include "scene.h"
-#include "../camera.h"
+#include "camera.h"
 #include "../utils/logger.h"
-#include "../input.h"
-#include "time\time.h"
+#include "input.h"
+#include "time.h"
 
 void Program::init()
 {

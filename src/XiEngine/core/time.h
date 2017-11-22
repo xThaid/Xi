@@ -4,6 +4,26 @@
 #include <vector>
 #include <functional>
 
+
+class Time
+{
+public:
+	Time();
+
+	static float getDeltaTime();
+	static float getElapsedTime();
+
+	void reset();
+	void update();
+	void updateDelta();
+
+private:
+	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
+	float deltaTime;
+	float elapsedTime;
+};
+
 typedef void(*Action)();
 
 class Timer
@@ -24,7 +44,7 @@ public:
 private:
 	static std::vector<Timer*> timers;
 	static void invokeTimers();
-		
+
 	bool enabled;
 
 	std::function<void(void)> action;

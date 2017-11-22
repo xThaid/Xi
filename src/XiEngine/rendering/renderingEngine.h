@@ -4,7 +4,7 @@
 #include <GLFW\glfw3.h>
 
 #include "window.h"
-#include "shader\shader.h"
+#include "shader.h"
 
 class Scene;
 

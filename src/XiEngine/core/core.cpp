@@ -5,9 +5,8 @@
 #include <iomanip>
 
 #include "program.h"
-#include "time\time.h"
-#include "time\timer.h"
-#include "../input.h"
+#include "time.h"
+#include "input.h"
 #include "scene.h"
 
 #include "../utils/logger.h"

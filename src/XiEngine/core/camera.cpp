@@ -1,6 +1,6 @@
 #include "camera.h"
 
-#include "utils\logger.h"
+#include "../utils/logger.h"
 
 Camera::Camera()
 	: Camera(xim::Vector3(), -90.0f, 0.0f)
