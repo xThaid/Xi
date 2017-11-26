@@ -31,6 +31,8 @@ public:
 	Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile, const std::string& geometryShaderFile);
 	~Shader();
 
+	void reload();
+
 	void compileShader();
 	void destroyShader();
 

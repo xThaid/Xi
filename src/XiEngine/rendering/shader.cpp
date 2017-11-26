@@ -76,6 +76,11 @@ Shader::~Shader()
 		delete geometryShader;
 }
 
+void Shader::reload()
+{
+	destroyShader();
+	compileShader();
+}
 
 void Shader::compileShader()
 {
@@ -142,11 +147,17 @@ void Shader::stopShader()
 
 void Shader::bindAttribute(const GLuint attribute, const std::string& name)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glBindAttribLocation(shaderProgramID, attribute, name.c_str());
 }
 
 GLuint Shader::getUniformLocation(const std::string& name)
 {
+	if (shaderProgramID == 0)
+		return 0;
+
 	GLuint result = glGetUniformLocation(shaderProgramID, name.c_str());
 
 	if (result == -1)
@@ -157,16 +168,25 @@ GLuint Shader::getUniformLocation(const std::string& name)
 
 void Shader::loadInt(const std::string& name, GLint value)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniform1i(getUniformLocation(name), value);
 }
 
 void Shader::loadFloat(const std::string& name, GLfloat value)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniform1f(getUniformLocation(name), value);
 }
 
 void Shader::loadBoolean(const std::string& name, bool value)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	GLuint toLoad = 0;
 	if (value) toLoad = 1;
 
@@ -175,20 +195,32 @@ void Shader::loadBoolean(const std::string& name, bool value)
 
 void Shader::loadVector2(const std::string& name, xim::Vector2& v)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniform2fv(getUniformLocation(name), 1, v.getPointer());
 }
 
 void Shader::loadVector3(const std::string& name, xim::Vector3& v)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniform3fv(getUniformLocation(name), 1, v.getPointer());
 }
 
 void Shader::loadVector4(const std::string& name, xim::Vector4& v)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniform4fv(getUniformLocation(name), 1, v.getPointer());
 }
 
 void Shader::loadMatrix4(const std::string& name, xim::Matrix4& m)
 {
+	if (shaderProgramID == 0)
+		return;
+
 	glUniformMatrix4fv(getUniformLocation(name), 1, false, m.getPointer());
 }
