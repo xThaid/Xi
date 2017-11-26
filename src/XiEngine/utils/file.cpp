@@ -5,6 +5,17 @@
 File::File(const std::string& filePath)
 {
 	path = filePath;
+	int index = path.find_last_of('/');
+	if (index != std::string::npos)
+	{
+		fileName = path.substr(index + 1);
+		directory = path.substr(0, index);
+	}
+	else
+	{
+		fileName = path;
+		directory = "";
+	}
 
 	if (!exist())
 		Logger::warn("File " + path + " doesn't exist");

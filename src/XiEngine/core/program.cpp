@@ -3,13 +3,23 @@
 #include "core.h"
 #include "scene.h"
 #include "camera.h"
-#include "../utils/logger.h"
 #include "input.h"
 #include "time.h"
 
+#include "../rendering/model.h"
+
+#include "../resource/importer.h"
+
+#include "../utils/logger.h"
+
 void Program::init()
 {
-	Core::getCurrentCore()->setCurrentScene(new Scene());
+	Scene* scene = new Scene();
+
+	//scene->addEntity(ModelImporter::import("D:/Dev/Repos/Xi/res/models/dragon.obj"));
+	scene->addEntity(ModelImporter::import("D:/Dev/Repos/Xi/res/models/hand.obj"));
+
+	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()

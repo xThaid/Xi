@@ -7,6 +7,11 @@
 #include "shader.h"
 
 class Scene;
+class Mesh;
+class Model;
+class Camera;
+class Entity;
+class Texture;
 
 class RenderingEngine
 {
@@ -23,9 +28,12 @@ private:
 
 	Shader* basicShader;
 
-	unsigned int VBO, VAO,EBO;
+	Texture* text;
 
 	void setUp();
 	void cleanUp();
 	void destroy();
+
+	void renderEntity(Entity* entity, Camera* camera);
+
 };

@@ -14,7 +14,7 @@ Input::Input(Window* window)
 
 bool Input::getKey(int key)
 {
-	return glfwGetKey(Core::getCurrentCore()->input->window->getWindow(), key);
+	return glfwGetKey(Core::getCurrentCore()->input->window->getWindow(), key) == GLFW_PRESS;
 }
 
 float Input::getMouseDeltaX()

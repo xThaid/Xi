@@ -1,8 +1,13 @@
 #include "renderingEngine.h"
 
-#include "../utils/logger.h"
 #include "../core/scene.h"
+#include "../core/entity.h"
 #include "../core/camera.h"
+
+#include "../utils/logger.h"
+
+#include "model.h"
+#include "texture.h"
 
 RenderingEngine::RenderingEngine(Window * window)
 {
@@ -35,63 +40,7 @@ void RenderingEngine::init()
 {
 	basicShader->compileShader();
 
-	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	text = new Texture("D:/Dev/Repos/Xi/res/textures/default.png");
 
 	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -99,6 +48,14 @@ void RenderingEngine::init()
 	xim::Matrix4 proj = xim::perspective(xim::radians(45.0f), 1.0f, 0.1f, 100.0f);
 	basicShader->useShader();
 	basicShader->loadMatrix4("projection", proj);
+
+	basicShader->loadVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
+	basicShader->loadVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
+	basicShader->loadVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
+
+	basicShader->loadInt("material.diffuse", 0);
+	basicShader->loadFloat("material.shininess", 32.0f);
+
 }
 
 void RenderingEngine::changeViewport(int width, int height)
@@ -110,38 +67,21 @@ void RenderingEngine::changeViewport(int width, int height)
 
 void RenderingEngine::render(Scene* scene)
 {
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	xim::Matrix4 viewMatrix = scene->getMainCamera()->getViewMatrix();
-
-	xim::Vector3 cubePositions[] = {
-		xim::Vector3(0.0f,  0.0f,  0.0f),
-		xim::Vector3(2.0f,  5.0f, -15.0f),
-		xim::Vector3(-1.5f, -2.2f, -2.5f),
-		xim::Vector3(-3.8f, -2.0f, -12.3f),
-		xim::Vector3(2.4f, -0.4f, -3.5f),
-		xim::Vector3(-1.7f,  3.0f, -7.5f),
-		xim::Vector3(1.3f, -2.0f, -2.5f),
-		xim::Vector3(1.5f,  2.0f, -2.5f),
-		xim::Vector3(1.5f,  0.2f, -1.5f),
-		xim::Vector3(-1.3f,  1.0f, -1.5f)
-	};
-
 	basicShader->useShader();
 	basicShader->loadMatrix4("view", viewMatrix);
+	basicShader->loadVector3("viewPos", scene->getMainCamera()->getPosition());
 
-	for (int i = 0; i < 10; i++)
+	float angle = glfwGetTime();
+
+	basicShader->loadVector3("light.position", xim::Vector3(cosf(angle), 1.0f, sinf(angle)) * 10);
+
+	for (Entity* entity : scene->getEntites())
 	{
-		xim::Matrix4 model;
-		model.translate(cubePositions[i] + xim::Vector3(0.0f, 0.0f, -5.0f));
-
-		model.rotate(glfwGetTime(), 1.0f, 0.5f, 0.5f);
-
-		basicShader->loadMatrix4("model", model);
-
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		renderEntity(entity, scene->getMainCamera());
 	}
 }
 
@@ -153,9 +93,28 @@ void RenderingEngine::setUp()
 void RenderingEngine::cleanUp()
 {
 	delete basicShader;
+	delete text;
 }
 
 void RenderingEngine::destroy()
 {
 	glfwTerminate();
+}
+
+void RenderingEngine::renderEntity(Entity* entity, Camera* camera)
+{
+	for (Entity* child : entity->getChildren())
+	{
+		renderEntity(child, camera);
+	}
+
+	if (entity->getModel() == nullptr)
+		return;
+
+	text->bindTexture(GL_TEXTURE0);
+
+	xim::Matrix4 model;
+
+	basicShader->loadMatrix4("model", model);
+	entity->getModel()->draw();
 }

@@ -31,6 +31,8 @@ public:
 	void setCameraSpeed(float speed);
 	void setMouseSensitivity(float sensitivity);
 
+	inline xim::Vector3 getPosition() { return position; }
+
 private:
 	float yaw;
 	float pitch;

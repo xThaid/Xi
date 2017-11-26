@@ -1,4 +1,6 @@
 -szybsze uniformy w shaderach
 
--sprawdzic funkcje perspective, ortho, lookAt
+-duza liczba wierzcholkow przy importowaniu
 
+-katastrofalne przepisywanie danych przy importowaniu
+-resource manager
