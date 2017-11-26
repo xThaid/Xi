@@ -26,9 +26,7 @@ public:
 private:
 	int viewportWidth, viewportHeight;
 
-	Shader* basicShader;
-
-	Texture* text;
+	Shader* entityShader;
 
 	void setUp();
 	void cleanUp();

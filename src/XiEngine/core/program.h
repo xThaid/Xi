@@ -1,5 +1,7 @@
 #pragma once
 
+class Entity;
+
 class Program
 {
 public:
@@ -8,4 +10,7 @@ public:
 
 private:
 	bool mouseLocked = true;
+
+	Entity* myEntity;
+	Entity* myEntity2;
 };

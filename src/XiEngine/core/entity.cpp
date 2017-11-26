@@ -6,6 +6,7 @@
 
 Entity::Entity()
 {
+	parent = nullptr;
 	model = nullptr;
 }
 
@@ -20,7 +21,10 @@ Entity::~Entity()
 
 void Entity::addChild(Entity* entity)
 {
+	entity->parent = this;
 	children.push_back(entity);
+
+	transform.addChild(&entity->transform);
 }
 
 void Entity::setModel(Model* model)

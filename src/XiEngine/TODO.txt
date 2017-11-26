@@ -4,3 +4,5 @@
 
 -katastrofalne przepisywanie danych przy importowaniu
 -resource manager
+
+-kwaterniony

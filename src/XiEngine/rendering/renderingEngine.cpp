@@ -38,23 +38,21 @@ RenderingEngine::~RenderingEngine()
 
 void RenderingEngine::init()
 {
-	basicShader->compileShader();
-
-	text = new Texture("D:/Dev/Repos/Xi/res/textures/default.png");
+	entityShader->compileShader();
 
 	glEnable(GL_DEPTH_TEST);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	xim::Matrix4 proj = xim::perspective(xim::radians(45.0f), 1.0f, 0.1f, 100.0f);
-	basicShader->useShader();
-	basicShader->loadMatrix4("projection", proj);
+	entityShader->useShader();
+	entityShader->loadMatrix4("projection", proj);
 
-	basicShader->loadVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
-	basicShader->loadVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
-	basicShader->loadVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
+	entityShader->loadVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
+	entityShader->loadVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
+	entityShader->loadVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
 
-	basicShader->loadInt("material.diffuse", 0);
-	basicShader->loadFloat("material.shininess", 32.0f);
+	entityShader->loadInt("material.diffuse", 0);
+	entityShader->loadFloat("material.shininess", 32.0f);
 
 }
 
@@ -71,29 +69,27 @@ void RenderingEngine::render(Scene* scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	xim::Matrix4 viewMatrix = scene->getMainCamera()->getViewMatrix();
-	basicShader->useShader();
-	basicShader->loadMatrix4("view", viewMatrix);
-	basicShader->loadVector3("viewPos", scene->getMainCamera()->getPosition());
+	entityShader->useShader();
+	entityShader->loadMatrix4("view", viewMatrix);
+	entityShader->loadVector3("viewPos", scene->getMainCamera()->getPosition());
 
-	float angle = glfwGetTime();
-
-	basicShader->loadVector3("light.position", xim::Vector3(cosf(angle), 1.0f, sinf(angle)) * 10);
+	entityShader->loadVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
 
 	for (Entity* entity : scene->getEntites())
 	{
+		entity->getTransform()->applyTranformToChildren();
 		renderEntity(entity, scene->getMainCamera());
 	}
 }
 
 void RenderingEngine::setUp()
 {
-	basicShader = new Shader("D:/Dev/Repos/Xi/res/shaders/basicShader.vs", "D:/Dev/Repos/Xi/res/shaders/basicShader.fs");
+	entityShader = new Shader("D:/Dev/Repos/Xi/res/shaders/entityShader.vs", "D:/Dev/Repos/Xi/res/shaders/entityShader.fs");
 }
 
 void RenderingEngine::cleanUp()
 {
-	delete basicShader;
-	delete text;
+	delete entityShader;
 }
 
 void RenderingEngine::destroy()
@@ -103,18 +99,14 @@ void RenderingEngine::destroy()
 
 void RenderingEngine::renderEntity(Entity* entity, Camera* camera)
 {
+	if (entity->getModel() != nullptr)
+	{
+		entityShader->loadMatrix4("model", entity->getTransform()->getModelMatrix());
+		entity->getModel()->draw();
+	}
+
 	for (Entity* child : entity->getChildren())
 	{
 		renderEntity(child, camera);
 	}
-
-	if (entity->getModel() == nullptr)
-		return;
-
-	text->bindTexture(GL_TEXTURE0);
-
-	xim::Matrix4 model;
-
-	basicShader->loadMatrix4("model", model);
-	entity->getModel()->draw();
 }
