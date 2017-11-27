@@ -11,9 +11,9 @@ public:
 
 	std::string loadText();
 
-	inline std::string getPath() { return path; }
-	inline std::string getFileName() { return fileName; }
-	inline std::string getDirectory() { return directory; }
+	inline std::string getPath() const { return path; }
+	inline std::string getFileName() const { return fileName; }
+	inline std::string getDirectory() const { return directory; }
 
 private:
 	std::string path;
