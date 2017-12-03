@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../rendering/renderingEngine.h"
+#include "../graphics/renderingEngine.h"
 
+class ResourceManager;
 class Scene;
 class Program;
 class Time;
@@ -10,6 +11,7 @@ class Core
 {
 	friend class Time;
 	friend class Input;
+	friend class ResourceManager;
 
 public:
 	Core(Window* window);
@@ -21,6 +23,8 @@ public:
 	inline void setFPSLimit(int fpsLimit) { this->fpsLimit = fpsLimit; }
 
 	inline bool isRunning() { return running; }
+
+	inline ResourceManager* getResourceManager() { return resourceManager; }
 
 	static void setCurrentScene(Scene* scene);
 
@@ -36,6 +40,8 @@ private:
 
 	Time* time;
 	Input* input;
+
+	ResourceManager* resourceManager;
 
 	Scene* scene;
 

@@ -1,17 +1,19 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "rendering\window.h"
-#include "rendering\renderingEngine.h"
+#include "graphics\window.h"
+#include "graphics\renderingEngine.h"
 #include "core\core.h"
 #include "core\program.h"
 
 #include "utils\logger.h"
-#include "utils\test.h"
+#include "utils/stringHash.h"
 
 int main(int argc, char* argv[])
 {
-	Logger::setLevel(Logger::LEVEL_TRACE);
+	const char* launchPath = argv[0];
+
+	Logger::setLevel(Logger::LEVEL_DEBUG);
 
 	Window win(800, 600, "Xi");
 

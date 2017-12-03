@@ -1,8 +1,4 @@
 -szybsze uniformy w shaderach
-
--duza liczba wierzcholkow przy importowaniu
-
--katastrofalne przepisywanie danych przy importowaniu
--resource manager
-
 -kwaterniony
+-unordered_map zamiast map?
+-release mesh

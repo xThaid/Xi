@@ -7,14 +7,14 @@ const int Logger::LEVEL_NONE = 6;
 const int Logger::LEVEL_ERROR = 5;
 const int Logger::LEVEL_WARN = 4;
 const int Logger::LEVEL_INFO = 3;
-const int Logger::LEVEL_DEBUG = 2;
-const int Logger::LEVEL_TRACE = 1;
+const int Logger::LEVEL_TRACE = 2;
+const int Logger::LEVEL_DEBUG = 1;
 
 bool Logger::ERROR_LVL = currentLevel <= LEVEL_ERROR;
 bool Logger::WARN_LVL = currentLevel <= LEVEL_WARN;
 bool Logger::INFO_LVL = currentLevel <= LEVEL_INFO;
-bool Logger::DEBUG_LVL = currentLevel <= LEVEL_DEBUG;
 bool Logger::TRACE_LVL = currentLevel <= LEVEL_TRACE;
+bool Logger::DEBUG_LVL = currentLevel <= LEVEL_DEBUG;
 
 time_t Logger::startTime = time(0);
 
@@ -26,8 +26,8 @@ void Logger::setLevel(int level)
 	ERROR_LVL = level <= LEVEL_ERROR;
 	WARN_LVL = level <= LEVEL_WARN;
 	INFO_LVL = level <= LEVEL_INFO;
-	DEBUG_LVL = level <= LEVEL_DEBUG;
 	TRACE_LVL = level <= LEVEL_TRACE;
+	DEBUG_LVL = level <= LEVEL_DEBUG;
 }
 
 void Logger::error(const std::string& message)
@@ -45,14 +45,14 @@ void Logger::info(const std::string& message)
 	if (INFO_LVL) log(LEVEL_INFO, message);
 }
 
-void Logger::debug(const std::string& message)
-{
-	if (DEBUG_LVL) log(LEVEL_DEBUG, message);
-}
-
 void Logger::trace(const std::string& message)
 {
 	if (TRACE_LVL) log(LEVEL_TRACE, message);
+}
+
+void Logger::debug(const std::string& message)
+{
+	if (DEBUG_LVL) log(LEVEL_DEBUG, message);
 }
 
 void Logger::log(int level, const std::string& message)
@@ -82,11 +82,11 @@ void Logger::log(int level, const std::string& message)
 	case LEVEL_INFO:
 		out.append("INFO");
 		break;
-	case LEVEL_DEBUG:
-		out.append("DEBUG");
-		break;
 	case LEVEL_TRACE:
 		out.append("TRACE");
+		break;
+	case LEVEL_DEBUG:
+		out.append("DEBUG");
 		break;
 	}
 	out.append("] ");

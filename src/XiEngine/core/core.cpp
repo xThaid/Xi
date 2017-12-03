@@ -7,7 +7,9 @@
 #include "program.h"
 #include "time.h"
 #include "input.h"
-#include "scene.h"
+#include "../scene/scene.h"
+
+#include "../resource/resourceManager.h"
 
 #include "../utils/logger.h"
 
@@ -53,6 +55,8 @@ void Core::init()
 	time = new Time();
 	input = new Input(mainWindow);
 
+	resourceManager = new ResourceManager();
+
 	scene = nullptr;
 	currentCore = this;
 
@@ -68,6 +72,8 @@ void Core::destroy()
 	delete rendering;
 
 	delete program;
+
+	delete resourceManager;
 
 	delete time;
 	delete input;

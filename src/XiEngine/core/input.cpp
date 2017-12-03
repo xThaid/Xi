@@ -1,6 +1,6 @@
 #include "input.h"
 
-#include "../rendering/window.h"
+#include "../graphics/window.h"
 #include "core.h"
 
 Input::Input(Window* window)

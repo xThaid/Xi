@@ -26,7 +26,7 @@ uniform Light light;
 void main()
 {
     //texture(material.diffuse, TexCoords).rgb
-    vec3 basicColor = vec3(1.0, 1.0, 1.0);
+    vec3 basicColor = vec3(1.0, 0.0, 0.0);
 
     // ambient
     vec3 ambient = light.ambient * basicColor;
