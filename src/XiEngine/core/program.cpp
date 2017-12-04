@@ -1,21 +1,24 @@
 #include "program.h"
 
-#include "core.h"
+#include "../core/camera.h"
+#include "../core/core.h"
+#include "../core/input.h"
+#include "../core/time.h"
+#include "../graphics/mesh.h"
+#include "../resource/primitives.h"
+#include "../resource/resourceManager.h"
 #include "../scene/scene.h"
 #include "../scene/sceneNodeImporter.h"
-#include "camera.h"
-#include "input.h"
-#include "time.h"
-
-#include "../graphics/mesh.h"
-
 #include "../utils/logger.h"
 
 void Program::init()
 {
 	Scene* scene = new Scene();
 
-	scene->getRootNode()->addChildNode(SceneNodeImporter::import("D:/Dev/Repos/Xi/res/models/cube.obj"));
+	Mesh* mesh = new Primitives::Sphere("myCube", 30, 30);
+	Core::getCurrentCore()->getResourceManager()->addResource(mesh);
+
+	scene->getRootNode()->mesh_ = mesh;
 	
 	Core::getCurrentCore()->setCurrentScene(scene);
 }

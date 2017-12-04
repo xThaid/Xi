@@ -43,7 +43,7 @@ bool Mesh::beginLoad()
 	if (hasUV() && UV_->size() != numVertex)
 		return false;
 
-	if (hasUV() && normals_->size() != numVertex)
+	if (hasNormals() && normals_->size() != numVertex)
 		return false;
 
 	unsigned int memoryUse = sizeof(xim::Vector3) * positions_->size();
