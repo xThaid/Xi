@@ -60,6 +60,7 @@ void ResourceManager::releaseGroup(StringHash type)
 		deleteResource(i->second);
 	}
 
+	group->second.resources_.clear();
 	updateResourceGroup(type);
 }
 
@@ -67,6 +68,8 @@ void ResourceManager::releaseAll()
 {
 	for (std::map<StringHash, ResourceGroup>::iterator it = resourceGroups_.begin(); it != resourceGroups_.end(); it++)
 		releaseGroup(it->first);
+
+	resourceGroups_.clear();
 }
 
 Resource* ResourceManager::getResource(StringHash type, const std::string& name)
@@ -124,7 +127,10 @@ void ResourceManager::updateResourceGroup(StringHash type)
 
 void ResourceManager::setupResource(Resource* resource)
 {
-	resource->load();
+	bool result = resource->load();
+
+	if (!result)
+		Logger::warn("Couldn't load resource: " + resource->getName());
 
 	//Logger::trace("[Resource Manager] Loading resource: " + resource->getName() + " of type " + resource->getTypeName());
 }
