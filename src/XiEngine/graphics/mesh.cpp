@@ -9,12 +9,12 @@ Mesh::Mesh(const std::string& name,
 	std::vector<xim::Vector3>* positions,
 	std::vector<xim::Vector2>* UV,
 	std::vector<xim::Vector3>* normals) :
+	Resource(name),
 	indices_(indices),
 	positions_(positions),
 	UV_(UV),
 	normals_(normals),
-	VAO_(0),
-	Resource(name)
+	VAO_(0)
 {
 }
 	

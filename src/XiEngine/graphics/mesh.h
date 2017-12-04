@@ -22,7 +22,7 @@ public:
 
 	virtual void release() override;
 
-	const std::string getTypeName() const { return "Mesh"; }
+	virtual const std::string getTypeName() const override { return "Mesh"; }
 
 	inline unsigned int getNumIndices() { return indices_->size(); }
 

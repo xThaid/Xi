@@ -1,4 +1,5 @@
--szybsze uniformy w shaderach
--kwaterniony
--unordered_map zamiast map?
--release mesh
+1.szybsze uniformy w shaderach - done
+2.kwaterniony
+3.unordered_map zamiast map?
+4.release mesh
+5.use hash of name in uniform map

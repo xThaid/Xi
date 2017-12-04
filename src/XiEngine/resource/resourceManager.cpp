@@ -126,12 +126,12 @@ void ResourceManager::setupResource(Resource* resource)
 {
 	resource->load();
 
-	Logger::trace("[Resource Manager] Loading resource: " + resource->getName() + " of type " + resource->getTypeName());
+	//Logger::trace("[Resource Manager] Loading resource: " + resource->getName() + " of type " + resource->getTypeName());
 }
 
 void ResourceManager::deleteResource(Resource* resource)
 {
-	Logger::trace("[Resource Manager] Deleting resource: " + resource->getName() + " of type " + resource->getTypeName());
+	//Logger::trace("[Resource Manager] Deleting resource: " + resource->getName() + " of type " + resource->getTypeName());
 
 	resource->release();
 	delete resource;

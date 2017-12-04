@@ -15,7 +15,7 @@ void Program::init()
 {
 	Scene* scene = new Scene();
 
-	scene->getRootNode()->addChildNode(SceneNodeImporter::import("D:/Dev/Repos/Xi/res/models/dragon.obj"));
+	scene->getRootNode()->addChildNode(SceneNodeImporter::import("D:/Dev/Repos/Xi/res/models/sponza.obj"));
 	
 	Core::getCurrentCore()->setCurrentScene(scene);
 }

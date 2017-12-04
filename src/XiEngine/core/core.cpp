@@ -48,6 +48,10 @@ void Core::stop()
 
 void Core::init()
 {
+	currentCore = this;
+
+	resourceManager = new ResourceManager();
+
 	rendering = new RenderingEngine(mainWindow);
 	
 	program = new Program();
@@ -55,10 +59,7 @@ void Core::init()
 	time = new Time();
 	input = new Input(mainWindow);
 
-	resourceManager = new ResourceManager();
-
 	scene = nullptr;
-	currentCore = this;
 
 	rendering->init();
 

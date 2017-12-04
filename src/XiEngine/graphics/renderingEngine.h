@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h> 
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include "window.h"
 #include "shader.h"
@@ -24,16 +24,13 @@ public:
 
 	void render(Scene* scene);
 private:
-	int viewportWidth, viewportHeight;
+	int renderWidth, renderHeight;
 
-	Shader* entityShader;
-
-	bool temp = false;
+	Shader* tempShader;
 
 	void setUp();
 	void cleanUp();
 	void destroy();
 
 	void renderEntity(SceneNode* entity, Camera* camera);
-
 };

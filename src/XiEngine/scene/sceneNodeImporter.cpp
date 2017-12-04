@@ -37,7 +37,7 @@ SceneNode* SceneNodeImporter::loadScene()
 
 	SceneNode* rootNode = processNode(file_.getFileName(), assimpScene_->mRootNode);
 
-	Logger::debug("Imported model with " + std::to_string(numVertices_) + " vertices and " + std::to_string(numIndices_) + " indices");
+	Logger::debug("Imported model " + file_.getFileName() + " with " + std::to_string(assimpScene_->mNumMeshes) + " meshes");
 
 	return rootNode;
 }
