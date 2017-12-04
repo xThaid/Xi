@@ -46,6 +46,12 @@ public:
 	bool hasNormals();
 	bool hasIndices();
 
+protected:
+	void setPositions(std::vector<xim::Vector3>* positions);
+	void setUV(std::vector<xim::Vector2>* UV);
+	void setNormals(std::vector<xim::Vector3>* normals);
+	void setIndices(std::vector<unsigned int>* indices);
+
 private:
 	MeshTopology topology_;
 

@@ -86,6 +86,26 @@ bool Mesh::hasIndices()
 	return indices_ != nullptr && indices_->size() >= 0; 
 }
 
+void Mesh::setPositions(std::vector<xim::Vector3>* positions)
+{
+	positions_ = positions;
+}
+
+void Mesh::setUV(std::vector<xim::Vector2>* UV)
+{
+	UV_ = UV;
+}
+
+void Mesh::setNormals(std::vector<xim::Vector3>* normals)
+{
+	normals_ = normals;
+}
+
+void Mesh::setIndices(std::vector<unsigned int>* indices)
+{
+	indices_ = indices;
+}
+
 bool Mesh::uploadToGPU(bool interleaved)
 {
 	std::vector<float> data;
