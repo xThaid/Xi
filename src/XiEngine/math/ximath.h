@@ -1,6 +1,5 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
 #include <math.h>
 
 #include "vector2.h"
@@ -10,3 +9,8 @@
 #include "matrix4.h"
 
 #include "utils.h"
+
+namespace xim
+{
+	const float PI = 3.1415926535897932f;
+}
