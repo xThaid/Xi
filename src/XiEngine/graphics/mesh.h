@@ -37,6 +37,7 @@ public:
 
 	inline MeshTopology getMeshTopology() { return topology_; }
 	inline unsigned int getNumIndices() { return indices_->size(); }
+	inline unsigned int getNumVertices() { return positions_->size(); }
 
 	inline unsigned int getVAO() { return VAO_; }
 

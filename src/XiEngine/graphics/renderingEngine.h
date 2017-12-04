@@ -34,4 +34,6 @@ private:
 	void destroy();
 
 	void renderEntity(SceneNode* entity, Camera* camera);
+
+	void renderMesh(Mesh* mesh);
 };

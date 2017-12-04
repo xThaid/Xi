@@ -101,10 +101,21 @@ void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
 	{
 		tempTexture->getGLTexture()->bind();
 		tempShader->setMatrix4("model", xim::Matrix4::scaleMatrix(xim::Vector3(1.0f)));
-		glBindVertexArray(entity->mesh_->getVAO());
-		glDrawElements(entity->mesh_->getMeshTopology() == MeshTopology::TRIANGLES ? GL_TRIANGLES : GL_TRIANGLE_STRIP, entity->mesh_->getNumIndices(), GL_UNSIGNED_INT, 0);
+		renderMesh(entity->mesh_);
 	}
 
 	for (SceneNode* child : entity->getChildren())
 		renderEntity(child, camera);
+}
+
+void RenderingEngine::renderMesh(Mesh* mesh)
+{
+	GLenum mode = mesh->getMeshTopology() == MeshTopology::TRIANGLES ? GL_TRIANGLES : GL_TRIANGLE_STRIP;
+
+	glBindVertexArray(mesh->getVAO());
+
+	if(mesh->hasIndices())
+		glDrawElements(mode, mesh->getNumIndices(), GL_UNSIGNED_INT, 0);
+	else
+		glDrawArrays(mode, 0, mesh->getNumVertices());
 }
