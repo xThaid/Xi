@@ -18,7 +18,7 @@ SceneNodeImporter::SceneNodeImporter(const std::string& path) :
 	numIndices_(0)
 {
 	Assimp::Importer import;
-	assimpScene_ = import.ReadFile(file_.getPath(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+	assimpScene_ = import.ReadFile(file_.getPath(), aiProcess_Triangulate | aiProcess_GenNormals);
 	if (!assimpScene_ || assimpScene_->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene_->mRootNode)
 	{
 		Logger::error("Assimp error while importing model: " + file_.getPath());

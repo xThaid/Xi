@@ -81,6 +81,8 @@ void RenderingEngine::setUp()
 {
 	tempShader = new Shader("tempShader", "D:/Dev/Repos/Xi/res/shaders/entityShader.vs", "D:/Dev/Repos/Xi/res/shaders/entityShader.fs");
 	Core::getCurrentCore()->getResourceManager()->addResource(tempShader);
+	tempTexture = new Texture2D("tempTexture", "D:/Dev/Repos/Xi/res/textures/uv-mapping.png");
+	Core::getCurrentCore()->getResourceManager()->addResource(tempTexture);
 }
 
 void RenderingEngine::cleanUp()
@@ -97,7 +99,8 @@ void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
 {
 	if (entity->mesh_ != nullptr)
 	{
-		tempShader->setMatrix4("model", xim::Matrix4::scaleMatrix(xim::Vector3(0.01f)));
+		tempTexture->getGLTexture()->bind();
+		tempShader->setMatrix4("model", xim::Matrix4::scaleMatrix(xim::Vector3(1.0f)));
 		glBindVertexArray(entity->mesh_->getVAO());
 		glDrawElements(GL_TRIANGLES, entity->mesh_->getNumIndices(), GL_UNSIGNED_INT, 0);
 	}

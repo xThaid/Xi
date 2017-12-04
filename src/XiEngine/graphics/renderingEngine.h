@@ -11,7 +11,7 @@ class Mesh;
 class Model;
 class Camera;
 class SceneNode;
-class Texture;
+class Texture2D;
 
 class RenderingEngine
 {
@@ -27,6 +27,7 @@ private:
 	int renderWidth, renderHeight;
 
 	Shader* tempShader;
+	Texture2D* tempTexture;
 
 	void setUp();
 	void cleanUp();
