@@ -5,11 +5,13 @@
 #include "../utils/logger.h"
 
 Mesh::Mesh(const std::string& name,
+	MeshTopology topology,
 	std::vector<unsigned int>* indices,
 	std::vector<xim::Vector3>* positions,
 	std::vector<xim::Vector2>* UV,
 	std::vector<xim::Vector3>* normals) :
 	Resource(name),
+	topology_(topology),
 	indices_(indices),
 	positions_(positions),
 	UV_(UV),

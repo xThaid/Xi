@@ -102,7 +102,7 @@ void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
 		tempTexture->getGLTexture()->bind();
 		tempShader->setMatrix4("model", xim::Matrix4::scaleMatrix(xim::Vector3(1.0f)));
 		glBindVertexArray(entity->mesh_->getVAO());
-		glDrawElements(GL_TRIANGLES, entity->mesh_->getNumIndices(), GL_UNSIGNED_INT, 0);
+		glDrawElements(entity->mesh_->getMeshTopology() == MeshTopology::TRIANGLES ? GL_TRIANGLES : GL_TRIANGLE_STRIP, entity->mesh_->getNumIndices(), GL_UNSIGNED_INT, 0);
 	}
 
 	for (SceneNode* child : entity->getChildren())

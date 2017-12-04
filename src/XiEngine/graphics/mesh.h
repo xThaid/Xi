@@ -5,12 +5,23 @@
 #include "../math/ximath.h"
 #include "../resource/resource.h"
 
+enum class MeshTopology
+{
+	POINTS,
+	LINES,
+	LINE_STRIP,
+	TRIANGLES,
+	TRIANGLE_STRIP,
+	TRIANGLE_FAN,
+};
+
 class Mesh : public Resource
 {
 	XI_RESOURCE(Mesh)
 
 public:
-	Mesh(const std::string& name, 
+	Mesh(const std::string& name,
+		MeshTopology topology,
 		std::vector<unsigned int>* indices, 
 		std::vector<xim::Vector3>* positions, 
 		std::vector<xim::Vector2>* UV, 
@@ -24,6 +35,7 @@ public:
 
 	virtual const std::string getTypeName() const override { return "Mesh"; }
 
+	inline MeshTopology getMeshTopology() { return topology_; }
 	inline unsigned int getNumIndices() { return indices_->size(); }
 
 	inline unsigned int getVAO() { return VAO_; }
@@ -34,6 +46,8 @@ public:
 	bool hasIndices();
 
 private:
+	MeshTopology topology_;
+
 	std::vector<xim::Vector3>* positions_;
 	std::vector<xim::Vector2>* UV_;
 	std::vector<xim::Vector3>* normals_;
