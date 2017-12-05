@@ -15,7 +15,7 @@ void Program::init()
 {
 	Scene* scene = new Scene();
 
-	Mesh* mesh = new Mesh("myCube", Primitives::torus(3, 1, 30, 30));
+	Mesh* mesh = new Mesh("myCube", Primitives::line());
 	Core::getCurrentCore()->getResourceManager()->addResource(mesh);
 
 	scene->getRootNode()->mesh_ = mesh;

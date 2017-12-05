@@ -2,6 +2,17 @@
 
 namespace Primitives
 {
+	MeshGeometry* line()
+	{
+		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
+		{
+			xim::Vector3(-0.5f, 0.0f, 0.0f),
+			xim::Vector3(0.5f, 0.0f, 0.0f)
+		};
+
+		return new MeshGeometry(MeshTopology::LINES, nullptr, positions, nullptr, nullptr);
+	}
+
 	MeshGeometry* quad()
 	{
 		return quad(1.0f, 1.0f);
@@ -323,6 +334,7 @@ namespace Primitives
 		return new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals);
 	}
 
+	//https://github.com/JoeyDeVries/Cell/blob/master/cell/mesh/torus.cpp
 	MeshGeometry* torus(float r1, float r2, unsigned int numSteps1, unsigned int numSteps2)
 	{
 		int numVertex = (numSteps1 + 1) * (numSteps2 + 1);
@@ -331,55 +343,44 @@ namespace Primitives
 		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
 		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
 
-		std::vector<xim::Vector3> p(numSteps1 + 1);
-		float a = 0.0f;
-		float step = 2.0f * xim::PI / numSteps1;
-		for (int i = 0; i <= numSteps1; ++i)
+		
+		float d1 = 2.0f * xim::PI / numSteps1;
+		float d2 = 2.0f * xim::PI / numSteps2;
+		
+		float a1 = 0.0f;
+		for (unsigned int i = 0; i <= numSteps1; ++i)
 		{
-			float x = cos(a) * r1;
-			float y = sin(a) * r1;
-			p[i].data[0] = x;
-			p[i].data[1] = y;
-			p[i].data[2] = 0.0f;
-			a += step;
-		}
-
-		for (int i = 0; i <= numSteps1; ++i)
-		{
-			// the basis vectors of the ring equal the difference  vector between the minorRing 
-			// center and the donut's center position (which equals the origin (0, 0, 0)) and the 
-			// positive z-axis.
-			xim::Vector3 u = (-p[i]).normalized() * r2; // Could be p[i] also        
+			float x = cos(a1) * r1;
+			float y = sin(a1) * r1;
+			xim::Vector3 p(x, y, 0.0f);
+			a1 += d1;
+		
+			xim::Vector3 u = (-p).normalized() * r2; // Could be p[i] also        
 			xim::Vector3 v = xim::Vector3(0.0f, 0.0f, 1.0f) * r2;
 
-			// create the vertices of each minor ring segment:
-			float a = 0.0f;
-			float step = 2.0f * xim::PI / numSteps2;
-			for (int j = 0; j <= numSteps2; ++j)
+			float a2 = 0.0f;
+			for (unsigned int j = 0; j <= numSteps2; ++j)
 			{
-				float c = cos(a);
-				float s = sin(a);
+				float c = cos(a2);
+				float s = sin(a2);
 
-				(*positions)[i * (numSteps2 + 1) + j] = p[i] + u * c + v * s;
+				(*positions)[i * (numSteps2 + 1) + j] = p + u * c + v * s;
 				(*UV)[i * (numSteps2 + 1) + j].data[0] = ((float)i) / ((float)numSteps1) * 2 * xim::PI;
 				(*UV)[i * (numSteps2 + 1) + j].data[1] = ((float)j) / ((float)numSteps2);
 				(*normals)[i * (numSteps2 + 1) + j] = (u * c + v * s).normalized();
-				a += step;
+				a2 += d2;
 			}
 		}
 
-
-		// generate the indicies for a triangle topology:
-		// NOTE(Joey): as taken from gamedev.net resource.
 		std::vector<unsigned int>* indices = new std::vector<unsigned int>(numSteps1 * numSteps2 * 6);
 
 		int index = 0;
-		for (int i = 0; i < numSteps1; ++i)
+		for (unsigned int i = 0; i < numSteps1; ++i)
 		{
 			int i1 = i;
 			int i2 = (i1 + 1);
 
-			for (int j = 0; j < numSteps2; ++j)
+			for (unsigned int j = 0; j < numSteps2; ++j)
 			{
 				int j1 = j;
 				int j2 = (j1 + 1);
