@@ -15,16 +15,59 @@ void Program::init()
 {
 	Scene* scene = new Scene();
 
-	Mesh* mesh = new Mesh("myCube", Primitives::line());
-	Core::getCurrentCore()->getResourceManager()->addResource(mesh);
+	Mesh* line = new Mesh("simpleLine", Primitives::line());
+	Core::getCurrentCore()->getResourceManager()->addResource(line);
 
-	scene->getRootNode()->mesh_ = mesh;
-	
+	Mesh* mesh2 = new Mesh("srodek", Primitives::sphere(20, 20));
+	Core::getCurrentCore()->getResourceManager()->addResource(mesh2);
+
+	axis = new SceneNode("coordAxis");
+	{
+		SceneNode* xAxis = new SceneNode("x");
+		SceneNode* yAxis = new SceneNode("y");
+		SceneNode* zAxis = new SceneNode("z");
+
+		xAxis->getTransform().setPosition(xim::Vector3(0.5f, 0.0f, 0.0f));
+
+		yAxis->getTransform().setRotation(xim::Vector3(0.0f, 0.0f, 90.0f));
+		yAxis->getTransform().setPosition(xim::Vector3(0.0f, 0.5f, 0.0f));
+
+		zAxis->getTransform().setRotation(xim::Vector3(0.0f, 90.0f, 0.0f));
+		zAxis->getTransform().setPosition(xim::Vector3(0.0f, 0.0f, 0.5f));
+		
+		xAxis->mesh_ = line;
+		yAxis->mesh_ = line;
+		zAxis->mesh_ = line;
+		
+		axis->addChildNode(xAxis);
+		axis->addChildNode(yAxis);
+		axis->addChildNode(zAxis);
+	}
+	scene->getRootNode()->addChildNode(axis);
+
+
+	myEntity2 = new SceneNode("costam");
+	myEntity2->mesh_ = mesh2;
+	scene->getRootNode()->addChildNode(myEntity2);
+
+	myEntity = myEntity2->clone();
+	myEntity->getTransform().setPosition(xim::Vector3(0.0f, 0.0f, 6.0f));
+	myEntity2->addChildNode(myEntity);
+
+	myEntity3 = myEntity2->clone();
+	myEntity3->getTransform().setPosition(xim::Vector3(3.0f, 0.0f, 0.0f));
+	myEntity->addChildNode(myEntity3);
+
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
+	myEntity2->getTransform().setPosition(xim::Vector3(0.0f, sinf(Time::getElapsedTime()) * 5, 0.0f));
+	myEntity2->getTransform().setRotation(xim::Vector3(0.0f, Time::getElapsedTime() * 30.0f, 0.0f));
+
+	myEntity->getTransform().setRotation(xim::Vector3(1.0f, 0.0f, Time::getElapsedTime() * 100.0f));
+
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();

@@ -41,7 +41,7 @@ RenderingEngine::~RenderingEngine()
 void RenderingEngine::init()
 {
 	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	xim::Matrix4 proj = xim::perspective(xim::radians(45.0f), (float) renderWidth / renderHeight, 0.1f, 100.0f);
 	tempShader->useShader();
@@ -97,10 +97,12 @@ void RenderingEngine::destroy()
 
 void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
 {
+	entity->getTransform().updateTransform();
+
 	if (entity->mesh_ != nullptr)
 	{
 		tempTexture->getGLTexture()->bind();
-		tempShader->setMatrix4("model", xim::Matrix4::rotationYMatrix(glfwGetTime() / 10.0f));
+		tempShader->setMatrix4("model", entity->getTransform().getTransform());
 		renderMesh(entity->mesh_);
 	}
 

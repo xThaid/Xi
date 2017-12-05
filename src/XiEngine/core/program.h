@@ -1,6 +1,6 @@
 #pragma once
 
-class Entity;
+#include "../scene/sceneNode.h"
 
 class Program
 {
@@ -11,6 +11,9 @@ public:
 private:
 	bool mouseLocked = true;
 
-	Entity* myEntity;
-	Entity* myEntity2;
+	SceneNode* axis;
+
+	SceneNode* myEntity;
+	SceneNode* myEntity2;
+	SceneNode* myEntity3;
 };

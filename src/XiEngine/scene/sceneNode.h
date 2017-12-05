@@ -3,7 +3,44 @@
 #include "../precompiled.h"
 
 #include "../graphics/mesh.h"
+#include "../math/ximath.h"
 #include "../utils/stringHash.h"
+
+class SceneNode;
+
+class Transform
+{
+public:
+	Transform(SceneNode* owner);
+	
+	void operator=(const Transform& copyFrom);
+
+	void translate(xim::Vector3 vec);
+	void rotate(xim::Vector3 angle);
+
+	void setPosition(xim::Vector3 position);
+	void setRotation(xim::Vector3 rotation);
+	void setScale(float scale);
+	void setScale(xim::Vector3 scale);
+
+	inline xim::Vector3 getLocalPosition() { return position_; }
+	inline xim::Vector3 getLocalRotation() { return rotation_; }
+	inline xim::Vector3 getLocalScale() { return scale_; }
+
+	xim::Matrix4 getTransform();
+	void updateTransform();
+
+private:
+	SceneNode* owner_;
+	
+	bool dirty_;
+
+	xim::Vector3 position_;
+	xim::Vector3 rotation_; // in degrees
+	xim::Vector3 scale_;
+
+	xim::Matrix4 transform_;
+};
 
 class SceneNode
 {
@@ -20,6 +57,8 @@ public:
 
 	void setName(const std::string& name);
 
+	inline SceneNode* getParentNode() { return parentNode_; }
+
 	void addChildNode(SceneNode* node);
 
 	SceneNode* findChildNode(StringHash nameHash);
@@ -27,10 +66,14 @@ public:
 
 	std::vector<SceneNode*> getChildren();
 
+	inline Transform& getTransform() { return transform_; }
+
 private:
 	std::string name_;
 	StringHash nameHash_;
 
 	SceneNode* parentNode_;
 	std::map<StringHash, SceneNode*> childrenNode_;
+
+	Transform transform_;
 };

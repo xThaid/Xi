@@ -2,9 +2,108 @@
 
 #include "../utils/logger.h"
 
+Transform::Transform(SceneNode* owner) :
+	owner_(owner),
+	dirty_(false),
+	position_(xim::Vector3(0.0f)),
+	rotation_(xim::Vector3(0.0f)),
+	scale_(xim::Vector3(1.0f)),
+	transform_(xim::Matrix4())
+{
+}
+
+void Transform::operator=(const Transform& copyFrom)
+{
+	position_ = copyFrom.position_;
+	rotation_ = copyFrom.rotation_;
+	scale_ = copyFrom.scale_;
+	dirty_ = true;
+}
+
+void Transform::translate(xim::Vector3 vec)
+{
+	position_ += vec;
+	dirty_ = true;
+}
+
+void Transform::rotate(xim::Vector3 angle)
+{
+	rotation_ += angle;
+	dirty_ = true;
+}
+
+void Transform::setPosition(xim::Vector3 position)
+{
+	position_ = position;
+	dirty_ = true;
+}
+
+void Transform::setRotation(xim::Vector3 rotation)
+{
+	rotation_ = rotation;
+	dirty_ = true;
+}
+
+void Transform::setScale(float scale)
+{
+	scale_ = xim::Vector3(scale);
+	dirty_ = true;
+}
+
+void Transform::setScale(xim::Vector3 scale)
+{
+	scale_ = scale;
+	dirty_ = true;
+}
+
+xim::Matrix4 Transform::getTransform()
+{
+	if (dirty_)
+	{
+		updateTransform();
+	}
+
+	return transform_;
+}
+
+void Transform::updateTransform()
+{
+	if (dirty_)
+	{
+		transform_ = xim::Matrix4();
+		transform_.translate(position_);
+
+		transform_.rotateX(xim::radians(rotation_.x()));
+		transform_.rotateY(xim::radians(rotation_.y()));
+		transform_.rotateZ(xim::radians(rotation_.z()));
+
+		transform_.scale(scale_);
+	
+		if (owner_->getParentNode() != nullptr)
+		{
+			Transform& parentTransform = owner_->getParentNode()->getTransform();
+			transform_ = parentTransform.transform_ * transform_;
+		}
+	}
+
+	for (SceneNode* child : owner_->getChildren())
+	{
+		Transform& childTranform = child->getTransform();
+		if (dirty_)
+		{
+			childTranform.dirty_ = true;
+		}
+
+		childTranform.updateTransform();
+	}
+
+	dirty_ = false;
+}
+
 SceneNode::SceneNode(const std::string& name) :
 	name_(name),
-	nameHash_(name)
+	nameHash_(name),
+	transform_(this)
 {
 }
 
@@ -24,6 +123,7 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	
 	myClone->parentNode_ = parentNode_;
 	myClone->mesh_ = mesh_;
+	myClone->transform_ = transform_;
 
 	for (std::map<StringHash, SceneNode*>::const_iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
 		myClone->childrenNode_[it->first] = it->second->clone(true);
