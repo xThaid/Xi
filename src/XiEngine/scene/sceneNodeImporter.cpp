@@ -112,5 +112,5 @@ Mesh* SceneNodeImporter::processMesh(const std::string& name, aiMesh* assimpMesh
 		}
 	}
 
-	return new Mesh(name, MeshTopology::TRIANGLES, indices, positions, UV, normals);
+	return new Mesh(name, new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals));
 }

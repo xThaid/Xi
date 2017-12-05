@@ -4,34 +4,16 @@
 
 namespace Primitives
 {
-	class Quad : public Mesh
-	{
-	public:
-		Quad(const std::string& name);
-		Quad(const std::string& name, float width, float height);
-	};
+	MeshGeometry* quad();
+	MeshGeometry* quad(float width, float height);
 
-	class Cube : public Mesh
-	{
-	public:
-		Cube(const std::string& name);
-	};
+	MeshGeometry* cube();
 
-	class Plane : public Mesh
-	{
-	public:
-		Plane(const std::string& name, unsigned int xSegments, unsigned int ySegments);
-	};
+	MeshGeometry* plane(unsigned int xSegments, unsigned int ySegments);
 
-	class Circle : public Mesh
-	{
-	public:
-		Circle(const std::string& name, unsigned int edgeSegments, unsigned int ringSegments);
-	};
+	MeshGeometry* circle(unsigned int edgeSegments, unsigned int ringSegments);
 
-	class Sphere : public Mesh
-	{
-	public:
-		Sphere(const std::string& name, unsigned int xSegments, unsigned int ySegments);
-	};
+	MeshGeometry* sphere(unsigned int xSegments, unsigned int ySegments);
+
+	MeshGeometry* torus(float r1, float r2, unsigned int numSteps1, unsigned int numSteps2);
 }

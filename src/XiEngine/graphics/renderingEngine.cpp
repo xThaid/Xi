@@ -110,12 +110,10 @@ void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
 
 void RenderingEngine::renderMesh(Mesh* mesh)
 {
-	GLenum mode = mesh->getMeshTopology() == MeshTopology::TRIANGLES ? GL_TRIANGLES : GL_TRIANGLE_STRIP;
-
 	glBindVertexArray(mesh->getVAO());
 
-	if(mesh->hasIndices())
-		glDrawElements(mode, mesh->getNumIndices(), GL_UNSIGNED_INT, 0);
+	if(mesh->getMeshGeometry()->hasIndices())
+		glDrawElements(mesh->getDrawMode(), mesh->getMeshGeometry()->getNumIndices(), GL_UNSIGNED_INT, 0);
 	else
-		glDrawArrays(mode, 0, mesh->getNumVertices());
+		glDrawArrays(mesh->getDrawMode(), 0, mesh->getMeshGeometry()->getNumVertices());
 }

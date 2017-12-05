@@ -2,13 +2,12 @@
 
 namespace Primitives
 {
-	Quad::Quad(const std::string& name) :
-		Quad(name, 1.0f, 1.0f)
+	MeshGeometry* quad()
 	{
+		return quad(1.0f, 1.0f);
 	}
 
-	Quad::Quad(const std::string& name, float width, float height) :
-		Mesh(name, MeshTopology::TRIANGLE_STRIP, nullptr, nullptr, nullptr, nullptr)
+	MeshGeometry* quad(float width, float height)
 	{
 		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
 		{
@@ -26,12 +25,10 @@ namespace Primitives
 			xim::Vector2(1.0f, 0.0f)
 		};
 
-		setPositions(positions);
-		setUV(UV);
+		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, nullptr, positions, UV, nullptr);
 	}
 
-	Cube::Cube(const std::string& name) :
-		Mesh(name, MeshTopology::TRIANGLES, nullptr, nullptr, nullptr, nullptr)
+	MeshGeometry* cube()
 	{
 		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
 		{
@@ -168,13 +165,10 @@ namespace Primitives
 			xim::Vector3(0.0f,  1.0f,  0.0f),
 		};
 
-		setPositions(positions);
-		setUV(UV);
-		setNormals(normals);
+		return new MeshGeometry(MeshTopology::TRIANGLES, nullptr, positions, UV, normals);
 	}
 
-	Plane::Plane(const std::string& name, unsigned int xSegments, unsigned int ySegments) :
-		Mesh(name, MeshTopology::TRIANGLE_STRIP, nullptr, nullptr, nullptr, nullptr)
+	MeshGeometry* plane(unsigned int xSegments, unsigned int ySegments)
 	{
 		int numVertex = (xSegments + 1) * (ySegments + 1);
 		float dx = 1.0f / xSegments;
@@ -223,14 +217,10 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		setPositions(positions);
-		setUV(UV);
-		setNormals(normals);
-		setIndices(indices);
+		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
 	}
 
-	Circle::Circle(const std::string& name, unsigned int edgeSegments, unsigned int ringSegments) :
-		Mesh(name, MeshTopology::TRIANGLE_STRIP, nullptr, nullptr, nullptr, nullptr)
+	MeshGeometry* circle(unsigned int edgeSegments, unsigned int ringSegments)
 	{
 		int numVertex = (edgeSegments + 1) * (ringSegments + 1);
 
@@ -282,14 +272,10 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		setPositions(positions);
-		setUV(UV);
-		setNormals(normals);
-		setIndices(indices);
+		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
 	}
 
-	Sphere::Sphere(const std::string& name, unsigned int xSegments, unsigned int ySegments) :
-		Mesh(name, MeshTopology::TRIANGLES, nullptr, nullptr, nullptr, nullptr)
+	MeshGeometry* sphere(unsigned int xSegments, unsigned int ySegments)
 	{
 		int numVertex = (xSegments + 1) * (ySegments + 1);
 		
@@ -334,9 +320,80 @@ namespace Primitives
 			}
 		}
 
-		setPositions(positions);
-		setUV(UV);
-		setNormals(normals);
-		setIndices(indices);
+		return new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals);
+	}
+
+	MeshGeometry* torus(float r1, float r2, unsigned int numSteps1, unsigned int numSteps2)
+	{
+		int numVertex = (numSteps1 + 1) * (numSteps2 + 1);
+
+		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(numVertex);
+		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
+		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
+
+		std::vector<xim::Vector3> p(numSteps1 + 1);
+		float a = 0.0f;
+		float step = 2.0f * xim::PI / numSteps1;
+		for (int i = 0; i <= numSteps1; ++i)
+		{
+			float x = cos(a) * r1;
+			float y = sin(a) * r1;
+			p[i].data[0] = x;
+			p[i].data[1] = y;
+			p[i].data[2] = 0.0f;
+			a += step;
+		}
+
+		for (int i = 0; i <= numSteps1; ++i)
+		{
+			// the basis vectors of the ring equal the difference  vector between the minorRing 
+			// center and the donut's center position (which equals the origin (0, 0, 0)) and the 
+			// positive z-axis.
+			xim::Vector3 u = (-p[i]).normalized() * r2; // Could be p[i] also        
+			xim::Vector3 v = xim::Vector3(0.0f, 0.0f, 1.0f) * r2;
+
+			// create the vertices of each minor ring segment:
+			float a = 0.0f;
+			float step = 2.0f * xim::PI / numSteps2;
+			for (int j = 0; j <= numSteps2; ++j)
+			{
+				float c = cos(a);
+				float s = sin(a);
+
+				(*positions)[i * (numSteps2 + 1) + j] = p[i] + u * c + v * s;
+				(*UV)[i * (numSteps2 + 1) + j].data[0] = ((float)i) / ((float)numSteps1) * 2 * xim::PI;
+				(*UV)[i * (numSteps2 + 1) + j].data[1] = ((float)j) / ((float)numSteps2);
+				(*normals)[i * (numSteps2 + 1) + j] = (u * c + v * s).normalized();
+				a += step;
+			}
+		}
+
+
+		// generate the indicies for a triangle topology:
+		// NOTE(Joey): as taken from gamedev.net resource.
+		std::vector<unsigned int>* indices = new std::vector<unsigned int>(numSteps1 * numSteps2 * 6);
+
+		int index = 0;
+		for (int i = 0; i < numSteps1; ++i)
+		{
+			int i1 = i;
+			int i2 = (i1 + 1);
+
+			for (int j = 0; j < numSteps2; ++j)
+			{
+				int j1 = j;
+				int j2 = (j1 + 1);
+
+				(*indices)[index++] = i1 * (numSteps2 + 1) + j1;
+				(*indices)[index++] = i1 * (numSteps2 + 1) + j2;
+				(*indices)[index++] = i2 * (numSteps2 + 1) + j1;
+
+				(*indices)[index++] = i2 * (numSteps2 + 1) + j2;
+				(*indices)[index++] = i2 * (numSteps2 + 1) + j1;
+				(*indices)[index++] = i1 * (numSteps2 + 1) + j2;
+			}
+		}
+
+		return new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals);
 	}
 }
