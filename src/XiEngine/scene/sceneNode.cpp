@@ -123,6 +123,7 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	
 	myClone->parentNode_ = parentNode_;
 	myClone->mesh_ = mesh_;
+	myClone->material_ = material_;
 	myClone->transform_ = transform_;
 
 	for (std::map<StringHash, SceneNode*>::const_iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)

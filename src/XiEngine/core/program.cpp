@@ -43,11 +43,13 @@ void Program::init()
 		axis->addChildNode(yAxis);
 		axis->addChildNode(zAxis);
 	}
+
 	scene->getRootNode()->addChildNode(axis);
 
 
 	myEntity2 = new SceneNode("costam");
 	myEntity2->mesh_ = mesh2;
+	myEntity2->material_ = Core::getCurrentCore()->getResourceManager()->getResource<Material>("default");
 	scene->getRootNode()->addChildNode(myEntity2);
 
 	myEntity = myEntity2->clone();

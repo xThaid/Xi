@@ -27,6 +27,25 @@ struct ShaderUniform
 	unsigned int location;
 };
 
+//TODO All shader uniform values take 64 bytes
+struct ShaderUniformValue
+{
+	UniformType type;
+	union
+	{
+		bool bool_;
+		int int_;
+		float float_;
+
+		xim::Vector2 vec2_;
+		xim::Vector3 vec3_;
+		xim::Vector4 vec4_;
+		xim::Matrix4 mat4_;
+	};
+
+	ShaderUniformValue() {}
+};
+
 class ShaderVariation
 {
 public:

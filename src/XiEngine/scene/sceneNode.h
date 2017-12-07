@@ -2,6 +2,7 @@
 
 #include "../precompiled.h"
 
+#include "../graphics/material.h"
 #include "../graphics/mesh.h"
 #include "../math/ximath.h"
 #include "../utils/stringHash.h"
@@ -46,6 +47,7 @@ class SceneNode
 {
 public:
 	Mesh* mesh_;
+	Material* material_;
 
 	SceneNode(const std::string& name);
 	~SceneNode();
@@ -67,6 +69,7 @@ public:
 	std::vector<SceneNode*> getChildren();
 
 	inline Transform& getTransform() { return transform_; }
+	inline std::string getName() { return name_; }
 
 private:
 	std::string name_;

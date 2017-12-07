@@ -174,7 +174,10 @@ bool Mesh::endLoad()
 
 void Mesh::release()
 {
+	glDeleteBuffers(1, &VBO_);
+	glDeleteBuffers(1, &EBO_);
 
+	glDeleteVertexArrays(1, &VAO_);
 }
 
 bool Mesh::uploadToGPU(bool interleaved)

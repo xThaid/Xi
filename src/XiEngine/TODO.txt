@@ -1,5 +1,5 @@
-1.szybsze uniformy w shaderach - done
-2.kwaterniony
-3.unordered_map zamiast map?
-4.release mesh
-5.use hash of name in uniform map
+1.better shader uniforms management - done
+2.quaternions
+3.unordered_map instead of map?
+4.release mesh- done
+5.use hash of name in uniform map- not necessary i think

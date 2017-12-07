@@ -8,7 +8,6 @@
 
 class Scene;
 class Mesh;
-class Model;
 class Camera;
 class SceneNode;
 class Texture2D;
@@ -26,7 +25,6 @@ public:
 private:
 	int renderWidth, renderHeight;
 
-	Shader* tempShader;
 	Texture2D* tempTexture;
 
 	void setUp();
