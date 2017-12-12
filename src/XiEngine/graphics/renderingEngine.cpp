@@ -28,7 +28,9 @@ RenderingEngine::RenderingEngine(Window * window)
 
 	Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
 
-	changeViewport(window->getWidth(), window->getHeight());
+	changeRenderSize(window->getWidth(), window->getHeight());
+
+	commandBuffer_ = new CommandBuffer();
 
 	setUp();
 }
@@ -43,11 +45,10 @@ RenderingEngine::~RenderingEngine()
 void RenderingEngine::init()
 {
 	glEnable(GL_DEPTH_TEST);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void RenderingEngine::changeViewport(int width, int height)
+void RenderingEngine::changeRenderSize(int width, int height)
 {
 	glViewport(0, 0, width, height);
 	renderWidth = width;
@@ -59,7 +60,11 @@ void RenderingEngine::render(Scene* scene)
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	renderEntity(scene->getRootNode(), scene->getMainCamera());
+	renderSceneNode(scene->getRootNode());
+
+	renderPushedCommands(scene->getMainCamera());
+
+	commandBuffer_->clear();
 }
 
 void RenderingEngine::setUp()
@@ -71,11 +76,10 @@ void RenderingEngine::setUp()
 
 	Material* defaultMaterial = new Material("default", defaultShader);
 
-	defaultMaterial->setMatrix4("projection", xim::perspective(xim::radians(45.0f), (float)renderWidth / renderHeight, 0.1f, 100.0f));
-
 	defaultMaterial->setVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
 	defaultMaterial->setVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
 	defaultMaterial->setVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
+	defaultMaterial->setVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
 
 	defaultMaterial->setInt("material.diffuse", 0);
 	defaultMaterial->setFloat("material.shininess", 32.0f);
@@ -95,27 +99,58 @@ void RenderingEngine::destroy()
 	glfwTerminate();
 }
 
-void RenderingEngine::renderEntity(SceneNode* entity, Camera* camera)
+void RenderingEngine::renderPushedCommands(Camera* camera)
 {
-	entity->getTransform().updateTransform();
-
-	if (entity->mesh_ != nullptr && entity->material_ != nullptr)
+	sendGlobalUniformsToAll(camera);
+	
+	for (RenderCommand& command : commandBuffer_->getDefaultRenderCommands())
 	{
-		Logger::info(entity->getName());
-		entity->material_->sendUniformsValuesToShader();
-		xim::Matrix4 viewMatrix = camera->getViewMatrix();
+		renderCommand(&command);
+	}
+}
 
-		entity->material_->getShader()->useShader();
-		entity->material_->getShader()->setMatrix4("view", viewMatrix);
-		entity->material_->getShader()->setVector3("viewPos", camera->getPosition());
-		entity->material_->getShader()->setVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
-		entity->material_->getShader()->setMatrix4("model", entity->getTransform().getTransform());
+void RenderingEngine::renderSceneNode(SceneNode* node)
+{
+	node->getTransform().updateTransform();
 
-		renderMesh(entity->mesh_);
+	if (node->mesh_ != nullptr && node->material_ != nullptr)
+	{
+		commandBuffer_->push(node->mesh_, node->material_, node->getTransform().getTransform());
 	}
 
-	for (SceneNode* child : entity->getChildren())
-		renderEntity(child, camera);
+	for (SceneNode* child : node->getChildren())
+		renderSceneNode(child);
+}
+
+void RenderingEngine::sendGlobalUniformsToAll(Camera* camera)
+{
+	std::map<StringHash, Resource*>* shaders = Core::getCurrentCore()->getResourceManager()->getResources<Shader>();
+	for (auto shader : *shaders)
+	{
+		Shader* castedShader = static_cast<Shader*>(shader.second);
+		sendGlobalUniforms(castedShader, camera);
+	}
+}
+
+void RenderingEngine::sendGlobalUniforms(Shader* shader, Camera* camera)
+{
+	shader->useShader();
+	shader->setMatrix4("projection", getProjectionMatrix());
+	shader->setMatrix4("view", camera->getViewMatrix());
+	shader->setVector3("viewPos", camera->getPosition());
+}
+
+void RenderingEngine::renderCommand(RenderCommand* command)
+{
+	Material* material = command->material;
+	Mesh* mesh = command->mesh;
+
+	material->getShader()->useShader();
+	material->getShader()->setMatrix4("model", command->transform);
+
+	material->sendUniformsValuesToShader();
+
+	renderMesh(mesh);
 }
 
 void RenderingEngine::renderMesh(Mesh* mesh)
@@ -126,4 +161,9 @@ void RenderingEngine::renderMesh(Mesh* mesh)
 		glDrawElements(mesh->getDrawMode(), mesh->getMeshGeometry()->getNumIndices(), GL_UNSIGNED_INT, 0);
 	else
 		glDrawArrays(mesh->getDrawMode(), 0, mesh->getMeshGeometry()->getNumVertices());
+}
+
+xim::Matrix4 RenderingEngine::getProjectionMatrix()
+{
+	return xim::perspective(xim::radians(45.0f), (float)renderWidth / renderHeight, 0.1f, 100.0f);
 }

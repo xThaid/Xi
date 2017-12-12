@@ -18,9 +18,6 @@ void Program::init()
 	Mesh* line = new Mesh("simpleLine", Primitives::line());
 	Core::getCurrentCore()->getResourceManager()->addResource(line);
 
-	Mesh* mesh2 = new Mesh("srodek", Primitives::sphere(20, 20));
-	Core::getCurrentCore()->getResourceManager()->addResource(mesh2);
-
 	axis = new SceneNode("coordAxis");
 	{
 		SceneNode* xAxis = new SceneNode("x");
@@ -46,29 +43,19 @@ void Program::init()
 
 	scene->getRootNode()->addChildNode(axis);
 
+	Mesh* mesh2 = new Mesh("plane", Primitives::plane(100, 100));
+	Core::getCurrentCore()->getResourceManager()->addResource(mesh2);
 
-	myEntity2 = new SceneNode("costam");
-	myEntity2->mesh_ = mesh2;
-	myEntity2->material_ = Core::getCurrentCore()->getResourceManager()->getResource<Material>("default");
-	scene->getRootNode()->addChildNode(myEntity2);
-
-	myEntity = myEntity2->clone();
-	myEntity->getTransform().setPosition(xim::Vector3(0.0f, 0.0f, 6.0f));
-	myEntity2->addChildNode(myEntity);
-
-	myEntity3 = myEntity2->clone();
-	myEntity3->getTransform().setPosition(xim::Vector3(3.0f, 0.0f, 0.0f));
-	myEntity->addChildNode(myEntity3);
+	myEntity = new SceneNode("costam");
+	myEntity->mesh_ = mesh2;
+	myEntity->material_ = Core::getCurrentCore()->getResourceManager()->getResource<Material>("default");
+	scene->getRootNode()->addChildNode(myEntity);
 
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
-	myEntity2->getTransform().setPosition(xim::Vector3(0.0f, sinf(Time::getElapsedTime()) * 5, 0.0f));
-	myEntity2->getTransform().setRotation(xim::Vector3(0.0f, Time::getElapsedTime() * 30.0f, 0.0f));
-
-	myEntity->getTransform().setRotation(xim::Vector3(1.0f, 0.0f, Time::getElapsedTime() * 100.0f));
 
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
