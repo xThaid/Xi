@@ -8,6 +8,14 @@
         static StringHash getTypeStatic() { return StringHash(#typeName); } \
         static const std::string getTypeNameStatic() { return #typeName; }
 
+
+enum ResourceStatus
+{
+	UNLOADED,
+	LOADING_FAILED,
+	READY_TO_USE
+};
+
 class Resource
 {
 	XI_RESOURCE(Resource)
@@ -17,25 +25,31 @@ public:
 	virtual ~Resource();
 
 	bool load();
+	void unload();
 
-	virtual bool beginLoad() = 0;
-	virtual bool endLoad() = 0;
-
-	virtual void release() = 0;
-
-	void setName(const std::string& name);
-	void setMemoryUse(unsigned int size);
-	
 	inline std::string& getName() { return name_; }
 	inline StringHash getNameHash() { return nameHash_; }
 	inline unsigned int getMemoryUse() { return memoryUse_; }
+	inline ResourceStatus getStatus() { return status_; }
 
 	StringHash getType() const;
-	virtual const std::string getTypeName() const = 0;
+
+protected:
+	void setName(const std::string& name);
+	void setMemoryUse(unsigned int size);
 
 private:
 	std::string name_;
 	StringHash nameHash_;
 
 	unsigned int memoryUse_;
+
+	ResourceStatus status_;
+	
+	virtual bool beginLoad() = 0;
+	virtual bool endLoad() = 0;
+
+	virtual void release() = 0;
+
+	virtual const std::string getTypeName() const = 0;
 };

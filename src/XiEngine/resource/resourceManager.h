@@ -30,6 +30,7 @@ public:
 	void releaseAll();
 
 	Resource* getResource(StringHash type, const std::string& name);
+	std::map<StringHash, Resource*>* getResources(StringHash type);
 
 	bool existsResource(StringHash type, const std::string& name);
 
@@ -37,6 +38,7 @@ public:
 	template <class T> void releaseGroup();
 	
 	template <class T> T* getResource(const std::string& name);
+	template <class T> std::map<StringHash, Resource*>* getResources();
 
 	template <class T> bool existsResource(const std::string& name);
 
@@ -68,6 +70,12 @@ template <class T> T* ResourceManager::getResource(const std::string& name)
 {
 	StringHash type = T::getTypeNameStatic();
 	return static_cast<T*>(getResource(type, name));
+}
+
+template <class T> std::map<StringHash, Resource*>* ResourceManager::getResources()
+{
+	StringHash type = T::getTypeNameStatic();
+	return getResources(type);
 }
 
 template<class T> bool ResourceManager::existsResource(const std::string& name)

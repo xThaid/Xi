@@ -196,7 +196,7 @@ namespace Primitives
 			{
 				(*positions)[verticesCounter] = xim::Vector3(dx * x * 2.0f - 1.0f, dy * y * 2.0f - 1.0f, 0.0f);
 				(*UV)[verticesCounter] = xim::Vector2(dx * x, 1.0f - y * dy);
-				(*normals)[verticesCounter] = xim::Vector3(0.0f, 0.0f, 1.0f);
+				(*normals)[verticesCounter] = xim::Vector3(0.0f, 1.0f, 0.0f);
 				
 				verticesCounter++;
 			}

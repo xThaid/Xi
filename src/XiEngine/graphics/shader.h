@@ -107,6 +107,7 @@ private:
 	ShaderVariation* fragmentShader_;
 
 	std::map<std::string, ShaderUniform> shaderUniforms_;
+	std::set<std::string> unknownUniformsCache_;
 
 	void loadUniforms();
 

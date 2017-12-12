@@ -4,7 +4,6 @@
 
 #include "../utils/logger.h"
 
-
 ShaderVariation::ShaderVariation(const std::string& path, unsigned int type) :
 	sourceFile_(File(path)),
 	shaderType_(type),
@@ -53,7 +52,7 @@ bool ShaderVariation::compileShader()
 	if (!success)
 	{
 		glGetShaderInfoLog(shaderVariationID_, 512, NULL, infoLog);
-		Logger::warn("Shader of type " + std::to_string(shaderType_) + " compilation failed: \n" + std::string(infoLog));
+		Logger::error("Shader of type " + std::to_string(shaderType_) + " compilation failed: \n" + std::string(infoLog));
 
 		destroyShader();
 
@@ -107,12 +106,18 @@ bool Shader::endLoad()
 	if (!vertexShaderResult || !fragmentShaderResult)
 		return false;
 
-	return linkShaders();
+	bool linkResult = linkShaders();
+
+	if (!linkResult)
+		return false;
+
+	return true;
 }
 
 void Shader::release()
 {
 	shaderUniforms_.clear();
+	unknownUniformsCache_.clear();
 
 	destroyShader();
 }
@@ -132,7 +137,7 @@ bool Shader::linkShaders()
 	if (!success)
 	{
 		glGetProgramInfoLog(shaderProgramID_, 512, NULL, infoLog);
-		Logger::warn("Shader program linking failed: \n" + std::string(infoLog));
+		Logger::error("Shader program linking failed: \n" + std::string(infoLog));
 
 		destroyShader();
 
@@ -254,10 +259,18 @@ void Shader::loadUniforms()
 
 int Shader::getUniformLocation(const std::string& name)
 {
+	if (getStatus() != READY_TO_USE)
+		return -1;
+
 	std::map<std::string, ShaderUniform>::iterator uniform = shaderUniforms_.find(name);
 	if (uniform == shaderUniforms_.end())
 	{
-		Logger::warn("Couldn't find uniform name " + name + " in shader " + std::to_string(shaderProgramID_));
+		std::set<std::string>::iterator cache = unknownUniformsCache_.find(name);
+		if (cache == unknownUniformsCache_.end())
+		{
+			unknownUniformsCache_.insert(name);
+			Logger::warn("Couldn't find uniform name \"" + name + "\" in shader: " + getName());
+		}
 		return -1;
 	}
 

@@ -59,13 +59,6 @@ public:
 	Mesh(const std::string& name, MeshGeometry* meshGeometry);
 	~Mesh();
 
-	virtual bool beginLoad() override;
-	virtual bool endLoad() override;
-
-	virtual void release() override;
-
-	virtual const std::string getTypeName() const override { return "Mesh"; }
-
 	inline MeshGeometry* getMeshGeometry() { return meshGeometry_; }
 	inline unsigned int getDrawMode() { return drawMode_; }
 	inline unsigned int getVAO() { return VAO_; }
@@ -78,6 +71,13 @@ private:
 	unsigned int EBO_;
 	
 	unsigned int drawMode_;
+
+	virtual bool beginLoad() override;
+	virtual bool endLoad() override;
+
+	virtual void release() override;
+
+	virtual const std::string getTypeName() const override { return "Mesh"; }
 
 	bool uploadToGPU(bool interleaved);
 	void parseTopology();

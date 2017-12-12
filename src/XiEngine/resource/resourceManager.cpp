@@ -85,6 +85,11 @@ Resource* ResourceManager::getResource(StringHash type, const std::string& name)
 	return resource;
 }
 
+std::map<StringHash, Resource*>* ResourceManager::getResources(StringHash type)
+{
+	return &resourceGroups_[type].resources_;
+}
+
 bool ResourceManager::existsResource(StringHash type, const std::string& name)
 {
 	return findResource(type, name) != nullptr;
@@ -139,6 +144,6 @@ void ResourceManager::deleteResource(Resource* resource)
 {
 	//Logger::trace("[Resource Manager] Deleting resource: " + resource->getName() + " of type " + resource->getTypeName());
 
-	resource->release();
+	resource->unload();
 	delete resource;
 }
