@@ -9,6 +9,12 @@
 
 class SceneNode;
 
+struct Drawable
+{
+	Mesh* mesh = nullptr;
+	Material* material = nullptr;
+};
+
 class Transform
 {
 public:
@@ -46,9 +52,6 @@ private:
 class SceneNode
 {
 public:
-	Mesh* mesh_;
-	Material* material_;
-
 	SceneNode(const std::string& name);
 	~SceneNode();
 	
@@ -59,6 +62,7 @@ public:
 
 	void setName(const std::string& name);
 
+
 	inline SceneNode* getParentNode() { return parentNode_; }
 
 	void addChildNode(SceneNode* node);
@@ -67,9 +71,16 @@ public:
 	void removeChildNode(StringHash nameHash, bool purge = true);
 
 	std::vector<SceneNode*> getChildren();
+	
+	void setMesh(Mesh* mesh);
+	void setMaterial(Material* material);
+	void setDrawable(Mesh* mesh, Material* material);
+	bool isDrawable();
 
 	inline Transform& getTransform() { return transform_; }
 	inline std::string getName() { return name_; }
+
+	inline Drawable& getDrawable() { return drawable_; }
 
 private:
 	std::string name_;
@@ -79,4 +90,6 @@ private:
 	std::map<StringHash, SceneNode*> childrenNode_;
 
 	Transform transform_;
+
+	Drawable drawable_;
 };

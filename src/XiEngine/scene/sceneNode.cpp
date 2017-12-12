@@ -122,12 +122,15 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	SceneNode* myClone = new SceneNode(newName);
 	
 	myClone->parentNode_ = parentNode_;
-	myClone->mesh_ = mesh_;
-	myClone->material_ = material_;
+	myClone->drawable_ = drawable_;
 	myClone->transform_ = transform_;
 
 	for (std::map<StringHash, SceneNode*>::const_iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
-		myClone->childrenNode_[it->first] = it->second->clone(true);
+	{
+		SceneNode* cloneChild = it->second->clone(true);
+		cloneChild->parentNode_ = myClone;
+		myClone->childrenNode_[it->first] = cloneChild;
+	}
 
 	return myClone;
 }
@@ -192,4 +195,25 @@ std::vector<SceneNode*> SceneNode::getChildren()
 		children.push_back(it->second);
 
 	return children;
+}
+
+void SceneNode::setMesh(Mesh* mesh)
+{
+	drawable_.mesh = mesh;
+}
+
+void SceneNode::setMaterial(Material* material)
+{
+	drawable_.material = material;
+}
+
+void SceneNode::setDrawable(Mesh* mesh, Material* material)
+{
+	drawable_.mesh = mesh;
+	drawable_.material = material;
+}
+
+bool SceneNode::isDrawable()
+{
+	return drawable_.mesh != nullptr;
 }

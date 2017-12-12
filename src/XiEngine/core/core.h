@@ -24,8 +24,6 @@ public:
 
 	inline bool isRunning() { return running; }
 
-	inline ResourceManager* getResourceManager() { return resourceManager; }
-
 	static void setCurrentScene(Scene* scene);
 
 	static Core* getCurrentCore();

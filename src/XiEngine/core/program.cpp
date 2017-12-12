@@ -14,41 +14,14 @@
 void Program::init()
 {
 	Scene* scene = new Scene();
-
-	Mesh* line = new Mesh("simpleLine", Primitives::line());
-	Core::getCurrentCore()->getResourceManager()->addResource(line);
-
-	axis = new SceneNode("coordAxis");
-	{
-		SceneNode* xAxis = new SceneNode("x");
-		SceneNode* yAxis = new SceneNode("y");
-		SceneNode* zAxis = new SceneNode("z");
-
-		xAxis->getTransform().setPosition(xim::Vector3(0.5f, 0.0f, 0.0f));
-
-		yAxis->getTransform().setRotation(xim::Vector3(0.0f, 0.0f, 90.0f));
-		yAxis->getTransform().setPosition(xim::Vector3(0.0f, 0.5f, 0.0f));
-
-		zAxis->getTransform().setRotation(xim::Vector3(0.0f, 90.0f, 0.0f));
-		zAxis->getTransform().setPosition(xim::Vector3(0.0f, 0.0f, 0.5f));
-		
-		xAxis->mesh_ = line;
-		yAxis->mesh_ = line;
-		zAxis->mesh_ = line;
-		
-		axis->addChildNode(xAxis);
-		axis->addChildNode(yAxis);
-		axis->addChildNode(zAxis);
-	}
-
-	scene->getRootNode()->addChildNode(axis);
-
+	
 	Mesh* mesh2 = new Mesh("plane", Primitives::plane(100, 100));
-	Core::getCurrentCore()->getResourceManager()->addResource(mesh2);
+	ResourceManager::getInstance()->addResource(mesh2);
 
 	myEntity = new SceneNode("costam");
-	myEntity->mesh_ = mesh2;
-	myEntity->material_ = Core::getCurrentCore()->getResourceManager()->getResource<Material>("default");
+	myEntity->setMesh(mesh2);
+	Material* myMaterial = MaterialLibrary::getInstance()->getDefaultMaterial();
+	myEntity->setMaterial(myMaterial);
 	scene->getRootNode()->addChildNode(myEntity);
 
 	Core::getCurrentCore()->setCurrentScene(scene);

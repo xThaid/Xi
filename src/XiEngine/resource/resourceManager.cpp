@@ -3,8 +3,17 @@
 #include "../core/core.h"
 #include "../utils/logger.h"
 
+ResourceManager* ResourceManager::instance_ = nullptr;
+
 ResourceManager::ResourceManager()
 {
+	if (instance_ != nullptr)
+	{
+		Logger::error("Created second resource manager!");
+		return;
+	}
+
+	instance_ = this;
 }
 
 ResourceManager::~ResourceManager()

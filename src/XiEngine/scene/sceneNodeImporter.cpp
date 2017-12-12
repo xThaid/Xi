@@ -50,21 +50,21 @@ SceneNode* SceneNodeImporter::processNode(const std::string& name, aiNode* assim
 		aiMesh* assimpMesh = assimpScene_->mMeshes[assimpNode->mMeshes[i]];
 
 		const std::string& meshName = name + "_mesh" + std::to_string(i);
-		Mesh* mesh = Core::getCurrentCore()->getResourceManager()->getResource<Mesh>(meshName);
+		Mesh* mesh = ResourceManager::getInstance()->getResource<Mesh>(meshName);
 		if (mesh == nullptr)
 		{
 			mesh = processMesh(meshName, assimpMesh);
-			Core::getCurrentCore()->getResourceManager()->addResource(mesh);
+			ResourceManager::getInstance()->addResource(mesh);
 		}
 	
 		if (assimpNode->mNumMeshes == 1)
 		{
-			node->mesh_ = mesh;
+			node->setMesh(mesh);
 		}
 		else
 		{
 			SceneNode* child = new SceneNode(name + "_m" + std::to_string(i));
-			child->mesh_ = mesh;
+			child->setMesh(mesh);
 			node->addChildNode(child);
 		}
 	}

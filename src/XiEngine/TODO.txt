@@ -3,3 +3,4 @@
 3.unordered_map instead of map?
 4.release mesh- done
 5.use hash of name in uniform map- not necessary i think
+6.opengl state class for saving time in repeating commands

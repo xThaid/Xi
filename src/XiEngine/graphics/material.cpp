@@ -1,8 +1,12 @@
 #include "material.h"
 
-Material::Material(const std::string& name, Shader* shader) :
-	Resource(name),
-	shader_(shader)
+#include "../resource/resourceManager.h"
+#include "../utils/logger.h"
+
+Material::Material(MaterialLibrary* matLibrary, Shader* shader) :
+	matLibrary_(matLibrary),
+	shader_(shader),
+	wireframe_(false)
 {
 }
 
@@ -10,23 +14,26 @@ Material::~Material()
 {
 }
 
-bool Material::beginLoad()
+Material* Material::clone(const std::string& newName) const
 {
-	return true;
-}
+	Material* myClone = new Material(matLibrary_, shader_);
+	myClone->wireframe_ = wireframe_;
 
-bool Material::endLoad()
-{
-	return true;
-}
+	myClone->shaderUniformValues_ = shaderUniformValues_;
 
-void Material::release()
-{
+	matLibrary_->registerMaterial(newName, myClone);
+
+	return myClone;
 }
 
 void Material::setShader(Shader* shader)
 {
 	shader_ = shader;
+}
+
+void Material::setWireframe(bool wireframe)
+{
+	wireframe_ = wireframe;
 }
 
 void Material::setBool(const std::string& name, bool value)
@@ -103,4 +110,76 @@ void Material::sendUniformsValuesToShader()
 			break;
 		}
 	}
+}
+
+MaterialLibrary* MaterialLibrary::instance_ = nullptr;
+
+MaterialLibrary::MaterialLibrary()
+{
+	if (instance_ != nullptr)
+	{
+		Logger::error("Created second material library!");
+		return;
+	}
+
+	instance_ = this;
+
+	setupDefaultMaterials();
+}
+
+MaterialLibrary::~MaterialLibrary()
+{
+	for (auto& material : materials_)
+	{
+		delete material.second;
+	}
+
+	delete debugMaterial_;
+	delete defaultMaterial_;
+}
+
+Material* MaterialLibrary::getMaterial(const std::string& name)
+{
+	auto result = materials_.find(name);
+	if (result == materials_.end())
+	{
+		return debugMaterial_;
+	}
+
+	return result->second;
+}
+
+void MaterialLibrary::registerMaterial(const std::string& name, Material* material)
+{
+	auto result = materials_.find(name);
+	if (result != materials_.end())
+	{
+		Logger::warn("There already exists material with name " + name);
+		return;
+	}
+
+	materials_[name] = material;
+}
+
+void MaterialLibrary::setupDefaultMaterials()
+{
+	debugMaterial_ = new Material(this, ResourceManager::getInstance()->getResource<Shader>("debug shader"));
+	debugMaterial_->setVector3("color", xim::Vector3(1.0f, 0.0f, 1.0f));
+
+	defaultMaterial_ = new Material(this, ResourceManager::getInstance()->getResource<Shader>("tempShader"));
+
+	defaultMaterial_->setVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
+	defaultMaterial_->setVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
+	defaultMaterial_->setVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
+	defaultMaterial_->setVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
+
+	defaultMaterial_->setInt("material.diffuse", 0);
+	defaultMaterial_->setFloat("material.shininess", 32.0f);
+
+	Material* redDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("redDebug");
+	redDebug->setVector3("color", xim::Vector3(1.0f, 0.0f, 0.0f));
+	Material* greenDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("greenDebug");
+	greenDebug->setVector3("color", xim::Vector3(0.0f, 1.0f, 0.0f));
+	Material* blueDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("blueDebug");
+	blueDebug->setVector3("color", xim::Vector3(0.0f, 0.0f, 1.0f));
 }

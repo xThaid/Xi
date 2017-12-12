@@ -5,22 +5,20 @@
 #include "../graphics/shader.h"
 #include "../resource/resource.h"
 
-class Material : public Resource
-{
-	XI_RESOURCE(Material)
+class MaterialLibrary;
 
+class Material
+{
 public:
-	Material(const std::string& name, Shader* shader);
 	~Material();
 
-	virtual bool beginLoad() override;
-	virtual bool endLoad() override;
+	Material(const Material&) = delete;
+	void operator=(const Material&) = delete;
 
-	virtual void release() override;
-
-	virtual const std::string getTypeName() const override { return "Material"; }
+	Material* clone(const std::string& newName) const;
 
 	void setShader(Shader* shader);
+	void setWireframe(bool wireframe);
 
 	void setBool(const std::string& name, bool value);
 	void setInt(const std::string& name, int value);
@@ -33,9 +31,46 @@ public:
 	void sendUniformsValuesToShader();
 
 	inline Shader* getShader() { return shader_; }
+	inline bool isWireframe() { return wireframe_; }
 
 private:
+	MaterialLibrary* matLibrary_;
+
 	Shader* shader_;
 
 	std::map<std::string, ShaderUniformValue> shaderUniformValues_;
+
+	bool wireframe_;
+
+	Material(MaterialLibrary* matLibrary, Shader* shader);
+
+	friend class MaterialLibrary;
+};
+
+class MaterialLibrary
+{
+public:
+	inline static MaterialLibrary* getInstance() { return instance_; }
+
+	MaterialLibrary();
+	~MaterialLibrary();
+	
+	Material* getMaterial(const std::string& name);
+
+	inline Material* getDebugMaterial() { return debugMaterial_; }
+	inline Material* getDefaultMaterial() { return defaultMaterial_; }
+
+private:
+	static MaterialLibrary* instance_;
+
+	std::map<std::string, Material*> materials_;
+
+	Material* debugMaterial_;
+	Material* defaultMaterial_;
+
+	void registerMaterial(const std::string& name, Material* material);
+
+	void setupDefaultMaterials();
+
+	friend class Material;
 };

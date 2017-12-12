@@ -355,7 +355,7 @@ namespace Primitives
 			xim::Vector3 p(x, y, 0.0f);
 			a1 += d1;
 		
-			xim::Vector3 u = (-p).normalized() * r2; // Could be p[i] also        
+			xim::Vector3 u = (-p).normalized() * r2;     
 			xim::Vector3 v = xim::Vector3(0.0f, 0.0f, 1.0f) * r2;
 
 			float a2 = 0.0f;

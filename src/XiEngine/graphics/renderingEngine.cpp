@@ -7,6 +7,7 @@
 #include "../graphics/mesh.h"
 #include "../graphics/shader.h"
 #include "../graphics/texture.h"
+#include "../resource/primitives.h"
 #include "../resource/resourceManager.h"
 #include "../scene/sceneNode.h"
 #include "../scene/scene.h"
@@ -32,7 +33,9 @@ RenderingEngine::RenderingEngine(Window * window)
 
 	commandBuffer_ = new CommandBuffer();
 
-	setUp();
+	setup();
+
+	materialLibrary_ = new MaterialLibrary();
 }
 
 
@@ -45,7 +48,6 @@ RenderingEngine::~RenderingEngine()
 void RenderingEngine::init()
 {
 	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void RenderingEngine::changeRenderSize(int width, int height)
@@ -62,36 +64,43 @@ void RenderingEngine::render(Scene* scene)
 	
 	renderSceneNode(scene->getRootNode());
 
-	renderPushedCommands(scene->getMainCamera());
+	renderCoordAxes(xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.0f, 0.0f)));
 
+	renderPushedCommands(scene->getMainCamera());
 	commandBuffer_->clear();
 }
 
-void RenderingEngine::setUp()
+void RenderingEngine::renderCoordAxes(xim::Matrix4 transform)
 {
-	Shader* defaultShader = new Shader("tempShader", "D:/Dev/Repos/Xi/res/shaders/temporary.vert", "D:/Dev/Repos/Xi/res/shaders/temporary.frag");
-	Core::getCurrentCore()->getResourceManager()->addResource(defaultShader);
-	Shader* axesShader = new Shader("axesShader", "D:/Dev/Repos/Xi/res/shaders/coordAxes.vert", "D:/Dev/Repos/Xi/res/shaders/coordAxes.frag");
-	Core::getCurrentCore()->getResourceManager()->addResource(axesShader);
+	Mesh* line = ResourceManager::getInstance()->getResource<Mesh>("line");
 
-	Material* defaultMaterial = new Material("default", defaultShader);
+	xim::Matrix4 xTransform = xim::Matrix4();
+	xTransform.translate(xim::Vector3(0.5f, 0.0f, 0.0f));
+	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("redDebug"), transform * xTransform);
 
-	defaultMaterial->setVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
-	defaultMaterial->setVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
-	defaultMaterial->setVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
-	defaultMaterial->setVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
+	xim::Matrix4 yTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.5f, 0.0f));
+	yTransform.rotateZ(xim::radians(90.0f));
+	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("greenDebug"), transform * yTransform);
 
-	defaultMaterial->setInt("material.diffuse", 0);
-	defaultMaterial->setFloat("material.shininess", 32.0f);
-	Core::getCurrentCore()->getResourceManager()->addResource(defaultMaterial);
+	xim::Matrix4 zTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.0f, 0.5f));
+	zTransform.rotateY(xim::radians(90.0f));
+	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("blueDebug"), transform * zTransform);
+}
 
-	tempTexture = new Texture2D("tempTexture", "D:/Dev/Repos/Xi/res/textures/uv-mapping.png");
-	Core::getCurrentCore()->getResourceManager()->addResource(tempTexture);
+void RenderingEngine::setup()
+{
+	ResourceManager::getInstance()->addResource(
+		new Shader("tempShader", "D:/Dev/Repos/Xi/res/shaders/temporary.vert", "D:/Dev/Repos/Xi/res/shaders/temporary.frag"));
+	ResourceManager::getInstance()->addResource(
+		new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag"));
+
+	ResourceManager::getInstance()->addResource(new Mesh("line", Primitives::line()));
 }
 
 void RenderingEngine::cleanUp()
 {
-
+	delete commandBuffer_;
+	delete materialLibrary_;
 }
 
 void RenderingEngine::destroy()
@@ -113,9 +122,13 @@ void RenderingEngine::renderSceneNode(SceneNode* node)
 {
 	node->getTransform().updateTransform();
 
-	if (node->mesh_ != nullptr && node->material_ != nullptr)
+	if (node->isDrawable())
 	{
-		commandBuffer_->push(node->mesh_, node->material_, node->getTransform().getTransform());
+		Material* material = node->getDrawable().material;
+		if (material == nullptr)
+			material = MaterialLibrary::getInstance()->getDebugMaterial();
+
+		commandBuffer_->push(node->getDrawable().mesh, material, node->getTransform().getTransform());
 	}
 
 	for (SceneNode* child : node->getChildren())
@@ -124,7 +137,7 @@ void RenderingEngine::renderSceneNode(SceneNode* node)
 
 void RenderingEngine::sendGlobalUniformsToAll(Camera* camera)
 {
-	std::map<StringHash, Resource*>* shaders = Core::getCurrentCore()->getResourceManager()->getResources<Shader>();
+	std::map<StringHash, Resource*>* shaders = ResourceManager::getInstance()->getResources<Shader>();
 	for (auto shader : *shaders)
 	{
 		Shader* castedShader = static_cast<Shader*>(shader.second);
@@ -149,6 +162,11 @@ void RenderingEngine::renderCommand(RenderCommand* command)
 	material->getShader()->setMatrix4("model", command->transform);
 
 	material->sendUniformsValuesToShader();
+
+	if(material->isWireframe())
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	else
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	renderMesh(mesh);
 }

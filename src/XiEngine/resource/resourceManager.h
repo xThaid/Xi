@@ -20,6 +20,8 @@ struct ResourceGroup
 class ResourceManager
 {
 public:
+	inline static ResourceManager* getInstance() { return instance_; }
+
 	ResourceManager();
 	~ResourceManager();
 
@@ -43,6 +45,8 @@ public:
 	template <class T> bool existsResource(const std::string& name);
 
 private:
+	static ResourceManager* instance_;
+
 	std::map<StringHash, ResourceGroup> resourceGroups_;
 
 	Resource* findResource(StringHash type, StringHash nameHash);
