@@ -7,7 +7,6 @@
 #include "core\program.h"
 
 #include "utils\logger.h"
-#include "utils/stringHash.h"
 
 int main(int argc, char* argv[])
 {
@@ -20,6 +19,5 @@ int main(int argc, char* argv[])
 	Core core(&win);
 	core.start();
 
-	system("pause");
 	return 0;
 }

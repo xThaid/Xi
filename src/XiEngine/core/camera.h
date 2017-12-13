@@ -16,14 +16,14 @@ class Camera
 {
 public:
 	Camera();
-	Camera(xim::Vector3 position, float yaw, float pitch);
+	Camera(Vector3 position, float yaw, float pitch);
 
-	xim::Matrix4 getViewMatrix();
+	Matrix4 getViewMatrix();
 
 	void processKeyboard(CameraMovement direction, float deltaTime);
 	void processMouse(float xDelta, float yDelta);
 
-	void setPosition(xim::Vector3 position);
+	void setPosition(Vector3 position);
 	void setAngles(float yaw, float pitch);
 	void setYaw(float yaw);
 	void setPitch(float pitch);
@@ -31,7 +31,7 @@ public:
 	void setCameraSpeed(float speed);
 	void setMouseSensitivity(float sensitivity);
 
-	inline xim::Vector3 getPosition() { return position; }
+	inline Vector3 getPosition() { return position; }
 
 private:
 	float yaw;
@@ -40,11 +40,11 @@ private:
 	float cameraSpeed;
 	float mouseSensitivity;
 
-	xim::Vector3 position;
+	Vector3 position;
 
-	xim::Vector3 front;
-	xim::Vector3 right;
-	xim::Vector3 up;
+	Vector3 front;
+	Vector3 right;
+	Vector3 up;
 
 	void updateVectors();
 };

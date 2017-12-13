@@ -8,7 +8,7 @@ CommandBuffer::~CommandBuffer()
 {
 }
 
-void CommandBuffer::push(Mesh* mesh, Material* material, xim::Matrix4 transform)
+void CommandBuffer::push(Mesh* mesh, Material* material, Matrix4 transform)
 {
 	RenderCommand command;
 	command.mesh = mesh;

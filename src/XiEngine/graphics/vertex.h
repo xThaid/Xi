@@ -5,10 +5,10 @@
 class Vertex
 {
 public:
-	xim::Vector3 position;
-	xim::Vector3 normal;
-	xim::Vector2 texCoords;
+	Vector3 position;
+	Vector3 normal;
+	Vector2 texCoords;
 
 	Vertex();
-	Vertex(xim::Vector3 position, xim::Vector3 normal, xim::Vector2 texCoords = xim::Vector2());
+	Vertex(Vector3 position, Vector3 normal, Vector2 texCoords = Vector2());
 };

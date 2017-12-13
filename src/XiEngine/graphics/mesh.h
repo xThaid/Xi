@@ -20,9 +20,9 @@ class MeshGeometry
 public:
 	MeshGeometry(MeshTopology topology,
 		std::vector<unsigned int>* indices,
-		std::vector<xim::Vector3>* positions,
-		std::vector<xim::Vector2>* UV,
-		std::vector<xim::Vector3>* normals);
+		std::vector<Vector3>* positions,
+		std::vector<Vector2>* UV,
+		std::vector<Vector3>* normals);
 	~MeshGeometry();
 
 	bool hasIndices();
@@ -46,9 +46,9 @@ private:
 
 	std::vector<unsigned int>* indices_;
 
-	std::vector<xim::Vector3>* positions_;
-	std::vector<xim::Vector2>* UV_;
-	std::vector<xim::Vector3>* normals_;
+	std::vector<Vector3>* positions_;
+	std::vector<Vector2>* UV_;
+	std::vector<Vector3>* normals_;
 };
 
 class Mesh : public Resource

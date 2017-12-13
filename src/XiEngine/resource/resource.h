@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utils/stringHash.h"
+#include "../math/ximath.h"
 
 #define XI_RESOURCE(typeName) \
     public: \

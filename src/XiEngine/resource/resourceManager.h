@@ -2,8 +2,8 @@
 
 #include "../precompiled.h"
 
+#include "../math/ximath.h"
 #include "../resource/resource.h"
-#include "../utils/stringHash.h"
 
 struct ResourceGroup
 {

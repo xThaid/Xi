@@ -2,12 +2,12 @@
 
 #include "../utils/logger.h"
 
-Camera::Camera()
-	: Camera(xim::Vector3(), -90.0f, 0.0f)
+Camera::Camera() : 
+	Camera(Vector3(), -90.0f, 0.0f)
 {
 }
 
-Camera::Camera(xim::Vector3 position, float yaw, float pitch)
+Camera::Camera(Vector3 position, float yaw, float pitch)
 {
 	this->position = position;
 	this->yaw = yaw;
@@ -16,14 +16,14 @@ Camera::Camera(xim::Vector3 position, float yaw, float pitch)
 	cameraSpeed = SPEED;
 	mouseSensitivity = SENSITIVITY;
 
-	up = xim::Vector3(0.0f, 1.0f, 0.0f);
+	up = Vector3(0.0f, 1.0f, 0.0f);
 
 	updateVectors();
 }
 
-xim::Matrix4 Camera::getViewMatrix()
+Matrix4 Camera::getViewMatrix()
 {
-	return xim::lookAt(position, position + front, up);
+	return Matrix4::lookAt(position, position + front, up);
 }
 
 void Camera::processKeyboard(CameraMovement direction, float deltaTime)
@@ -55,7 +55,7 @@ void Camera::processMouse(float xDelta, float yDelta)
 	updateVectors();
 }
 
-void Camera::setPosition(xim::Vector3 position)
+void Camera::setPosition(Vector3 position)
 {
 	this->position = position;
 }
@@ -91,10 +91,10 @@ void Camera::setMouseSensitivity(float sensitivity)
 
 void Camera::updateVectors()
 {
-	front.data[0] = cosf(xim::radians(yaw)) * cosf(xim::radians(pitch));
-	front.data[1] = sinf(xim::radians(pitch));
-	front.data[2] = sinf(xim::radians(yaw)) * cosf(xim::radians(pitch));
+	front.data[0] = cosf(degToRad(yaw)) * cosf(degToRad(pitch));
+	front.data[1] = sinf(degToRad(pitch));
+	front.data[2] = sinf(degToRad(yaw)) * cosf(degToRad(pitch));
 	front.normalize();
 
-	right = xim::cross(front, up).normalized();
+	right = front.crossProduct(up).normalized();
 }

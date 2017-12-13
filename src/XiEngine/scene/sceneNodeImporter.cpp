@@ -80,13 +80,13 @@ SceneNode* SceneNodeImporter::processNode(const std::string& name, aiNode* assim
 
 Mesh* SceneNodeImporter::processMesh(const std::string& name, aiMesh* assimpMesh)
 {
-	std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(assimpMesh->mNumVertices);
-	std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(assimpMesh->mNumVertices);
+	std::vector<Vector3>* positions = new std::vector<Vector3>(assimpMesh->mNumVertices);
+	std::vector<Vector3>* normals = new std::vector<Vector3>(assimpMesh->mNumVertices);
 	
-	std::vector<xim::Vector2>* UV = nullptr;
+	std::vector<Vector2>* UV = nullptr;
 	if (assimpMesh->mNumUVComponents[0] > 0)
 	{
-		UV = new std::vector<xim::Vector2>(assimpMesh->mNumVertices);
+		UV = new std::vector<Vector2>(assimpMesh->mNumVertices);
 	}
 
 	std::vector<unsigned int>* indices = new std::vector<unsigned int>(assimpMesh->mNumFaces * 3);
@@ -94,12 +94,12 @@ Mesh* SceneNodeImporter::processMesh(const std::string& name, aiMesh* assimpMesh
 	numVertices_ += assimpMesh->mNumVertices;
 	for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
 	{
-		(*positions)[i] = xim::Vector3(assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z);
-		(*normals)[i] = xim::Vector3(assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z);
+		(*positions)[i] = Vector3(assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z);
+		(*normals)[i] = Vector3(assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z);
 
 		if (assimpMesh->mTextureCoords[0])
 		{
-			(*UV)[i] = xim::Vector2(assimpMesh->mTextureCoords[0][i].x, assimpMesh->mTextureCoords[0][i].y);
+			(*UV)[i] = Vector2(assimpMesh->mTextureCoords[0][i].x, assimpMesh->mTextureCoords[0][i].y);
 		}
 	}
 

@@ -6,9 +6,9 @@
 
 MeshGeometry::MeshGeometry(MeshTopology topology,
 	std::vector<unsigned int>* indices,
-	std::vector<xim::Vector3>* positions,
-	std::vector<xim::Vector2>* UV,
-	std::vector<xim::Vector3>* normals) :
+	std::vector<Vector3>* positions,
+	std::vector<Vector2>* UV,
+	std::vector<Vector3>* normals) :
 	topology_(topology),
 	indices_(indices),
 	positions_(positions),
@@ -134,9 +134,9 @@ bool MeshGeometry::isCorrect()
 
 unsigned int MeshGeometry::getMemoryUse()
 {
-	unsigned int memoryUse = sizeof(xim::Vector3) * getNumVertices();
-	if (hasUV()) memoryUse += sizeof(xim::Vector2) * getNumVertices();
-	if (hasNormals()) memoryUse += sizeof(xim::Vector3) * getNumVertices();
+	unsigned int memoryUse = sizeof(Vector3) * getNumVertices();
+	if (hasUV()) memoryUse += sizeof(Vector2) * getNumVertices();
+	if (hasNormals()) memoryUse += sizeof(Vector3) * getNumVertices();
 	if (hasIndices()) memoryUse += sizeof(unsigned int) * getNumIndices();
 
 	return memoryUse;

@@ -64,24 +64,24 @@ void RenderingEngine::render(Scene* scene)
 	
 	renderSceneNode(scene->getRootNode());
 
-	renderCoordAxes(xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.0f, 0.0f)));
+	renderCoordAxes(Matrix4::translationMatrix(Vector3(0.0f, 0.0f, 0.0f)));
 
 	renderPushedCommands(scene->getMainCamera());
 	commandBuffer_->clear();
 }
 
-void RenderingEngine::renderCoordAxes(xim::Matrix4 transform)
+void RenderingEngine::renderCoordAxes(Matrix4 transform)
 {
-	xim::Matrix4 xTransform = xim::Matrix4();
-	xTransform.translate(xim::Vector3(0.5f, 0.0f, 0.0f));
+	Matrix4 xTransform = Matrix4();
+	xTransform.translate(Vector3(0.5f, 0.0f, 0.0f));
 	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("redDebug"), transform * xTransform);
 
-	xim::Matrix4 yTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.5f, 0.0f));
-	yTransform.rotateZ(xim::radians(90.0f));
+	Matrix4 yTransform = Matrix4::translationMatrix(Vector3(0.0f, 0.5f, 0.0f));
+	yTransform.rotateZ(degToRad(90.0f));
 	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("greenDebug"), transform * yTransform);
 
-	xim::Matrix4 zTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.0f, 0.5f));
-	zTransform.rotateY(xim::radians(90.0f));
+	Matrix4 zTransform = Matrix4::translationMatrix(Vector3(0.0f, 0.0f, 0.5f));
+	zTransform.rotateY(degToRad(90.0f));
 	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("blueDebug"), transform * zTransform);
 }
 
@@ -180,7 +180,7 @@ void RenderingEngine::renderMesh(Mesh* mesh)
 		glDrawArrays(mesh->getDrawMode(), 0, mesh->getMeshGeometry()->getNumVertices());
 }
 
-xim::Matrix4 RenderingEngine::getProjectionMatrix()
+Matrix4 RenderingEngine::getProjectionMatrix()
 {
-	return xim::perspective(xim::radians(45.0f), (float)renderWidth / renderHeight, 0.1f, 100.0f);
+	return Matrix4::perspective(degToRad(45.0f), (float)renderWidth / renderHeight, 0.1f, 100.0f);
 }

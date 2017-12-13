@@ -59,25 +59,25 @@ void Material::setFloat(const std::string& name, float value)
 	shaderUniformValues_[name].float_ = value;
 }
 
-void Material::setVector2(const std::string& name, xim::Vector2& value)
+void Material::setVector2(const std::string& name, Vector2& value)
 {
 	shaderUniformValues_[name].type = UniformType::UNIFORM_TYPE_VEC2;
 	shaderUniformValues_[name].vec2_ = value;
 }
 
-void Material::setVector3(const std::string& name, xim::Vector3& value)
+void Material::setVector3(const std::string& name, Vector3& value)
 {
 	shaderUniformValues_[name].type = UniformType::UNIFORM_TYPE_VEC3;
 	shaderUniformValues_[name].vec3_ = value;
 }
 
-void Material::setVector4(const std::string& name, xim::Vector4& value)
+void Material::setVector4(const std::string& name, Vector4& value)
 {
 	shaderUniformValues_[name].type = UniformType::UNIFORM_TYPE_VEC4;
 	shaderUniformValues_[name].vec4_ = value;
 }
 
-void Material::setMatrix4(const std::string& name, xim::Matrix4& value)
+void Material::setMatrix4(const std::string& name, Matrix4& value)
 {
 	shaderUniformValues_[name].type = UniformType::UNIFORM_TYPE_MAT4;
 	shaderUniformValues_[name].mat4_ = value;
@@ -169,22 +169,22 @@ void MaterialLibrary::registerMaterial(const std::string& name, Material* materi
 void MaterialLibrary::setupDefaultMaterials()
 {
 	debugMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("debug shader"));
-	debugMaterial_->setVector3("color", xim::Vector3(1.0f, 0.0f, 1.0f));
+	debugMaterial_->setVector3("color", Vector3(1.0f, 0.0f, 1.0f));
 
 	defaultMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("tempShader"));
 
-	defaultMaterial_->setVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
-	defaultMaterial_->setVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
-	defaultMaterial_->setVector3("light.specular", xim::Vector3(1.0f, 1.0f, 1.0f));
-	defaultMaterial_->setVector3("light.position", xim::Vector3(3.0f, 3.0f, 0.0f));
+	defaultMaterial_->setVector3("light.ambient", Vector3(0.1f, 0.1f, 0.1f));
+	defaultMaterial_->setVector3("light.diffuse", Vector3(0.5f, 0.5f, 0.5f));
+	defaultMaterial_->setVector3("light.specular", Vector3(1.0f, 1.0f, 1.0f));
+	defaultMaterial_->setVector3("light.position", Vector3(3.0f, 3.0f, 0.0f));
 
 	defaultMaterial_->setInt("material.diffuse", 0);
 	defaultMaterial_->setFloat("material.shininess", 32.0f);
 
 	Material* redDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("redDebug");
-	redDebug->setVector3("color", xim::Vector3(1.0f, 0.0f, 0.0f));
+	redDebug->setVector3("color", Vector3(1.0f, 0.0f, 0.0f));
 	Material* greenDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("greenDebug");
-	greenDebug->setVector3("color", xim::Vector3(0.0f, 1.0f, 0.0f));
+	greenDebug->setVector3("color", Vector3(0.0f, 1.0f, 0.0f));
 	Material* blueDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("blueDebug");
-	blueDebug->setVector3("color", xim::Vector3(0.0f, 0.0f, 1.0f));
+	blueDebug->setVector3("color", Vector3(0.0f, 0.0f, 1.0f));
 }

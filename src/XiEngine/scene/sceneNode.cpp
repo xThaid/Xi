@@ -5,10 +5,10 @@
 Transform::Transform(SceneNode* owner) :
 	owner_(owner),
 	dirty_(false),
-	position_(xim::Vector3(0.0f)),
-	rotation_(xim::Vector3(0.0f)),
-	scale_(xim::Vector3(1.0f)),
-	transform_(xim::Matrix4())
+	position_(Vector3(0.0f)),
+	rotation_(Vector3(0.0f)),
+	scale_(Vector3(1.0f)),
+	transform_(Matrix4())
 {
 }
 
@@ -20,25 +20,25 @@ void Transform::operator=(const Transform& copyFrom)
 	dirty_ = true;
 }
 
-void Transform::translate(xim::Vector3 vec)
+void Transform::translate(Vector3 vec)
 {
 	position_ += vec;
 	dirty_ = true;
 }
 
-void Transform::rotate(xim::Vector3 angle)
+void Transform::rotate(Vector3 angle)
 {
 	rotation_ += angle;
 	dirty_ = true;
 }
 
-void Transform::setPosition(xim::Vector3 position)
+void Transform::setPosition(Vector3 position)
 {
 	position_ = position;
 	dirty_ = true;
 }
 
-void Transform::setRotation(xim::Vector3 rotation)
+void Transform::setRotation(Vector3 rotation)
 {
 	rotation_ = rotation;
 	dirty_ = true;
@@ -46,17 +46,17 @@ void Transform::setRotation(xim::Vector3 rotation)
 
 void Transform::setScale(float scale)
 {
-	scale_ = xim::Vector3(scale);
+	scale_ = Vector3(scale);
 	dirty_ = true;
 }
 
-void Transform::setScale(xim::Vector3 scale)
+void Transform::setScale(Vector3 scale)
 {
 	scale_ = scale;
 	dirty_ = true;
 }
 
-xim::Matrix4 Transform::getTransform()
+Matrix4 Transform::getTransform()
 {
 	if (dirty_)
 	{
@@ -70,12 +70,12 @@ void Transform::updateTransform()
 {
 	if (dirty_)
 	{
-		transform_ = xim::Matrix4();
+		transform_ = Matrix4();
 		transform_.translate(position_);
 
-		transform_.rotateX(xim::radians(rotation_.x()));
-		transform_.rotateY(xim::radians(rotation_.y()));
-		transform_.rotateZ(xim::radians(rotation_.z()));
+		transform_.rotateX(radToDeg(rotation_.x()));
+		transform_.rotateY(radToDeg(rotation_.y()));
+		transform_.rotateZ(radToDeg(rotation_.z()));
 
 		transform_.scale(scale_);
 	

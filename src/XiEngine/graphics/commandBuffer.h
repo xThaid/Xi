@@ -8,7 +8,7 @@ struct RenderCommand
 {
 	Mesh* mesh;
 	Material* material;
-	xim::Matrix4 transform;
+	Matrix4 transform;
 };
 
 class CommandBuffer
@@ -17,7 +17,7 @@ public:
 	CommandBuffer();
 	~CommandBuffer();
 
-	void push(Mesh* mesh, Material* material, xim::Matrix4 transform = xim::Matrix4());
+	void push(Mesh* mesh, Material* material, Matrix4 transform = Matrix4());
 
 	void clear();
 

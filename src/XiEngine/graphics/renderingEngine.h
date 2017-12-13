@@ -40,7 +40,7 @@ private:
 	void renderPushedCommands(Camera* camera);
 
 	void renderSceneNode(SceneNode* node);
-	void renderCoordAxes(xim::Matrix4 transform);
+	void renderCoordAxes(Matrix4 transform);
 
 	void sendGlobalUniformsToAll(Camera* camera);
 	void sendGlobalUniforms(Shader* shader, Camera* camera);
@@ -48,5 +48,5 @@ private:
 	void renderCommand(RenderCommand* command);
 	void renderMesh(Mesh* mesh);
 
-	xim::Matrix4 getProjectionMatrix();
+	Matrix4 getProjectionMatrix();
 };

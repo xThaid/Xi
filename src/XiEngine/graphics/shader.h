@@ -37,10 +37,10 @@ struct ShaderUniformValue
 		int int_;
 		float float_;
 
-		xim::Vector2 vec2_;
-		xim::Vector3 vec3_;
-		xim::Vector4 vec4_;
-		xim::Matrix4 mat4_;
+		Vector2 vec2_;
+		Vector3 vec3_;
+		Vector4 vec4_;
+		Matrix4 mat4_;
 	};
 
 	ShaderUniformValue() {}
@@ -95,10 +95,10 @@ public:
 	void setBool(const std::string& name, bool value);
 	void setInt(const std::string& name, int value);
 	void setFloat(const std::string& name, float value);
-	void setVector2(const std::string& name, xim::Vector2& value);
-	void setVector3(const std::string& name, xim::Vector3& value);
-	void setVector4(const std::string& name, xim::Vector4& value);
-	void setMatrix4(const std::string& name, xim::Matrix4& value);
+	void setVector2(const std::string& name, Vector2& value);
+	void setVector3(const std::string& name, Vector3& value);
+	void setVector4(const std::string& name, Vector4& value);
+	void setMatrix4(const std::string& name, Matrix4& value);
 
 private:
 	unsigned int shaderProgramID_;

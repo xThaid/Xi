@@ -4,10 +4,10 @@ namespace Primitives
 {
 	MeshGeometry* line()
 	{
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
+		std::vector<Vector3>* positions = new std::vector<Vector3>
 		{
-			xim::Vector3(-0.5f, 0.0f, 0.0f),
-			xim::Vector3(0.5f, 0.0f, 0.0f)
+			Vector3(-0.5f, 0.0f, 0.0f),
+			Vector3(0.5f, 0.0f, 0.0f)
 		};
 
 		return new MeshGeometry(MeshTopology::LINES, nullptr, positions, nullptr, nullptr);
@@ -20,20 +20,20 @@ namespace Primitives
 
 	MeshGeometry* quad(float width, float height)
 	{
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
+		std::vector<Vector3>* positions = new std::vector<Vector3>
 		{
-			xim::Vector3(-width,  height, 0.0f),
-			xim::Vector3(-width, -height, 0.0f),
-			xim::Vector3( width,  height, 0.0f),
-			xim::Vector3( width, -height, 0.0f)
+			Vector3(-width,  height, 0.0f),
+			Vector3(-width, -height, 0.0f),
+			Vector3( width,  height, 0.0f),
+			Vector3( width, -height, 0.0f)
 		};
 
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>
+		std::vector<Vector2>* UV = new std::vector<Vector2>
 		{
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f)
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f)
 		};
 
 		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, nullptr, positions, UV, nullptr);
@@ -41,139 +41,139 @@ namespace Primitives
 
 	MeshGeometry* cube()
 	{
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>
+		std::vector<Vector3>* positions = new std::vector<Vector3>
 		{
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f, -0.5f),
-			xim::Vector3(0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f, -0.5f),
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
-			xim::Vector3(-0.5f,  0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(0.5f,  0.5f, -0.5f),
+			Vector3(0.5f, -0.5f, -0.5f),
+			Vector3(0.5f,  0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(-0.5f,  0.5f, -0.5f),
 
-			xim::Vector3(-0.5f, -0.5f,  0.5f),
-			xim::Vector3(0.5f, -0.5f,  0.5f),
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(-0.5f,  0.5f,  0.5f),
-			xim::Vector3(-0.5f, -0.5f,  0.5f),
+			Vector3(-0.5f, -0.5f,  0.5f),
+			Vector3(0.5f, -0.5f,  0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f, -0.5f,  0.5f),
 
-			xim::Vector3(-0.5f,  0.5f,  0.5f),
-			xim::Vector3(-0.5f,  0.5f, -0.5f),
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
-			xim::Vector3(-0.5f, -0.5f,  0.5f),
-			xim::Vector3(-0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f,  0.5f),
 
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f, -0.5f),
-			xim::Vector3(0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(0.5f, -0.5f,  0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(0.5f, -0.5f, -0.5f),
+			Vector3(0.5f,  0.5f, -0.5f),
+			Vector3(0.5f, -0.5f, -0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(0.5f, -0.5f,  0.5f),
 
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f, -0.5f, -0.5f),
-			xim::Vector3(0.5f, -0.5f,  0.5f),
-			xim::Vector3(0.5f, -0.5f,  0.5f),
-			xim::Vector3(-0.5f, -0.5f,  0.5f),
-			xim::Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
+			Vector3(0.5f, -0.5f, -0.5f),
+			Vector3(0.5f, -0.5f,  0.5f),
+			Vector3(0.5f, -0.5f,  0.5f),
+			Vector3(-0.5f, -0.5f,  0.5f),
+			Vector3(-0.5f, -0.5f, -0.5f),
 
-			xim::Vector3(-0.5f,  0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(0.5f,  0.5f, -0.5f),
-			xim::Vector3(0.5f,  0.5f,  0.5f),
-			xim::Vector3(-0.5f,  0.5f, -0.5f),
-			xim::Vector3(-0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f, -0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(0.5f,  0.5f, -0.5f),
+			Vector3(0.5f,  0.5f,  0.5f),
+			Vector3(-0.5f,  0.5f, -0.5f),
+			Vector3(-0.5f,  0.5f,  0.5f),
 		};
 
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>
+		std::vector<Vector2>* UV = new std::vector<Vector2>
 		{
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
 
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
 
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
 
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 0.0f),
 
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(0.0f, 0.0f),
-			xim::Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
 
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(1.0f, 1.0f),
-			xim::Vector2(1.0f, 0.0f),
-			xim::Vector2(0.0f, 1.0f),
-			xim::Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
 		};
 
-		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>
+		std::vector<Vector3>* normals = new std::vector<Vector3>
 		{
-			xim::Vector3(0.0f,  0.0f, -1.0f),
-			xim::Vector3(0.0f,  0.0f, -1.0f),
-			xim::Vector3(0.0f,  0.0f, -1.0f),
-			xim::Vector3(0.0f,  0.0f, -1.0f),
-			xim::Vector3(0.0f,  0.0f, -1.0f),
-			xim::Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
+			Vector3(0.0f,  0.0f, -1.0f),
 
-			xim::Vector3(0.0f,  0.0f,  1.0f),
-			xim::Vector3(0.0f,  0.0f,  1.0f),
-			xim::Vector3(0.0f,  0.0f,  1.0f),
-			xim::Vector3(0.0f,  0.0f,  1.0f),
-			xim::Vector3(0.0f,  0.0f,  1.0f),
-			xim::Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
+			Vector3(0.0f,  0.0f,  1.0f),
 
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
-			xim::Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
+			Vector3(-1.0f,  0.0f,  0.0f),
 
-			xim::Vector3(1.0f,  0.0f,  0.0f),
-			xim::Vector3(1.0f,  0.0f,  0.0f),
-			xim::Vector3(1.0f,  0.0f,  0.0f),
-			xim::Vector3(1.0f,  0.0f,  0.0f),
-			xim::Vector3(1.0f,  0.0f,  0.0f),
-			xim::Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
+			Vector3(1.0f,  0.0f,  0.0f),
 
-			xim::Vector3(0.0f, -1.0f,  0.0f),
-			xim::Vector3(0.0f, -1.0f,  0.0f),
-			xim::Vector3(0.0f, -1.0f,  0.0f),
-			xim::Vector3(0.0f, -1.0f,  0.0f),
-			xim::Vector3(0.0f, -1.0f,  0.0f),
-			xim::Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
+			Vector3(0.0f, -1.0f,  0.0f),
 
-			xim::Vector3(0.0f,  1.0f,  0.0f),
-			xim::Vector3(0.0f,  1.0f,  0.0f),
-			xim::Vector3(0.0f,  1.0f,  0.0f),
-			xim::Vector3(0.0f,  1.0f,  0.0f),
-			xim::Vector3(0.0f,  1.0f,  0.0f),
-			xim::Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
+			Vector3(0.0f,  1.0f,  0.0f),
 		};
 
 		return new MeshGeometry(MeshTopology::TRIANGLES, nullptr, positions, UV, normals);
@@ -185,18 +185,18 @@ namespace Primitives
 		float dx = 1.0f / xSegments;
 		float dy = 1.0f / ySegments;
 
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(numVertex);
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
-		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
+		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
+		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ySegments; y++)
 		{
 			for (unsigned int x = 0; x <= xSegments; x++)
 			{
-				(*positions)[verticesCounter] = xim::Vector3(dx * x * 2.0f - 1.0f, dy * y * 2.0f - 1.0f, 0.0f);
-				(*UV)[verticesCounter] = xim::Vector2(dx * x, 1.0f - y * dy);
-				(*normals)[verticesCounter] = xim::Vector3(0.0f, 1.0f, 0.0f);
+				(*positions)[verticesCounter] = Vector3(dx * x * 2.0f - 1.0f, dy * y * 2.0f - 1.0f, 0.0f);
+				(*UV)[verticesCounter] = Vector2(dx * x, 1.0f - y * dy);
+				(*normals)[verticesCounter] = Vector3(0.0f, 1.0f, 0.0f);
 				
 				verticesCounter++;
 			}
@@ -235,9 +235,9 @@ namespace Primitives
 	{
 		int numVertex = (edgeSegments + 1) * (ringSegments + 1);
 
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(numVertex);
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
-		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
+		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
+		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ringSegments; y++)
@@ -246,12 +246,12 @@ namespace Primitives
 			{
 				float xSegment = (float)x / (float)edgeSegments;
 				float ringDepth = (float)y / (float)ringSegments;
-				float xPos = std::cos(xSegment * 2 * xim::PI);
-				float yPos = std::sin(xSegment * 2 * xim::PI);
+				float xPos = std::cos(xSegment * M_TWO_PI);
+				float yPos = std::sin(xSegment * M_TWO_PI);
 
-				(*positions)[verticesCounter] = xim::Vector3(xPos * ringDepth, yPos * ringDepth, 0.0f);
-				(*UV)[verticesCounter] = xim::Vector2(xSegment, ringDepth);
-				(*normals)[verticesCounter] = xim::Vector3(0.0f, 0.0f, 1.0f);
+				(*positions)[verticesCounter] = Vector3(xPos * ringDepth, yPos * ringDepth, 0.0f);
+				(*UV)[verticesCounter] = Vector2(xSegment, ringDepth);
+				(*normals)[verticesCounter] = Vector3(0.0f, 0.0f, 1.0f);
 				
 				verticesCounter++;
 			}
@@ -290,9 +290,9 @@ namespace Primitives
 	{
 		int numVertex = (xSegments + 1) * (ySegments + 1);
 		
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(numVertex);
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
-		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
+		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
+		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ySegments; y++)
@@ -302,13 +302,13 @@ namespace Primitives
 				float xSegment = (float) x / xSegments;
 				float ySegment = (float) y / ySegments;
 
-				float xPos = std::cos(xSegment * 2 * xim::PI) * std::sin(ySegment * xim::PI);
-				float yPos = std::cos(ySegment * xim::PI);
-				float zPos = std::sin(xSegment * 2 * xim::PI) * std::sin(ySegment * xim::PI);
+				float xPos = std::cos(xSegment * M_TWO_PI) * std::sin(ySegment * M_PI);
+				float yPos = std::cos(ySegment * M_PI);
+				float zPos = std::sin(xSegment * M_TWO_PI) * std::sin(ySegment * M_PI);
 			
-				(*positions)[verticesCounter] = xim::Vector3(xPos, yPos, zPos);
-				(*UV)[verticesCounter] = xim::Vector2(xSegment, ySegment);
-				(*normals)[verticesCounter] = xim::Vector3(xPos, yPos, zPos);
+				(*positions)[verticesCounter] = Vector3(xPos, yPos, zPos);
+				(*UV)[verticesCounter] = Vector2(xSegment, ySegment);
+				(*normals)[verticesCounter] = Vector3(xPos, yPos, zPos);
 			
 				verticesCounter++;
 			}
@@ -339,24 +339,24 @@ namespace Primitives
 	{
 		int numVertex = (numSteps1 + 1) * (numSteps2 + 1);
 
-		std::vector<xim::Vector3>* positions = new std::vector<xim::Vector3>(numVertex);
-		std::vector<xim::Vector2>* UV = new std::vector<xim::Vector2>(numVertex);
-		std::vector<xim::Vector3>* normals = new std::vector<xim::Vector3>(numVertex);
+		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
+		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
 
 		
-		float d1 = 2.0f * xim::PI / numSteps1;
-		float d2 = 2.0f * xim::PI / numSteps2;
+		float d1 = M_TWO_PI / numSteps1;
+		float d2 = M_TWO_PI / numSteps2;
 		
 		float a1 = 0.0f;
 		for (unsigned int i = 0; i <= numSteps1; ++i)
 		{
 			float x = cos(a1) * r1;
 			float y = sin(a1) * r1;
-			xim::Vector3 p(x, y, 0.0f);
+			Vector3 p(x, y, 0.0f);
 			a1 += d1;
 		
-			xim::Vector3 u = (-p).normalized() * r2;     
-			xim::Vector3 v = xim::Vector3(0.0f, 0.0f, 1.0f) * r2;
+			Vector3 u = (-p).normalized() * r2;     
+			Vector3 v = Vector3(0.0f, 0.0f, 1.0f) * r2;
 
 			float a2 = 0.0f;
 			for (unsigned int j = 0; j <= numSteps2; ++j)
@@ -365,7 +365,7 @@ namespace Primitives
 				float s = sin(a2);
 
 				(*positions)[i * (numSteps2 + 1) + j] = p + u * c + v * s;
-				(*UV)[i * (numSteps2 + 1) + j].data[0] = ((float)i) / ((float)numSteps1) * 2 * xim::PI;
+				(*UV)[i * (numSteps2 + 1) + j].data[0] = ((float)i) / ((float)numSteps1) * M_TWO_PI;
 				(*UV)[i * (numSteps2 + 1) + j].data[1] = ((float)j) / ((float)numSteps2);
 				(*normals)[i * (numSteps2 + 1) + j] = (u * c + v * s).normalized();
 				a2 += d2;

@@ -5,7 +5,6 @@
 #include "../graphics/material.h"
 #include "../graphics/mesh.h"
 #include "../math/ximath.h"
-#include "../utils/stringHash.h"
 
 class SceneNode;
 
@@ -22,19 +21,19 @@ public:
 	
 	void operator=(const Transform& copyFrom);
 
-	void translate(xim::Vector3 vec);
-	void rotate(xim::Vector3 angle);
+	void translate(Vector3 vec);
+	void rotate(Vector3 angle);
 
-	void setPosition(xim::Vector3 position);
-	void setRotation(xim::Vector3 rotation);
+	void setPosition(Vector3 position);
+	void setRotation(Vector3 rotation);
 	void setScale(float scale);
-	void setScale(xim::Vector3 scale);
+	void setScale(Vector3 scale);
 
-	inline xim::Vector3 getLocalPosition() { return position_; }
-	inline xim::Vector3 getLocalRotation() { return rotation_; }
-	inline xim::Vector3 getLocalScale() { return scale_; }
+	inline Vector3 getLocalPosition() { return position_; }
+	inline Vector3 getLocalRotation() { return rotation_; }
+	inline Vector3 getLocalScale() { return scale_; }
 
-	xim::Matrix4 getTransform();
+	Matrix4 getTransform();
 	void updateTransform();
 
 private:
@@ -42,11 +41,11 @@ private:
 	
 	bool dirty_;
 
-	xim::Vector3 position_;
-	xim::Vector3 rotation_; // in degrees
-	xim::Vector3 scale_;
+	Vector3 position_;
+	Vector3 rotation_; // in degrees
+	Vector3 scale_;
 
-	xim::Matrix4 transform_;
+	Matrix4 transform_;
 };
 
 class SceneNode
