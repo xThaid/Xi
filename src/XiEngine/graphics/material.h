@@ -10,12 +10,15 @@ class MaterialLibrary;
 class Material
 {
 public:
+	Material(Shader* shader);
 	~Material();
 
 	Material(const Material&) = delete;
 	void operator=(const Material&) = delete;
 
-	Material* clone(const std::string& newName) const;
+	Material* clone(const std::string& newName = "") const;
+
+	void registerInLibrary(const std::string& name);
 
 	void setShader(Shader* shader);
 	void setWireframe(bool wireframe);
@@ -34,15 +37,11 @@ public:
 	inline bool isWireframe() { return wireframe_; }
 
 private:
-	MaterialLibrary* matLibrary_;
-
 	Shader* shader_;
 
 	std::map<std::string, ShaderUniformValue> shaderUniformValues_;
 
 	bool wireframe_;
-
-	Material(MaterialLibrary* matLibrary, Shader* shader);
 
 	friend class MaterialLibrary;
 };

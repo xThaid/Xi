@@ -72,19 +72,17 @@ void RenderingEngine::render(Scene* scene)
 
 void RenderingEngine::renderCoordAxes(xim::Matrix4 transform)
 {
-	Mesh* line = ResourceManager::getInstance()->getResource<Mesh>("line");
-
 	xim::Matrix4 xTransform = xim::Matrix4();
 	xTransform.translate(xim::Vector3(0.5f, 0.0f, 0.0f));
-	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("redDebug"), transform * xTransform);
+	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("redDebug"), transform * xTransform);
 
 	xim::Matrix4 yTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.5f, 0.0f));
 	yTransform.rotateZ(xim::radians(90.0f));
-	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("greenDebug"), transform * yTransform);
+	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("greenDebug"), transform * yTransform);
 
 	xim::Matrix4 zTransform = xim::Matrix4::translationMatrix(xim::Vector3(0.0f, 0.0f, 0.5f));
 	zTransform.rotateY(xim::radians(90.0f));
-	commandBuffer_->push(line, MaterialLibrary::getInstance()->getMaterial("blueDebug"), transform * zTransform);
+	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("blueDebug"), transform * zTransform);
 }
 
 void RenderingEngine::setup()
@@ -94,7 +92,8 @@ void RenderingEngine::setup()
 	ResourceManager::getInstance()->addResource(
 		new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag"));
 
-	ResourceManager::getInstance()->addResource(new Mesh("line", Primitives::line()));
+	lineMesh_ = new Mesh("line", Primitives::line());
+	ResourceManager::getInstance()->addResource(lineMesh_);
 }
 
 void RenderingEngine::cleanUp()

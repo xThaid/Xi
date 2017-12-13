@@ -31,6 +31,8 @@ private:
 	MaterialLibrary* materialLibrary_;
 	CommandBuffer* commandBuffer_;
 
+	Mesh* lineMesh_;
+
 	void setup();
 	void cleanUp();
 	void destroy();

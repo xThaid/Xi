@@ -3,8 +3,7 @@
 #include "../resource/resourceManager.h"
 #include "../utils/logger.h"
 
-Material::Material(MaterialLibrary* matLibrary, Shader* shader) :
-	matLibrary_(matLibrary),
+Material::Material(Shader* shader) :
 	shader_(shader),
 	wireframe_(false)
 {
@@ -16,14 +15,20 @@ Material::~Material()
 
 Material* Material::clone(const std::string& newName) const
 {
-	Material* myClone = new Material(matLibrary_, shader_);
+	Material* myClone = new Material(shader_);
 	myClone->wireframe_ = wireframe_;
 
 	myClone->shaderUniformValues_ = shaderUniformValues_;
 
-	matLibrary_->registerMaterial(newName, myClone);
+	if (!newName.empty())
+		myClone->registerInLibrary(newName);
 
 	return myClone;
+}
+
+void Material::registerInLibrary(const std::string& name)
+{
+	MaterialLibrary::getInstance()->registerMaterial(name, this);
 }
 
 void Material::setShader(Shader* shader)
@@ -163,10 +168,10 @@ void MaterialLibrary::registerMaterial(const std::string& name, Material* materi
 
 void MaterialLibrary::setupDefaultMaterials()
 {
-	debugMaterial_ = new Material(this, ResourceManager::getInstance()->getResource<Shader>("debug shader"));
+	debugMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("debug shader"));
 	debugMaterial_->setVector3("color", xim::Vector3(1.0f, 0.0f, 1.0f));
 
-	defaultMaterial_ = new Material(this, ResourceManager::getInstance()->getResource<Shader>("tempShader"));
+	defaultMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("tempShader"));
 
 	defaultMaterial_->setVector3("light.ambient", xim::Vector3(0.1f, 0.1f, 0.1f));
 	defaultMaterial_->setVector3("light.diffuse", xim::Vector3(0.5f, 0.5f, 0.5f));
