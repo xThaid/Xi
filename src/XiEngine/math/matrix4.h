@@ -1,8 +1,12 @@
 #pragma once
 
-
 class Vector3;
 class Vector4;
+
+//0 4 8  12
+//1 5 9  13
+//2 6 10 14
+//3 7 11 15
 
 class Matrix4
 {
@@ -47,10 +51,6 @@ public:
 
 	static Matrix4 scaleMatrix(float x, float y, float z);
 	static Matrix4 scaleMatrix(Vector3 v);
-
-	static Matrix4 perspective(float fovy, float aspect, float znear, float zfar);
-	static Matrix4 ortho(float left, float right, float bottom, float top, float znear, float zfar);
-	static Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up);
 
 private:
 	void copy(const Matrix4& m);

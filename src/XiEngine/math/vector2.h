@@ -10,8 +10,8 @@ public:
 	explicit Vector2(float value);
 	explicit Vector2(float x, float y);
 
-	inline float x() { return data[0]; }
-	inline float y() { return data[1]; }
+	inline float x() const { return data[0]; }
+	inline float y() const { return data[1]; }
 
 	inline const float* getPointer() { return &data[0]; }
 

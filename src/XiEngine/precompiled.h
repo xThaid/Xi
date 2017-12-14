@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <math.h>
 #include <map>
 #include <set>

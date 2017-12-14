@@ -4,7 +4,7 @@
 
 #include "../utils/logger.h"
 
-MeshGeometry::MeshGeometry(MeshTopology topology,
+MeshGeometry::MeshGeometry(PrimitiveTopology topology,
 	std::vector<unsigned int>* indices,
 	std::vector<Vector3>* positions,
 	std::vector<Vector2>* UV,
@@ -252,24 +252,24 @@ bool Mesh::uploadToGPU(bool interleaved)
 
 void Mesh::parseTopology()
 {
-	switch (meshGeometry_->getMeshTopology())
+	switch (meshGeometry_->getPrimitiveTopology())
 	{
-	case MeshTopology::POINTS:
+	case PrimitiveTopology::POINTS:
 		drawMode_ = GL_POINTS;
 		break;
-	case MeshTopology::LINES:
+	case PrimitiveTopology::LINES:
 		drawMode_ = GL_LINES;
 		break;
-	case MeshTopology::LINE_STRIP:
+	case PrimitiveTopology::LINE_STRIP:
 		drawMode_ = GL_LINE_STRIP;
 		break;
-	case MeshTopology::TRIANGLES:
+	case PrimitiveTopology::TRIANGLES:
 		drawMode_ = GL_TRIANGLES;
 		break;
-	case MeshTopology::TRIANGLE_STRIP:
+	case PrimitiveTopology::TRIANGLE_STRIP:
 		drawMode_ = GL_TRIANGLE_STRIP;
 		break;
-	case MeshTopology::TRIANGLE_FAN:
+	case PrimitiveTopology::TRIANGLE_FAN:
 		drawMode_ = GL_TRIANGLE_FAN;
 		break;
 	}

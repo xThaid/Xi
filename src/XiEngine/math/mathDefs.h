@@ -25,3 +25,13 @@ enum Intersection
 inline float radToDeg(float rad) { return rad * M_RADTODEG; }
 inline float degToRad(float deg) { return deg * M_DEGTORAD; }
 
+inline float clamp(float value, float min, float max)
+{
+	if (value < min)
+		return min;
+	if (value > max)
+		return max;
+	else
+		return value;
+}
+

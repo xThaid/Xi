@@ -47,6 +47,4 @@ private:
 
 	void renderCommand(RenderCommand* command);
 	void renderMesh(Mesh* mesh);
-
-	Matrix4 getProjectionMatrix();
 };

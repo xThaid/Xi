@@ -10,7 +10,7 @@ namespace Primitives
 			Vector3(0.5f, 0.0f, 0.0f)
 		};
 
-		return new MeshGeometry(MeshTopology::LINES, nullptr, positions, nullptr, nullptr);
+		return new MeshGeometry(PrimitiveTopology::LINES, nullptr, positions, nullptr, nullptr);
 	}
 
 	MeshGeometry* quad()
@@ -36,7 +36,7 @@ namespace Primitives
 			Vector2(1.0f, 0.0f)
 		};
 
-		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, nullptr, positions, UV, nullptr);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, nullptr, positions, UV, nullptr);
 	}
 
 	MeshGeometry* cube()
@@ -176,7 +176,7 @@ namespace Primitives
 			Vector3(0.0f,  1.0f,  0.0f),
 		};
 
-		return new MeshGeometry(MeshTopology::TRIANGLES, nullptr, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, nullptr, positions, UV, normals);
 	}
 
 	MeshGeometry* plane(unsigned int xSegments, unsigned int ySegments)
@@ -228,7 +228,7 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
 	}
 
 	MeshGeometry* circle(unsigned int edgeSegments, unsigned int ringSegments)
@@ -283,7 +283,7 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		return new MeshGeometry(MeshTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
 	}
 
 	MeshGeometry* sphere(unsigned int xSegments, unsigned int ySegments)
@@ -331,7 +331,7 @@ namespace Primitives
 			}
 		}
 
-		return new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, UV, normals);
 	}
 
 	//https://github.com/JoeyDeVries/Cell/blob/master/cell/mesh/torus.cpp
@@ -395,6 +395,6 @@ namespace Primitives
 			}
 		}
 
-		return new MeshGeometry(MeshTopology::TRIANGLES, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, UV, normals);
 	}
 }

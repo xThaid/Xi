@@ -147,9 +147,9 @@ void RenderingEngine::sendGlobalUniformsToAll(Camera* camera)
 void RenderingEngine::sendGlobalUniforms(Shader* shader, Camera* camera)
 {
 	shader->useShader();
-	shader->setMatrix4("projection", getProjectionMatrix());
-	shader->setMatrix4("view", camera->getViewMatrix());
-	shader->setVector3("viewPos", camera->getPosition());
+	shader->setMatrix4("projection", camera->getProjection());
+	shader->setMatrix4("view", camera->getView());
+	shader->setVector3("viewPos", camera->position);
 }
 
 void RenderingEngine::renderCommand(RenderCommand* command)
@@ -178,9 +178,4 @@ void RenderingEngine::renderMesh(Mesh* mesh)
 		glDrawElements(mesh->getDrawMode(), mesh->getMeshGeometry()->getNumIndices(), GL_UNSIGNED_INT, 0);
 	else
 		glDrawArrays(mesh->getDrawMode(), 0, mesh->getMeshGeometry()->getNumVertices());
-}
-
-Matrix4 RenderingEngine::getProjectionMatrix()
-{
-	return Matrix4::perspective(degToRad(45.0f), (float)renderWidth / renderHeight, 0.1f, 100.0f);
 }

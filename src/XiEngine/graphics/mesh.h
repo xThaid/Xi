@@ -2,23 +2,14 @@
 
 #include "../precompiled.h"
 
+#include "../graphics/graphicsDefs.h"
 #include "../math/ximath.h"
 #include "../resource/resource.h"
-
-enum class MeshTopology
-{
-	POINTS,
-	LINES,
-	LINE_STRIP,
-	TRIANGLES,
-	TRIANGLE_STRIP,
-	TRIANGLE_FAN,
-};
 
 class MeshGeometry
 {
 public:
-	MeshGeometry(MeshTopology topology,
+	MeshGeometry(PrimitiveTopology topology,
 		std::vector<unsigned int>* indices,
 		std::vector<Vector3>* positions,
 		std::vector<Vector2>* UV,
@@ -33,7 +24,7 @@ public:
 	unsigned int* getIndicesData();
 	void prepareData(std::vector<float>& data, bool interleaved);
 
-	inline MeshTopology getMeshTopology() { return topology_; }
+	inline PrimitiveTopology getPrimitiveTopology() { return topology_; }
 	inline unsigned int getNumVertices() { return positions_->size(); }
 	inline unsigned int getNumIndices() { return indices_->size(); }
 
@@ -42,7 +33,7 @@ public:
 	unsigned int getMemoryUse();
 
 private:
-	MeshTopology topology_;
+	PrimitiveTopology topology_;
 
 	std::vector<unsigned int>* indices_;
 

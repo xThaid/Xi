@@ -19,6 +19,7 @@ void Program::init()
 	ResourceManager::getInstance()->addResource(mesh2);
 
 	myEntity = new SceneNode("costam");
+	myEntity->getTransform().setPosition(Vector3(0.0f, 0.0f, -2.0f));
 	myEntity->setMesh(mesh2);
 	Material* myMaterial = MaterialLibrary::getInstance()->getDefaultMaterial();
 	myEntity->setMaterial(myMaterial);

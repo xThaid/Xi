@@ -13,9 +13,9 @@ public:
 	explicit Vector3(float x, float y, float z);
 	explicit Vector3(const Vector2& v, float z);
 
-	inline float x() { return data[0]; }
-	inline float y() { return data[1]; }
-	inline float z() { return data[2]; }
+	inline float x() const { return data[0]; }
+	inline float y() const { return data[1]; }
+	inline float z() const { return data[2]; }
 
 	inline const float* getPointer() { return &data[0]; }
 
