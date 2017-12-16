@@ -12,13 +12,13 @@ struct DebugLine
 {
 	Vector3 start_;
 	Vector3 end_;
-	Vector3 color_;
+	unsigned int color_;
 
 	DebugLine()
 	{
 	}
 
-	DebugLine(const Vector3& start, const Vector3& end, const Vector3& color) :
+	DebugLine(const Vector3& start, const Vector3& end, unsigned int color) :
 		start_(start),
 		end_(end),
 		color_(color)
@@ -34,8 +34,10 @@ public:
 
 	void setView(Camera* camera);
 
-	void addLine(const Vector3& start, const Vector3& end, const Vector3& color);
-	void addQuad(const Vector3& center, float width, float height, const Vector3& color);
+	void addLine(const Vector3& start, const Vector3& end, unsigned int color);
+	void addLine(const Vector3& start, const Vector3& end, const Color& color);
+
+	void addQuad(const Vector3& center, float width, float height, const Color& color);
 
 	void render();
 

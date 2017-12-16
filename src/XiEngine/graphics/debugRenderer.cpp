@@ -23,13 +23,18 @@ void DebugRenderer::setView(Camera* camera)
 	projection_ = camera->getProjection();
 }
 
-void DebugRenderer::addLine(const Vector3& start, const Vector3& end, const Vector3& color)
+void DebugRenderer::addLine(const Vector3& start, const Vector3& end, unsigned int color)
 {
 	DebugLine line(start, end, color);
 	lines_.push_back(line);
 }
 
-void DebugRenderer::addQuad(const Vector3& center, float width, float height, const Vector3& color)
+void DebugRenderer::addLine(const Vector3& start, const Vector3& end, const Color& color)
+{
+	addLine(start, end, color.toUInt());
+}
+
+void DebugRenderer::addQuad(const Vector3& center, float width, float height, const Color& color)
 {
 	Vector3 v0(center.x() - width / 2, center.y(), center.z() - height / 2);
 	Vector3 v1(center.x() + width / 2, center.y(), center.z() - height / 2);
@@ -62,19 +67,15 @@ void DebugRenderer::render()
 		data[dest + 1] = line_.start_.y();
 		data[dest + 2] = line_.start_.z();
 		
-		data[dest + 3] = line_.color_.x();
-		data[dest + 4] = line_.color_.y();
-		data[dest + 5] = line_.color_.z();
+		((unsigned int&)data[dest + 3]) = line_.color_;
 		
-		data[dest + 6] = line_.end_.x();
-		data[dest + 7] = line_.end_.y();
-		data[dest + 8] = line_.end_.z();
+		data[dest + 4] = line_.end_.x();
+		data[dest + 5] = line_.end_.y();
+		data[dest + 6] = line_.end_.z();
 
-		data[dest + 9] = line_.color_.x();
-		data[dest + 10] = line_.color_.y();
-		data[dest + 11] = line_.color_.z();
+		((unsigned int&)data[dest + 7]) = line_.color_;
 	
-		dest += 12;
+		dest += 8;
 	}
 
 	vertexBuffer_->setData(data);

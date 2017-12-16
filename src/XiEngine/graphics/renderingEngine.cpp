@@ -41,7 +41,7 @@ void RenderingEngine::render(Scene* scene)
 
 	graphics_->beginFrame();
 
-	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Vector3(1.0f));
+	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
 	debugRenderer_->render();
 
 	//renderSceneNode(scene->getRootNode());

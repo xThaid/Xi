@@ -13,7 +13,8 @@ static const unsigned glElementTypes[] =
 	GL_FLOAT,
 	GL_FLOAT,
 	GL_FLOAT,
-	GL_FLOAT
+	GL_FLOAT,
+	GL_UNSIGNED_BYTE
 };
 
 static const unsigned glElementComponents[] =
@@ -22,6 +23,7 @@ static const unsigned glElementComponents[] =
 	1,
 	2,
 	3,
+	4,
 	4
 };
 
@@ -215,7 +217,7 @@ void Graphics::prepareDraw()
 
 				glVertexAttribPointer(location, 
 					glElementComponents[vertexElementDesc.type_], glElementTypes[vertexElementDesc.type_], 
-					GL_FALSE, 
+					vertexElementDesc.type_ == TYPE_UBYTE4_NORM ? GL_TRUE : GL_FALSE, 
 					vertexBuffer_->getVertexSize(), (const void *)offset);
 			}
 		}

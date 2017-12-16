@@ -9,3 +9,5 @@
 #include "../math/mathDefs.h"
 
 #include "../math/stringHash.h"
+
+#include "../math/color.h"
