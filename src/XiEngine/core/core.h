@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../graphics/graphics.h"
 #include "../graphics/renderingEngine.h"
 
 class ResourceManager;
@@ -14,7 +15,7 @@ class Core
 	friend class ResourceManager;
 
 public:
-	Core(Window* window);
+	Core();
 
 	void start();
 	void stop();
@@ -33,6 +34,7 @@ private:
 	static Core* currentCore;
 
 	Window* mainWindow;
+	Graphics* graphics;
 	RenderingEngine* rendering;
 	Program* program;
 

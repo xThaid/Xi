@@ -3,6 +3,9 @@
 #include "../core/core.h"
 #include "../core/input.h"
 #include "../core/camera.h"
+#include "../graphics/debugRenderer.h"
+#include "../graphics/commandBuffer.h"
+#include "../graphics/graphics.h"
 #include "../graphics/material.h"
 #include "../graphics/mesh.h"
 #include "../graphics/shader.h"
@@ -14,22 +17,10 @@
 #include "../utils/logger.h"
 
 
-RenderingEngine::RenderingEngine(Window * window)
+RenderingEngine::RenderingEngine() :
+	graphics_(Graphics::getInstance())
 {
-	if (!glfwInit())
-		Logger::error("Failed to initialize GLFW");
-	else
-		Logger::debug("GLFW version: " + std::string(glfwGetVersionString()));
-
-	window->init();
-	glfwMakeContextCurrent(window->getWindow());
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		Logger::error("Failed to initialize GLAD");
-
-	Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
-
-	changeRenderSize(window->getWidth(), window->getHeight());
+	debugRenderer_ = new DebugRenderer();
 
 	commandBuffer_ = new CommandBuffer();
 
@@ -42,69 +33,36 @@ RenderingEngine::RenderingEngine(Window * window)
 RenderingEngine::~RenderingEngine()
 {
 	cleanUp();
-	destroy();
-}
-
-void RenderingEngine::init()
-{
-	glEnable(GL_DEPTH_TEST);
-}
-
-void RenderingEngine::changeRenderSize(int width, int height)
-{
-	glViewport(0, 0, width, height);
-	renderWidth = width;
-	renderHeight = height;
 }
 
 void RenderingEngine::render(Scene* scene)
 {
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	renderSceneNode(scene->getRootNode());
+	debugRenderer_->setView(scene->getMainCamera());
 
-	renderCoordAxes(Matrix4::translationMatrix(Vector3(0.0f, 0.0f, 0.0f)));
+	graphics_->beginFrame();
 
-	renderPushedCommands(scene->getMainCamera());
-	commandBuffer_->clear();
-}
+	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Vector3(1.0f));
+	debugRenderer_->render();
 
-void RenderingEngine::renderCoordAxes(Matrix4 transform)
-{
-	Matrix4 xTransform = Matrix4();
-	xTransform.translate(Vector3(0.5f, 0.0f, 0.0f));
-	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("redDebug"), transform * xTransform);
+	//renderSceneNode(scene->getRootNode());
+	//renderPushedCommands(scene->getMainCamera());
+	//commandBuffer_->clear();
 
-	Matrix4 yTransform = Matrix4::translationMatrix(Vector3(0.0f, 0.5f, 0.0f));
-	yTransform.rotateZ(degToRad(90.0f));
-	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("greenDebug"), transform * yTransform);
-
-	Matrix4 zTransform = Matrix4::translationMatrix(Vector3(0.0f, 0.0f, 0.5f));
-	zTransform.rotateY(degToRad(90.0f));
-	commandBuffer_->push(lineMesh_, MaterialLibrary::getInstance()->getMaterial("blueDebug"), transform * zTransform);
+	debugRenderer_->handleEndFrame();
+	graphics_->endFrame();
 }
 
 void RenderingEngine::setup()
 {
 	ResourceManager::getInstance()->addResource(
-		new Shader("tempShader", "D:/Dev/Repos/Xi/res/shaders/temporary.vert", "D:/Dev/Repos/Xi/res/shaders/temporary.frag"));
-	ResourceManager::getInstance()->addResource(
 		new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag"));
-
-	lineMesh_ = new Mesh("line", Primitives::line());
-	ResourceManager::getInstance()->addResource(lineMesh_);
 }
 
 void RenderingEngine::cleanUp()
 {
+	delete debugRenderer_;
 	delete commandBuffer_;
 	delete materialLibrary_;
-}
-
-void RenderingEngine::destroy()
-{
-	glfwTerminate();
 }
 
 void RenderingEngine::renderPushedCommands(Camera* camera)

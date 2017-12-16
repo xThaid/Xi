@@ -73,7 +73,8 @@ void ShaderVariation::destroyShader()
 
 Shader::Shader(const std::string& shaderName, const std::string& vertexShaderFile, const std::string& fragmentShaderFile) :
 	Resource(shaderName),
-	shaderProgramID_(0)
+	shaderProgramID_(0),
+	usedVertexAttributes_(0)
 {
 	vertexShader_   = new ShaderVariation(vertexShaderFile,   GL_VERTEX_SHADER);
 	fragmentShader_ = new ShaderVariation(fragmentShaderFile, GL_FRAGMENT_SHADER);
@@ -116,6 +117,9 @@ bool Shader::endLoad()
 
 void Shader::release()
 {
+	vertexAttributes_.clear();
+	usedVertexAttributes_ = 0;
+
 	shaderUniforms_.clear();
 	unknownUniformsCache_.clear();
 
@@ -150,6 +154,7 @@ bool Shader::linkShaders()
 	vertexShader_->destroyShader();
 	fragmentShader_->destroyShader();
 
+	loadVertexAttributes();
 	loadUniforms();
 
 	return true;
@@ -230,6 +235,51 @@ void Shader::setMatrix4(const std::string& name, Matrix4& value)
 	if (location != -1)
 	{
 		glUniformMatrix4fv(location, 1, false, value.getPointer());
+	}
+}
+
+int Shader::getVertexAttributeLocation(VertexElement element)
+{
+	auto result = vertexAttributes_.find(element);
+	if (result == vertexAttributes_.end())
+		return -1;
+
+	return result->second;
+}
+
+void Shader::loadVertexAttributes()
+{
+	int numAttributes;
+	glGetProgramiv(shaderProgramID_, GL_ACTIVE_ATTRIBUTES, &numAttributes);
+	
+	char nameBuffer[128];
+	int numElements;
+	GLenum type;
+	for (int i = 0; i < numAttributes; ++i)
+	{
+		glGetActiveAttrib(shaderProgramID_, i, sizeof(nameBuffer), 0, &numElements, &type, nameBuffer);
+
+		std::string name = nameBuffer;
+
+		VertexElement element = MAX_VERTEX_ELEMENT;
+		for (int j = MAX_VERTEX_ELEMENT - 1; j >= 0; j--)
+		{
+			if (name.find(VERTEXELEMENTS[j].name_) != std::string::npos)
+			{
+				element = (VertexElement) j;
+				break;
+			}
+		}
+
+		if (element == MAX_VERTEX_ELEMENT)
+		{
+			Logger::warn("Found vertex attribute " + name + " with no known semantic in shader " + getName());
+			continue;
+		}
+
+		unsigned int location = glGetAttribLocation(shaderProgramID_, name.c_str());
+		vertexAttributes_[element] = location;
+		usedVertexAttributes_ |= (1 << location);
 	}
 }
 

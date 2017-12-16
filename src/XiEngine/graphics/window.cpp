@@ -1,66 +1,63 @@
 #include "window.h"
 
-#include <iostream>
-
-#include <glad/glad.h>
-#include <GLFW\glfw3.h>
-
 #include "../utils/logger.h"
 
-Window::Window(int width, int height, const std::string& title) :
-	width(width), height(height), title(title)
+Window::Window(int width, int height) :
+	width_(width),
+	height_(height),
+	renderWidth_(0),
+	renderHeight_(0)
 {
 }
 
 Window::~Window()
 {
-	glfwDestroyWindow(window);
+	destroy();
 }
 
-bool Window::init()
+bool Window::create()
 {
+	if (GLFWWindow_ != nullptr)
+		return true;
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	if(fullscreen)
-		window = glfwCreateWindow(width, height, title.c_str(), glfwGetPrimaryMonitor(), nullptr);
-	else
-		window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 
-	if (window == nullptr)
+	GLFWWindow_ = glfwCreateWindow(width_, height_, "Xi", nullptr, nullptr);
+
+	if (GLFWWindow_ == nullptr)
 	{
 		Logger::error("Failed to create GLFW window");
 		return false;
 	}
 
-	//glfwSwapInterval(1); //vsync
+	glfwGetFramebufferSize(GLFWWindow_, &renderWidth_, &renderHeight_);
 
 	return true;
 }
 
-void Window::swapBuffers() const
+void Window::destroy()
 {
-	if(window != nullptr)
-		glfwSwapBuffers(window);
+	if (GLFWWindow_ != nullptr)
+	{
+		glfwDestroyWindow(GLFWWindow_);
+		GLFWWindow_ = nullptr;
+	}
 }
 
-void Window::setFullscreen(bool enabled) 
+void Window::swapBuffers() const
 {
-	if (window != nullptr && enabled != fullscreen)
-	{
-		fullscreen = enabled;
-		GLFWmonitor* currMonitor = glfwGetPrimaryMonitor();
-		const GLFWvidmode* mode = glfwGetVideoMode(currMonitor);
-
-		glfwDestroyWindow(window);
-
-		init();
-	}
+	if(GLFWWindow_ != nullptr)
+		glfwSwapBuffers(GLFWWindow_);
 }
 
 bool Window::shouldClose()
 {
-	return glfwWindowShouldClose(window) == GL_TRUE;
+	if (GLFWWindow_ == nullptr)
+		return false;
+
+	return glfwWindowShouldClose(GLFWWindow_) == 1;
 }

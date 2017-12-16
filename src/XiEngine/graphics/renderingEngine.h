@@ -3,30 +3,29 @@
 #include <glad/glad.h> 
 #include <GLFW/glfw3.h>
 
-#include "../graphics/commandBuffer.h"
-#include "../graphics/material.h"
-#include "../graphics/shader.h"
-#include "../graphics/window.h"
-
-class Scene;
-class Mesh;
+class CommandBuffer;
 class Camera;
+class DebugRenderer;
+class Graphics;
+class MaterialLibrary;
+class Mesh;
+struct RenderCommand;
+class Scene;
 class SceneNode;
-class Texture2D;
+class Shader;
 
 class RenderingEngine
 {
 public:
-	RenderingEngine(Window* window);
+	RenderingEngine();
 	~RenderingEngine();
-
-	void init();
-	void changeRenderSize(int width, int height);
 
 	void render(Scene* scene);
 
 private:
-	int renderWidth, renderHeight;
+	Graphics* graphics_;
+
+	DebugRenderer* debugRenderer_;
 
 	MaterialLibrary* materialLibrary_;
 	CommandBuffer* commandBuffer_;
@@ -35,12 +34,10 @@ private:
 
 	void setup();
 	void cleanUp();
-	void destroy();
 
 	void renderPushedCommands(Camera* camera);
 
 	void renderSceneNode(SceneNode* node);
-	void renderCoordAxes(Matrix4 transform);
 
 	void sendGlobalUniformsToAll(Camera* camera);
 	void sendGlobalUniforms(Shader* shader, Camera* camera);

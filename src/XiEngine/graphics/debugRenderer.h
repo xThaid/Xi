@@ -2,9 +2,11 @@
 
 #include "../precompiled.h"
 
+#include "../graphics/graphicsDefs.h"
 #include "../math/ximath.h"
 
 class Camera;
+class VertexBuffer;
 
 struct DebugLine
 {
@@ -33,12 +35,15 @@ public:
 	void setView(Camera* camera);
 
 	void addLine(const Vector3& start, const Vector3& end, const Vector3& color);
+	void addQuad(const Vector3& center, float width, float height, const Vector3& color);
 
 	void render();
 
 	void handleEndFrame();
 
 private:
+	VertexBuffer* vertexBuffer_;
+
 	std::vector<DebugLine> lines_;
 
 	Matrix4 view_;

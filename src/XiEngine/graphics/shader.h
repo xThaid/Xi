@@ -2,6 +2,7 @@
 
 #include "../precompiled.h"
 
+#include "../graphics/graphicsDefs.h"
 #include "../math/ximath.h"
 #include "../resource/resource.h"
 #include "../utils/file.h"
@@ -99,6 +100,9 @@ public:
 	void setVector3(const std::string& name, Vector3& value);
 	void setVector4(const std::string& name, Vector4& value);
 	void setMatrix4(const std::string& name, Matrix4& value);
+	
+	int getVertexAttributeLocation(VertexElement element);
+	inline unsigned int getUsedVertexAttributes_() { return usedVertexAttributes_; }
 
 private:
 	unsigned int shaderProgramID_;
@@ -106,9 +110,13 @@ private:
 	ShaderVariation* vertexShader_;
 	ShaderVariation* fragmentShader_;
 
+	std::map<VertexElement, unsigned int> vertexAttributes_;
+	unsigned int usedVertexAttributes_;
+
 	std::map<std::string, ShaderUniform> shaderUniforms_;
 	std::set<std::string> unknownUniformsCache_;
 
+	void loadVertexAttributes();
 	void loadUniforms();
 
 	int getUniformLocation(const std::string& name);

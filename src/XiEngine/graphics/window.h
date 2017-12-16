@@ -1,34 +1,37 @@
 #pragma once
 
-#include <string>
+#include "../precompiled.h"
 
-struct GLFWwindow;
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 class Window
 {
 public:
-	Window(int width, int height, const std::string& title);
+	Window(int width, int height);
 	~Window();
 
-	bool init();
-	void swapBuffers() const;
+	bool create();
+	void destroy();
 
-	void setFullscreen(bool enabled);
+	void swapBuffers() const;
 
 	bool shouldClose();
 
-	inline GLFWwindow* getWindow() const { return window; }
+	inline GLFWwindow* getGLFWWindow() const { return GLFWWindow_; }
 
-	inline int getWidth() const { return width; }
-	inline int getHeight() const { return height; }
+	inline int getWidth() const { return width_; }
+	inline int getHeight() const { return height_; }
+
+	inline int getRenderWidth() const { return renderWidth_; }
+	inline int getRenderHeight() const { return renderHeight_; }
 
 private:
-	GLFWwindow* window;
+	GLFWwindow* GLFWWindow_;
 
-	const int width;
-	const int height;
-		
-	const std::string title;
+	const int width_;
+	const int height_;
 
-	bool fullscreen;
+	int renderWidth_;
+	int renderHeight_;
 };

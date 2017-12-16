@@ -14,23 +14,12 @@
 void Program::init()
 {
 	Scene* scene = new Scene();
-	
-	Mesh* mesh2 = new Mesh("plane", Primitives::plane(100, 100));
-	ResourceManager::getInstance()->addResource(mesh2);
-
-	myEntity = new SceneNode("costam");
-	myEntity->getTransform().setPosition(Vector3(0.0f, 0.0f, -2.0f));
-	myEntity->setMesh(mesh2);
-	Material* myMaterial = MaterialLibrary::getInstance()->getDefaultMaterial();
-	myEntity->setMaterial(myMaterial);
-	scene->getRootNode()->addChildNode(myEntity);
 
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
-
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();

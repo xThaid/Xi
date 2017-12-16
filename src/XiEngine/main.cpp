@@ -14,9 +14,7 @@ int main(int argc, char* argv[])
 
 	Logger::setLevel(Logger::LEVEL_DEBUG);
 
-	Window win(800, 600, "Xi");
-
-	Core core(&win);
+	Core core;
 	core.start();
 
 	return 0;

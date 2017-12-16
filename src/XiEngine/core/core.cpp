@@ -10,18 +10,19 @@
 #include "../scene/scene.h"
 
 #include "../resource/resourceManager.h"
-
+#include "../graphics/window.h"
 #include "../utils/logger.h"
 
 Core* Core::currentCore = nullptr;
 
-Core::Core(Window* window) : 
-	mainWindow(window)
+Core::Core()
 {
 	running = false;
 
 	upsLimit = 0;
 	fpsLimit = 60;
+
+	mainWindow = new Window(800, 800);
 }
 
 void Core::start()
@@ -52,16 +53,15 @@ void Core::init()
 
 	resourceManager = new ResourceManager();
 
-	rendering = new RenderingEngine(mainWindow);
-	
+	graphics = new Graphics(mainWindow);
+	rendering = new RenderingEngine();
+
 	program = new Program();
 
 	time = new Time();
 	input = new Input(mainWindow);
 
 	scene = nullptr;
-
-	rendering->init();
 
 	program->init();
 
@@ -70,17 +70,20 @@ void Core::init()
 
 void Core::destroy()
 {
-	delete rendering;
-
 	delete program;
-
-	delete resourceManager;
-
-	delete time;
-	delete input;
 
 	if (scene != nullptr)
 		delete scene;
+
+	delete resourceManager;
+
+	delete rendering;
+	delete graphics;
+
+	delete mainWindow;
+
+	delete time;
+	delete input;
 
 	currentCore = nullptr;
 }
@@ -168,8 +171,6 @@ void Core::render()
 {
 	if(scene != nullptr)
 		rendering->render(scene);
-
-	mainWindow->swapBuffers();
 }
 
 void Core::setCurrentScene(Scene* scene)
