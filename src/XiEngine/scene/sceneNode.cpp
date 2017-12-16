@@ -73,9 +73,9 @@ void Transform::updateTransform()
 		transform_ = Matrix4();
 		transform_.translate(position_);
 
-		transform_.rotateX(radToDeg(rotation_.x()));
-		transform_.rotateY(radToDeg(rotation_.y()));
-		transform_.rotateZ(radToDeg(rotation_.z()));
+		transform_.rotateX(radToDeg(rotation_.x_));
+		transform_.rotateY(radToDeg(rotation_.y_));
+		transform_.rotateZ(radToDeg(rotation_.z_));
 
 		transform_.scale(scale_);
 	

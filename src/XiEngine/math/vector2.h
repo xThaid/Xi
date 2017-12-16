@@ -4,16 +4,14 @@
 class Vector2
 {
 public:
-	float data[2];
+	float x_;
+	float y_;
 
 	Vector2();
 	explicit Vector2(float value);
 	explicit Vector2(float x, float y);
 
-	inline float x() const { return data[0]; }
-	inline float y() const { return data[1]; }
-
-	inline const float* getPointer() { return &data[0]; }
+	inline const float* getPointer() { return &x_; }
 
 	void set(float x, float y);
 

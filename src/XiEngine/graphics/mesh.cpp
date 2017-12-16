@@ -57,65 +57,6 @@ unsigned int* MeshGeometry::getIndicesData()
 
 void MeshGeometry::prepareData(std::vector<float>& data, bool interleaved)
 {
-	int floatsPerVertex = 3;
-	if (hasUV()) floatsPerVertex += 2;
-	if (hasNormals()) floatsPerVertex += 3;
-
-	int numVertex = getNumVertices();
-
-	data.resize(floatsPerVertex * numVertex);
-
-	int dataCounter = 0;
-	if (interleaved)
-	{
-		for (int i = 0; i < numVertex; i++)
-		{
-			data[dataCounter++] = (*positions_)[i].data[0];
-			data[dataCounter++] = (*positions_)[i].data[1];
-			data[dataCounter++] = (*positions_)[i].data[2];
-
-			if (hasUV())
-			{
-				data[dataCounter++] = (*UV_)[i].data[0];
-				data[dataCounter++] = (*UV_)[i].data[1];
-			}
-
-			if (hasNormals())
-			{
-				data[dataCounter++] = (*normals_)[i].data[0];
-				data[dataCounter++] = (*normals_)[i].data[1];
-				data[dataCounter++] = (*normals_)[i].data[2];
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < numVertex; i++)
-		{
-			data[dataCounter++] = (*positions_)[i].data[0];
-			data[dataCounter++] = (*positions_)[i].data[1];
-			data[dataCounter++] = (*positions_)[i].data[2];
-		}
-
-		if (hasUV())
-		{
-			for (int i = 0; i < numVertex; i++)
-			{
-				data[dataCounter++] = (*UV_)[i].data[0];
-				data[dataCounter++] = (*UV_)[i].data[1];
-			}
-		}
-
-		if (hasNormals())
-		{
-			for (int i = 0; i < numVertex; i++)
-			{
-				data[dataCounter++] = (*normals_)[i].data[0];
-				data[dataCounter++] = (*normals_)[i].data[1];
-				data[dataCounter++] = (*normals_)[i].data[2];
-			}
-		}
-	}
 }
 
 bool MeshGeometry::isCorrect()

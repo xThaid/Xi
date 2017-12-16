@@ -65,10 +65,10 @@ Vector4 Matrix4::operator*(const Vector4& v) const
 {
 	Vector4 result;
 	
-	result.data[0] = data[0] * v.data[0] + data[4] * v.data[1] + data[8] * v.data[2] + data[12] * v.data[3];
-	result.data[1] = data[1] * v.data[0] + data[5] * v.data[1] + data[9] * v.data[2] + data[13] * v.data[3];
-	result.data[2] = data[2] * v.data[0] + data[6] * v.data[1] + data[10] * v.data[2] + data[14] * v.data[3];
-	result.data[3] = data[3] * v.data[0] + data[7] * v.data[1] + data[11] * v.data[2] + data[15] * v.data[3];
+	result.x_ = data[0] * v.x_ + data[4] * v.y_ + data[8] * v.z_ + data[12] * v.w_;
+	result.y_ = data[1] * v.x_ + data[5] * v.y_ + data[9] * v.z_ + data[13] * v.w_;
+	result.z_ = data[2] * v.x_ + data[6] * v.y_ + data[10] * v.z_ + data[14] * v.w_;
+	result.w_ = data[3] * v.x_ + data[7] * v.y_ + data[11] * v.z_ + data[15] * v.w_;
 		
 	return result;
 }
@@ -98,9 +98,9 @@ Matrix4& Matrix4::translate(float x, float y, float z)
 
 Matrix4& Matrix4::translate(const Vector3& v)
 {
-	data[12] = data[0] * v.data[0] + data[4] * v.data[1] + data[8] * v.data[2] + data[12];
-	data[13] = data[1] * v.data[0] + data[5] * v.data[1] + data[9] * v.data[2] + data[13];
-	data[14] = data[2] * v.data[0] + data[6] * v.data[1] + data[10] * v.data[2] + data[14];
+	data[12] = data[0] * v.x_ + data[4] * v.y_ + data[8] * v.z_ + data[12];
+	data[13] = data[1] * v.x_ + data[5] * v.y_ + data[9] * v.z_ + data[13];
+	data[14] = data[2] * v.x_ + data[6] * v.y_ + data[10] * v.z_ + data[14];
 	return *this;
 }
 
@@ -111,20 +111,20 @@ Matrix4& Matrix4::scale(float x, float y, float z)
 
 Matrix4& Matrix4::scale(const Vector3& v)
 {
-	data[0] = data[0] * v.data[0];
-	data[1] = data[1] * v.data[0];
-	data[2] = data[2] * v.data[0];
-	data[3] = data[3] * v.data[0];
+	data[0] = data[0] * v.x_;
+	data[1] = data[1] * v.x_;
+	data[2] = data[2] * v.x_;
+	data[3] = data[3] * v.x_;
 
-	data[4] = data[4] * v.data[1];
-	data[5] = data[5] * v.data[1];
-	data[6] = data[6] * v.data[1];
-	data[7] = data[7] * v.data[1];
+	data[4] = data[4] * v.y_;
+	data[5] = data[5] * v.y_;
+	data[6] = data[6] * v.y_;
+	data[7] = data[7] * v.y_;
 		
-	data[8] = data[8] * v.data[2];
-	data[9] = data[9] * v.data[2];
-	data[10] = data[10] * v.data[2];
-	data[11] = data[11] * v.data[2];
+	data[8] = data[8] * v.z_;
+	data[9] = data[9] * v.z_;
+	data[10] = data[10] * v.z_;
+	data[11] = data[11] * v.z_;
 
 	return *this;
 }
@@ -213,17 +213,17 @@ Matrix4 Matrix4::rotationMatrix(float angle, Vector3 v)
 
 	Matrix4 result;
 
-	result.data[0] = c + temp.data[0] * axis.data[0];
-	result.data[1] = 0 + temp.data[0] * axis.data[1] + axis.data[2] * s;
-	result.data[2] = 0 + temp.data[0] * axis.data[2] - axis.data[1] * s;
+	result.data[0] = c + temp.x_ * axis.x_;
+	result.data[1] = 0 + temp.x_ * axis.y_ + axis.z_ * s;
+	result.data[2] = 0 + temp.x_ * axis.z_ - axis.y_ * s;
 
-	result.data[4] = 0 + temp.data[1] * axis.data[0] - axis.data[2] * s;
-	result.data[5] = c + temp.data[1] * axis.data[1];
-	result.data[6] = 0 + temp.data[1] * axis.data[2] + axis.data[0] * s;
+	result.data[4] = 0 + temp.y_ * axis.x_ - axis.z_ * s;
+	result.data[5] = c + temp.y_ * axis.y_;
+	result.data[6] = 0 + temp.y_ * axis.z_ + axis.x_ * s;
 
-	result.data[8] = 0 + temp.data[2] * axis.data[0] + axis.data[1] * s;
-	result.data[9] = 0 + temp.data[2] * axis.data[1] - axis.data[0] * s;
-	result.data[10] = c + temp.data[2] * axis.data[2];
+	result.data[8] = 0 + temp.z_ * axis.x_ + axis.y_ * s;
+	result.data[9] = 0 + temp.z_ * axis.y_ - axis.x_ * s;
+	result.data[10] = c + temp.z_ * axis.z_;
 
 	return result;
 }
@@ -236,9 +236,9 @@ Matrix4 Matrix4::translationMatrix(float x, float y, float z)
 Matrix4 Matrix4::translationMatrix(Vector3 v)
 {
 	Matrix4 m;
-	m.data[12] = v.data[0];
-	m.data[13] = v.data[1];
-	m.data[14] = v.data[2];
+	m.data[12] = v.x_;
+	m.data[13] = v.y_;
+	m.data[14] = v.z_;
 
 	return m;
 }
@@ -251,8 +251,8 @@ Matrix4 Matrix4::scaleMatrix(float x, float y, float z)
 Matrix4 Matrix4::scaleMatrix(Vector3 v)
 {
 	Matrix4 m;
-	m.data[0] = v.data[0];
-	m.data[5] = v.data[1];
-	m.data[10] = v.data[2];
+	m.data[0] = v.x_;
+	m.data[5] = v.y_;
+	m.data[10] = v.z_;
 	return m;
 }

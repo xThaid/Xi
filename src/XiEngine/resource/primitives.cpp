@@ -365,8 +365,8 @@ namespace Primitives
 				float s = sin(a2);
 
 				(*positions)[i * (numSteps2 + 1) + j] = p + u * c + v * s;
-				(*UV)[i * (numSteps2 + 1) + j].data[0] = ((float)i) / ((float)numSteps1) * M_TWO_PI;
-				(*UV)[i * (numSteps2 + 1) + j].data[1] = ((float)j) / ((float)numSteps2);
+				(*UV)[i * (numSteps2 + 1) + j].x_ = ((float)i) / ((float)numSteps1) * M_TWO_PI;
+				(*UV)[i * (numSteps2 + 1) + j].y_ = ((float)j) / ((float)numSteps2);
 				(*normals)[i * (numSteps2 + 1) + j] = (u * c + v * s).normalized();
 				a2 += d2;
 			}

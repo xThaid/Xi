@@ -36,10 +36,10 @@ void DebugRenderer::addLine(const Vector3& start, const Vector3& end, const Colo
 
 void DebugRenderer::addQuad(const Vector3& center, float width, float height, const Color& color)
 {
-	Vector3 v0(center.x() - width / 2, center.y(), center.z() - height / 2);
-	Vector3 v1(center.x() + width / 2, center.y(), center.z() - height / 2);
-	Vector3 v2(center.x() + width / 2, center.y(), center.z() + height / 2);
-	Vector3 v3(center.x() - width / 2, center.y(), center.z() + height / 2);
+	Vector3 v0(center.x_ - width / 2, center.y_, center.z_ - height / 2);
+	Vector3 v1(center.x_ + width / 2, center.y_, center.z_ - height / 2);
+	Vector3 v2(center.x_ + width / 2, center.y_, center.z_ + height / 2);
+	Vector3 v3(center.x_ - width / 2, center.y_, center.z_ + height / 2);
 
 	addLine(v0, v1, color);
 	addLine(v1, v2, color);
@@ -63,15 +63,15 @@ void DebugRenderer::render()
 	for (unsigned int i = 0; i < lines_.size(); i++)
 	{
 		DebugLine& line_ = lines_[i];
-		data[dest + 0] = line_.start_.x();
-		data[dest + 1] = line_.start_.y();
-		data[dest + 2] = line_.start_.z();
+		data[dest + 0] = line_.start_.x_;
+		data[dest + 1] = line_.start_.y_;
+		data[dest + 2] = line_.start_.z_;
 		
 		((unsigned int&)data[dest + 3]) = line_.color_;
 		
-		data[dest + 4] = line_.end_.x();
-		data[dest + 5] = line_.end_.y();
-		data[dest + 6] = line_.end_.z();
+		data[dest + 4] = line_.end_.x_;
+		data[dest + 5] = line_.end_.y_;
+		data[dest + 6] = line_.end_.z_;
 
 		((unsigned int&)data[dest + 7]) = line_.color_;
 	

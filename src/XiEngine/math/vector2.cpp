@@ -4,89 +4,89 @@
 
 Vector2::Vector2()
 {
-	data[0] = 0.0f;
-	data[1] = 0.0f;
+	x_ = 0.0f;
+	y_ = 0.0f;
 }
 
 Vector2::Vector2(float value)
 {
-	data[0] = value;
-	data[1] = value;
+	x_ = value;
+	y_ = value;
 }
 
 Vector2::Vector2(float x, float y)
 {
-	data[0] = x;
-	data[1] = y;
+	x_ = x;
+	y_ = y;
 }
 
 void Vector2::set(float x, float y)
 {
-	data[0] = x;
-	data[1] = y;
+	x_ = x;
+	y_ = y;
 }
 
 Vector2& Vector2::operator+=(const Vector2& v)
 {
-	data[0] += v.data[0];
-	data[1] += v.data[1];
+	x_ += v.x_;
+	y_ += v.y_;
 	return *this;
 }
 
 Vector2& Vector2::operator-=(const Vector2& v)
 {
-	data[0] -= v.data[0];
-	data[1] -= v.data[1];
+	x_ -= v.x_;
+	y_ -= v.y_;
 	return *this;
 }
 
 Vector2& Vector2::operator*=(const float& scalar)
 {
-	data[0] *= scalar;
-	data[1] *= scalar;
+	x_ *= scalar;
+	y_ *= scalar;
 	return *this;
 }
 
 Vector2& Vector2::operator/=(const float& scalar)
 {
-	data[0] /= scalar;
-	data[1] /= scalar;
+	x_ /= scalar;
+	y_ /= scalar;
 	return *this;
 }
 	
 Vector2 Vector2::operator+(const Vector2& v) const
 {
-	return Vector2(data[0] + v.data[0], data[1] + v.data[1]);
+	return Vector2(x_ + v.x_, y_ + v.y_);
 }
 
 Vector2 Vector2::operator-(const Vector2& v) const
 {
-	return Vector2(data[0] - v.data[0], data[1] - v.data[1]);
+	return Vector2(x_ - v.x_, y_ - v.y_);
 }
 
 Vector2 Vector2::operator*(const float& scalar) const
 {
-	return Vector2(data[0] * scalar, data[1] * scalar);
+	return Vector2(x_ * scalar, y_ * scalar);
 }
 
 Vector2 Vector2::operator/(const float& scalar) const
 {
-	return Vector2(data[0] / scalar, data[1] / scalar);
+	return Vector2(x_ / scalar, y_ / scalar);
 }
 
 Vector2 Vector2::operator-() const
 {
-	return Vector2(-data[0], -data[1]);
+	return Vector2(-x_, -y_);
 }
 
 float Vector2::length() const
 {
-	return sqrtf(data[0] * data[0] + data[1] * data[1]);
+	return sqrtf(x_ * x_ + y_ * y_);
 }
 
 float Vector2::lengthSquared() const
 {
-	return data[0] * data[0] + data[1] * data[1];
+	return x_ * x_ + y_ * y_;
 }
 
 Vector2& Vector2::normalize()
@@ -105,5 +105,5 @@ Vector2 Vector2::normalized() const
 
 float Vector2::dotProduct(const Vector2& v) const
 {
-	return (data[0] * v.data[0] + data[1] * v.data[1]);
+	return (x_ * v.x_ + y_ * v.y_);
 }

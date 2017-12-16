@@ -6,118 +6,118 @@
 
 Vector4::Vector4()
 {
-	data[0] = 0.0f;
-	data[1] = 0.0f;
-	data[2] = 0.0f;
-	data[3] = 0.0f;
+	x_ = 0.0f;
+	y_ = 0.0f;
+	z_ = 0.0f;
+	w_ = 0.0f;
 }
 
 Vector4::Vector4(float value)
 {
-	data[0] = value;
-	data[1] = value;
-	data[2] = value;
-	data[3] = value;
+	x_ = value;
+	y_ = value;
+	z_ = value;
+	w_ = value;
 }
 
 Vector4::Vector4(float x, float y, float z, float w)
 {
-	data[0] = x;
-	data[1] = y;
-	data[2] = z;
-	data[3] = w;
+	x_ = x;
+	y_ = y;
+	z_ = z;
+	w_ = w;
 }
 
 Vector4::Vector4(const Vector3& v, float w)
 {
-	data[0] = v.data[0];
-	data[1] = v.data[1];
-	data[2] = v.data[2];
-	data[3] = w;
+	x_ = v.x_;
+	y_ = v.y_;
+	z_ = v.z_;
+	w_ = w;
 }
 
 void Vector4::set(float x, float y, float z, float w)
 {
-	data[0] = x;
-	data[1] = y;
-	data[2] = z;
-	data[3] = w;
+	x_ = x;
+	y_ = y;
+	z_ = z;
+	w_ = w;
 }
 	
 Vector3 Vector4::xyz() const
 {
-	return Vector3(data[0], data[1], data[2]);
+	return Vector3(x_, y_, z_);
 }
 	
 Vector4& Vector4::operator+=(const Vector4& v)
 {
-	data[0] += v.data[0];
-	data[1] += v.data[1];
-	data[2] += v.data[2];
-	data[3] += v.data[3];
+	x_ += v.x_;
+	y_ += v.y_;
+	z_ += v.z_;
+	w_ += v.w_;
 	return *this;
 }
 	
 Vector4& Vector4::operator-=(const Vector4& v)
 {
-	data[0] -= v.data[0];
-	data[1] -= v.data[1];
-	data[2] -= v.data[2];
-	data[3] -= v.data[3];
+	x_ -= v.x_;
+	y_ -= v.y_;
+	z_ -= v.z_;
+	w_ -= v.w_;
 	return *this;
 }
 	
 Vector4& Vector4::operator*=(const float& scalar)
 {
-	data[0] *= scalar;
-	data[1] *= scalar;
-	data[2] *= scalar;
-	data[3] *= scalar;
+	x_ *= scalar;
+	y_ *= scalar;
+	z_ *= scalar;
+	w_ *= scalar;
 	return *this;
 }
 	
 Vector4& Vector4::operator/=(const float& scalar)
 {
-	data[0] /= scalar;
-	data[1] /= scalar;
-	data[2] /= scalar;
-	data[3] /= scalar;
+	x_ /= scalar;
+	y_ /= scalar;
+	z_ /= scalar;
+	w_ /= scalar;
 	return *this;
 }
 	
 Vector4 Vector4::operator+(const Vector4& v) const
 {
-	return Vector4(data[0] + v.data[0], data[1] + v.data[1], data[2] + v.data[2], data[3] + v.data[3]);
+	return Vector4(x_ + v.x_, y_ + v.y_, z_ + v.z_, w_ + v.w_);
 }
 	
 Vector4 Vector4::operator-(const Vector4& v) const
 {
-	return Vector4(data[0] - v.data[0], data[1] - v.data[1], data[2] - v.data[2], data[3] - v.data[3]);
+	return Vector4(x_ - v.x_, y_ - v.y_, z_ - v.z_, w_ - v.w_);
 }
 	
 Vector4 Vector4::operator*(const float& scalar) const
 {
-	return Vector4(data[0] * scalar, data[1] * scalar, data[2] * scalar, data[3] * scalar);
+	return Vector4(x_ * scalar, y_ * scalar, z_ * scalar, w_ * scalar);
 }
 	
 Vector4 Vector4::operator/(const float& scalar) const
 {
-	return Vector4(data[0] / scalar, data[1] / scalar, data[2] / scalar, data[3] / scalar);
+	return Vector4(x_ / scalar, y_ / scalar, z_ / scalar, w_ / scalar);
 }
 	
 Vector4 Vector4::operator-() const
 {
-	return Vector4(-data[0], -data[1], -data[2], -data[3]);
+	return Vector4(-x_, -y_, -z_, -w_);
 }
 	
 float Vector4::length() const
 {
-	return sqrtf(data[0] * data[0] + data[1] * data[1] + data[2] * data[2] + data[3] * data[3]);
+	return sqrtf(x_ * x_ + y_ * y_ + z_ * z_ + w_ * w_);
 }
 	
 float Vector4::lengthSquared() const
 {
-	return data[0] * data[0] + data[1] * data[1] + data[2] * data[2] + data[3] * data[3];
+	return x_ * x_ + y_ * y_ + z_ * z_ + w_ * w_;
 }
 
 Vector4& Vector4::normalize()
@@ -136,5 +136,5 @@ Vector4 Vector4::normalized() const
 	
 float Vector4::dotProduct(const Vector4& v) const
 {
-	return data[0] * v.data[0] + data[1] * v.data[1] + data[2] * v.data[2] + data[3] * v.data[3];
+	return x_ * v.x_ + y_ * v.y_ + z_ * v.z_ + w_ * v.w_;
 }

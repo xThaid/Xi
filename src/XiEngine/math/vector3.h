@@ -1,23 +1,20 @@
 #pragma once
 
-
 class Vector2;
 
 class Vector3
 {
 public:
-	float data[3];
+	float x_;
+	float y_;
+	float z_;
 
 	Vector3();
 	explicit Vector3(float value);
 	explicit Vector3(float x, float y, float z);
 	explicit Vector3(const Vector2& v, float z);
 
-	inline float x() const { return data[0]; }
-	inline float y() const { return data[1]; }
-	inline float z() const { return data[2]; }
-
-	inline const float* getPointer() { return &data[0]; }
+	inline const float* getPointer() { return &x_; }
 
 	void set(float x, float y, float z);
 

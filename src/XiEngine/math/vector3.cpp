@@ -6,104 +6,104 @@
 
 Vector3::Vector3()
 {
-	data[0] = 0.0f;
-	data[1] = 0.0f;
-	data[2] = 0.0f;
+	x_ = 0.0f;
+	y_ = 0.0f;
+	z_ = 0.0f;
 }
 
 Vector3::Vector3(float value)
 {
-	data[0] = value;
-	data[1] = value;
-	data[2] = value;
+	x_ = value;
+	y_ = value;
+	z_ = value;
 }
 
 Vector3::Vector3(float x, float y, float z)
 {
-	data[0] = x;
-	data[1] = y;
-	data[2] = z;
+	x_ = x;
+	y_ = y;
+	z_ = z;
 }
 
 Vector3::Vector3(const Vector2& v, float z)
 {
-	data[0] = v.data[0];
-	data[1] = v.data[1];
-	data[2] = z;
+	x_ = v.x_;
+	y_ = v.y_;
+	z_ = z;
 }
 	
 void Vector3::set(float x, float y, float z)
 {
-	data[0] = x;
-	data[1] = y;
-	data[2] = z;
+	x_ = x;
+	y_ = y;
+	z_ = z;
 }
 
 Vector3& Vector3::operator+=(const Vector3& v)
 {
-	data[0] += v.data[0];
-	data[1] += v.data[1];
-	data[2] += v.data[2];
+	x_ += v.x_;
+	y_ += v.y_;
+	z_ += v.z_;
 	return *this;
 }
 	
 Vector3& Vector3::operator-=(const Vector3& v)
 {
-	data[0] -= v.data[0];
-	data[1] -= v.data[1];
-	data[2] -= v.data[2];
+	x_ -= v.x_;
+	y_ -= v.y_;
+	z_ -= v.z_;
 	return *this;
 }
 	
 Vector3& Vector3::operator*=(const float& scalar)
 {
-	data[0] *= scalar;
-	data[1] *= scalar;
-	data[2] *= scalar;
+	x_ *= scalar;
+	y_ *= scalar;
+	z_ *= scalar;
 	return *this;
 }
 	
 Vector3& Vector3::operator/=(const float& scalar)
 {
-	data[0] /= scalar;
-	data[1] /= scalar;
-	data[2] /= scalar;
+	x_ /= scalar;
+	y_ /= scalar;
+	z_ /= scalar;
 	return *this;
 }
 	
 Vector3 Vector3::operator+(const Vector3& v) const
 {
-	return Vector3(data[0] + v.data[0], data[1] + v.data[1], data[2] + v.data[2]);
+	return Vector3(x_ + v.x_, y_ + v.y_, z_ + v.z_);
 }
 	
 Vector3 Vector3::operator-(const Vector3& v) const
 {
-	return Vector3(data[0] - v.data[0], data[1] - v.data[1], data[2] - v.data[2]);
+	return Vector3(x_ - v.x_, y_ - v.y_, z_ - v.z_);
 }
 	
 Vector3 Vector3::operator*(const float& scalar) const
 {
-	return Vector3(data[0] * scalar, data[1] * scalar, data[2] * scalar);
+	return Vector3(x_ * scalar, y_ * scalar, z_ * scalar);
 }
 
 Vector3 Vector3::operator/(const float& scalar) const
 {
-	return Vector3(data[0] / scalar, data[1] / scalar, data[2] / scalar);
+	return Vector3(x_ / scalar, y_ / scalar, z_ / scalar);
 }
 	
 Vector3 Vector3::operator-() const
 {
-	return Vector3(-data[0], -data[1], -data[2]);
+	return Vector3(-x_, -y_, -z_);
 }
 	
 float Vector3::length() const
 {
-	return sqrtf(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
+	return sqrtf(x_ * x_ + y_ * y_ + z_ * z_);
 }
 	
 float Vector3::lengthSquared() const
 {
-	return data[0] * data[0] + data[1] * data[1] + data[2] * data[2];
+	return x_ * x_ + y_ * y_ + z_ * z_;
 }
 	
 Vector3& Vector3::normalize()
@@ -122,10 +122,10 @@ Vector3 Vector3::normalized() const
 	
 float Vector3::dotProduct(const Vector3& v) const
 {
-	return data[0] * v.data[0] + data[1] * v.data[1] + data[2] * v.data[2];
+	return x_ * v.x_ + y_ * v.y_ + z_ * v.z_;
 }
 	
 Vector3 Vector3::crossProduct(const Vector3& v) const
 {
-	return Vector3(data[1] * v.data[2] - data[2] * v.data[1], data[2] * v.data[0] - data[0] * v.data[2], data[0] * v.data[1] - data[1] * v.data[0]);
+	return Vector3(y_ * v.z_ - z_ * v.y_, z_ * v.x_ - x_ * v.z_, x_ * v.y_ - y_ * v.x_);
 }

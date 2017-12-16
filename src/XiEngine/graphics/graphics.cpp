@@ -99,7 +99,7 @@ void Graphics::endFrame()
 
 void Graphics::clear(const Vector3& color)
 {
-	glClearColor(color.x(), color.y(), color.z(), 1.0f);
+	glClearColor(color.x_, color.y_, color.z_, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

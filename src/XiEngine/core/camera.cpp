@@ -9,17 +9,17 @@ Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
 	Vector3 yAxis = zAxis.crossProduct(xAxis);
 
 	Matrix4 res;
-	res.data[0] = xAxis.data[0];
-	res.data[4] = xAxis.data[1];
-	res.data[8] = xAxis.data[2];
+	res.data[0] = xAxis.x_;
+	res.data[4] = xAxis.y_;
+	res.data[8] = xAxis.z_;
 
-	res.data[1] = yAxis.data[0];
-	res.data[5] = yAxis.data[1];
-	res.data[9] = yAxis.data[2];
+	res.data[1] = yAxis.x_;
+	res.data[5] = yAxis.y_;
+	res.data[9] = yAxis.z_;
 
-	res.data[2] = zAxis.data[0];
-	res.data[6] = zAxis.data[1];
-	res.data[10] = zAxis.data[2];
+	res.data[2] = zAxis.x_;
+	res.data[6] = zAxis.y_;
+	res.data[10] = zAxis.z_;
 
 	res.data[12] = -eye.dotProduct(xAxis);
 	res.data[13] = -eye.dotProduct(yAxis);
@@ -60,9 +60,9 @@ void Camera::processMouse(float xDelta, float yDelta)
 
 void Camera::updateVectors()
 {
-	front.data[0] = cosf(degToRad(yaw)) * cosf(degToRad(pitch));
-	front.data[1] = sinf(degToRad(pitch));
-	front.data[2] = sinf(degToRad(yaw)) * cosf(degToRad(pitch));
+	front.x_ = cosf(degToRad(yaw)) * cosf(degToRad(pitch));
+	front.y_ = sinf(degToRad(pitch));
+	front.z_ = sinf(degToRad(yaw)) * cosf(degToRad(pitch));
 	front.normalize();
 
 	right = front.crossProduct(up).normalized();
@@ -117,8 +117,8 @@ void Camera::setOrthoSize(float orthoSize)
 
 void Camera::setOrthoSize(const Vector2& orthoSize)
 {
-	orthoSize_ = orthoSize.y();
-	aspectRatio_ = orthoSize.x() / orthoSize.y();
+	orthoSize_ = orthoSize.y_;
+	aspectRatio_ = orthoSize.x_ / orthoSize.y_;
 	projectionDirty_ = true;
 }
 
