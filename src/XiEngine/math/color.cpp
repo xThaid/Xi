@@ -35,7 +35,7 @@ unsigned int Color::toUInt() const
 	return (tempA << 24) | (tempB << 16) | (tempG << 8) | tempR;
 }
 
-const Color Color::WHITE(0.0f, 0.0f, 0.0f);
+const Color Color::WHITE(1.0f, 1.0f, 1.0f);
 const Color Color::GRAY(0.5f, 0.5f, 0.5f);
 const Color Color::BLACK(0.0f, 0.0f, 0.0f);
 const Color Color::RED(1.0f, 0.0f, 0.0f);

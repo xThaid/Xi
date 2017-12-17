@@ -8,7 +8,6 @@ static const float DEFAULT_FARCLIP = 1000.0f;
 static const float DEFAULT_CAMERA_FOV = 45.0f;
 static const float DEFAULT_ORTHOSIZE = 20.0f;
 
-
 static const float MIN_NEARCLIP = 0.01f;
 static const float MAX_FOV = 160.0f;
 
@@ -68,13 +67,18 @@ public:
 
 	inline bool isOrthographic() const { return orthographic_; }
 
+	const Frustum& getFrustum();
+
 	Matrix4 getProjection();
 	Matrix4 getView();
 
 private:
+	Frustum frustum_;
+
 	Matrix4 view_;
 	Matrix4 projection_;
 
+	bool frustumDirty_;
 	bool viewDirty_;
 	bool projectionDirty_;
 
@@ -89,5 +93,6 @@ private:
 
 	FillMode fillMode_;
 
+	void updateFrustum();
 	void updateProjection();
 };

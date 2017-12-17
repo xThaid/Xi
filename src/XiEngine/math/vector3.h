@@ -5,6 +5,13 @@ class Vector2;
 class Vector3
 {
 public:
+	static const Vector3 LEFT;
+	static const Vector3 RIGHT;
+	static const Vector3 UP;
+	static const Vector3 DOWN;
+	static const Vector3 FORWARD;
+	static const Vector3 BACK;
+
 	float x_;
 	float y_;
 	float z_;

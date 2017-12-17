@@ -4,6 +4,13 @@
 
 #include "../math/vector2.h"
 
+const Vector3 LEFT(-1.0f, 0.0f, 0.0f);
+const Vector3 RIGHT(1.0f, 0.0f, 0.0f);
+const Vector3 UP(0.0f, 1.0f, 0.0f);
+const Vector3 DOWN(0.0f, -1.0f, 0.0f);
+const Vector3 FORWARD(0.0f, 0.0f, 1.0f);
+const Vector3 BACK(0.0f, 0.0f, -1.0f);
+
 Vector3::Vector3()
 {
 	x_ = 0.0f;

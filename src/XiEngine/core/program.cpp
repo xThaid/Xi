@@ -1,9 +1,9 @@
 #include "program.h"
 
-#include "../core/camera.h"
 #include "../core/core.h"
 #include "../core/input.h"
 #include "../core/time.h"
+#include "../graphics/camera.h"
 #include "../graphics/mesh.h"
 #include "../resource/primitives.h"
 #include "../resource/resourceManager.h"

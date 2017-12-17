@@ -2,7 +2,7 @@
 
 #include "../core/core.h"
 #include "../core/input.h"
-#include "../core/camera.h"
+#include "../graphics/camera.h"
 #include "../graphics/debugRenderer.h"
 #include "../graphics/commandBuffer.h"
 #include "../graphics/graphics.h"
@@ -41,7 +41,23 @@ void RenderingEngine::render(Scene* scene)
 
 	graphics_->beginFrame();
 
+	static Frustum frust;
+	static bool pressed = false;
+
+	if (Input::getKey(GLFW_KEY_V))
+	{
+		pressed = true;
+		frust = scene->getMainCamera()->getFrustum();
+		scene->getMainCamera()->setFarClip(2000.0f);
+	}
+
+	if (pressed)
+		debugRenderer_->addFrustum(frust, Color::WHITE);
+	else
+		debugRenderer_->addFrustum(scene->getMainCamera()->getFrustum(), Color::WHITE);
+
 	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
+	debugRenderer_->addTriangle(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Color::RED);
 	debugRenderer_->render();
 
 	//renderSceneNode(scene->getRootNode());

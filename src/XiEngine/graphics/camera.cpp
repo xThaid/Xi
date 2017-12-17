@@ -40,6 +40,9 @@ void Camera::processKeyboard(CameraMovement direction, float deltaTime)
 		position -= right * velocity;
 	if (direction == RIGHT)
 		position += right * velocity;
+
+	frustumDirty_ = true;
+	viewDirty_ = true;
 }
 
 void Camera::processMouse(float xDelta, float yDelta)
@@ -56,19 +59,23 @@ void Camera::processMouse(float xDelta, float yDelta)
 		pitch = -89.0f;
 
 	updateVectors();
+
+	frustumDirty_ = true;
+	viewDirty_ = true;
 }
 
 void Camera::updateVectors()
 {
-	front.x_ = cosf(degToRad(yaw)) * cosf(degToRad(pitch));
+	front.x_ = cosf(degToRad(yaw + 90.0f)) * cosf(degToRad(pitch));
 	front.y_ = sinf(degToRad(pitch));
-	front.z_ = sinf(degToRad(yaw)) * cosf(degToRad(pitch));
+	front.z_ = sinf(degToRad(yaw + 90.0f)) * cosf(degToRad(pitch));
 	front.normalize();
 
 	right = front.crossProduct(up).normalized();
 }
 
 Camera::Camera() :
+	frustumDirty_(true),
 	viewDirty_(true),
 	projectionDirty_(true),
 	orthographic_(false),
@@ -88,6 +95,7 @@ Camera::~Camera()
 
 void Camera::drawDebugGeometry(DebugRenderer* debug)
 {
+	debug->addFrustum(getFrustum(), Color::WHITE);
 }
 
 void Camera::setNearClip(float nearClip)
@@ -145,6 +153,14 @@ void Camera::setOrthographic(bool enable)
 	projectionDirty_ = true;
 }
 
+const Frustum& Camera::getFrustum()
+{
+	if (frustumDirty_)
+		updateFrustum();
+
+	return frustum_;
+}
+
 Matrix4 Camera::getProjection()
 {
 	if (projectionDirty_)
@@ -158,9 +174,25 @@ Matrix4 Camera::getView()
 	if (viewDirty_)
 	{
 		view_ = lookAt(position, position + front, up);
+		viewDirty_ = false;
 	}
 
 	return view_;
+}
+
+void Camera::updateFrustum()
+{	
+	if (projectionDirty_)
+		updateProjection();
+
+	Matrix4 transform = Matrix4::translationMatrix(position);
+
+	transform.rotateY(degToRad(-yaw));
+	transform.rotateX(degToRad(-pitch));
+
+	frustum_.setTransform(transform);
+
+	frustumDirty_ = false;
 }
 
 void Camera::updateProjection()
@@ -179,6 +211,8 @@ void Camera::updateProjection()
 		projection_.data[11] = -1.0f;
 		projection_.data[14] = -2.0f * farClip_ * nearClip_ / d;
 		projection_.data[15] = 0.0f;
+
+		frustum_.define(fov_, aspectRatio_, zoom_, nearClip_, farClip_);
 	}
 	else
 	{
@@ -192,6 +226,8 @@ void Camera::updateProjection()
 		m.data[14] = -((zfar + znear) / (zfar - znear));
 		m.data[15] = 1.0f;
 		*/
+
+		frustum_.defineOrtho(orthoSize_, aspectRatio_, zoom_, nearClip_, farClip_);
 	}
 
 	projectionDirty_ = false;

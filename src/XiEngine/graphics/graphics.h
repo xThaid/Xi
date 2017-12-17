@@ -24,7 +24,7 @@ public:
 
 	void clear(const Vector3& color);
 
-	void draw(PrimitiveTopology topology, unsigned int vertexCount);
+	void draw(PrimitiveTopology topology, unsigned int start, unsigned int vertexCount);
 
 	void setViewport();
 

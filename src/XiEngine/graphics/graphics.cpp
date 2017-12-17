@@ -103,7 +103,7 @@ void Graphics::clear(const Vector3& color)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Graphics::draw(PrimitiveTopology topology, unsigned int vertexCount)
+void Graphics::draw(PrimitiveTopology topology, unsigned int start, unsigned int vertexCount)
 {
 	prepareDraw();
 
@@ -111,7 +111,7 @@ void Graphics::draw(PrimitiveTopology topology, unsigned int vertexCount)
 	GLenum glPrimitiveType;
 	getGLPrimitiveType(vertexCount, topology, primitiveCount, glPrimitiveType);
 	
-	glDrawArrays(glPrimitiveType, 0, vertexCount);
+	glDrawArrays(glPrimitiveType, start, vertexCount);
 
 	numPrimitives_ += primitiveCount;
 	numBatches_++;
