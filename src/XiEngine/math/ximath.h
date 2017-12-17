@@ -12,5 +12,7 @@
 
 #include "../math/color.h"
 
+#include "../math/boundingBox.h"
+
 #include "../math/plane.h"
 #include "../math/frustum.h"

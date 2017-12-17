@@ -70,10 +70,52 @@ void DebugRenderer::addQuad(const Vector3& center, float width, float height, co
 	addLine(v3, v0, color);
 }
 
+void DebugRenderer::addBoundingBox(const BoundingBox& box, const Matrix4& transform, const Color& color, bool solid)
+{
+	const Vector3& min = box.min_;
+	const Vector3& max = box.max_;
+
+	Vector3 v0(transform * min);
+	Vector3 v1(transform * Vector3(max.x_, min.y_, min.z_));
+	Vector3 v2(transform * Vector3(max.x_, max.y_, min.z_));
+	Vector3 v3(transform * Vector3(min.x_, max.y_, min.z_));
+	Vector3 v4(transform * Vector3(min.x_, min.y_, max.z_));
+	Vector3 v5(transform * Vector3(max.x_, min.y_, max.z_));
+	Vector3 v6(transform * Vector3(min.x_, max.y_, max.z_));
+	Vector3 v7(transform * max);
+
+	unsigned int uintColor = color.toUInt();
+
+	if (!solid)
+	{
+		addLine(v0, v1, uintColor);
+		addLine(v1, v2, uintColor);
+		addLine(v2, v3, uintColor);
+		addLine(v3, v0, uintColor);
+		addLine(v4, v5, uintColor);
+		addLine(v5, v7, uintColor);
+		addLine(v7, v6, uintColor);
+		addLine(v6, v4, uintColor);
+		addLine(v0, v4, uintColor);
+		addLine(v1, v5, uintColor);
+		addLine(v2, v7, uintColor);
+		addLine(v3, v6, uintColor);
+	}
+	else
+	{
+		addPolygon(v0, v1, v2, v3, uintColor);
+		addPolygon(v4, v5, v7, v6, uintColor);
+		addPolygon(v0, v4, v6, v3, uintColor);
+		addPolygon(v1, v5, v7, v2, uintColor);
+		addPolygon(v3, v2, v7, v6, uintColor);
+		addPolygon(v0, v1, v5, v4, uintColor);
+	}
+}
+
 void DebugRenderer::addFrustum(const Frustum& frustum, const Color& color)
 {
 	const Vector3* vertices = frustum.vertices_;
-	unsigned uintColor = color.toUInt();
+	unsigned int uintColor = color.toUInt();
 
 	addLine(vertices[0], vertices[1], uintColor);
 	addLine(vertices[1], vertices[2], uintColor);

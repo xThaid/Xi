@@ -44,7 +44,7 @@ void RenderingEngine::render(Scene* scene)
 	static Frustum frust;
 	static bool pressed = false;
 
-	if (Input::getKey(GLFW_KEY_V))
+	if (Input::getKey(GLFW_KEY_V) && !pressed)
 	{
 		pressed = true;
 		frust = scene->getMainCamera()->getFrustum();
@@ -58,6 +58,10 @@ void RenderingEngine::render(Scene* scene)
 
 	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
 	debugRenderer_->addTriangle(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Color::RED);
+
+	BoundingBox box(-3.0f, 3.0f);
+	debugRenderer_->addBoundingBox(box, Matrix4(), Color::GREEN);
+
 	debugRenderer_->render();
 
 	//renderSceneNode(scene->getRootNode());
