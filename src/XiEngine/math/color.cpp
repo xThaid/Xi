@@ -28,10 +28,10 @@ Color::Color(float r, float g, float b, float a) :
 
 unsigned int Color::toUInt() const
 {
-	unsigned int tempR = (unsigned int) clamp(((int)(r * 255.0f)), 0, 255);
-	unsigned int tempG = (unsigned int) clamp(((int)(g * 255.0f)), 0, 255);
-	unsigned int tempB = (unsigned int) clamp(((int)(b * 255.0f)), 0, 255);
-	unsigned int tempA = (unsigned int) clamp(((int)(a * 255.0f)), 0, 255);
+	unsigned int tempR = (unsigned int) clamp(r * 255.0f, 0.0f, 255.0f);
+	unsigned int tempG = (unsigned int) clamp(g * 255.0f, 0.0f, 255.0f);
+	unsigned int tempB = (unsigned int) clamp(b * 255.0f, 0.0f, 255.0f);
+	unsigned int tempA = (unsigned int) clamp(a * 255.0f, 0.0f, 255.0f);
 	return (tempA << 24) | (tempB << 16) | (tempG << 8) | tempR;
 }
 

@@ -2,51 +2,9 @@
 
 #include "../precompiled.h"
 
-#include "../graphics/material.h"
-#include "../graphics/mesh.h"
 #include "../math/ximath.h"
 
-class SceneNode;
-
-struct Drawable
-{
-	Mesh* mesh = nullptr;
-	Material* material = nullptr;
-};
-
-class Transform
-{
-public:
-	Transform(SceneNode* owner);
-	
-	void operator=(const Transform& copyFrom);
-
-	void translate(Vector3 vec);
-	void rotate(Vector3 angle);
-
-	void setPosition(Vector3 position);
-	void setRotation(Vector3 rotation);
-	void setScale(float scale);
-	void setScale(Vector3 scale);
-
-	inline Vector3 getLocalPosition() { return position_; }
-	inline Vector3 getLocalRotation() { return rotation_; }
-	inline Vector3 getLocalScale() { return scale_; }
-
-	Matrix4 getTransform();
-	void updateTransform();
-
-private:
-	SceneNode* owner_;
-	
-	bool dirty_;
-
-	Vector3 position_;
-	Vector3 rotation_; // in degrees
-	Vector3 scale_;
-
-	Matrix4 transform_;
-};
+class Component;
 
 class SceneNode
 {
@@ -59,36 +17,80 @@ public:
 
 	SceneNode* clone(bool cloneName = false) const;
 
-	void setName(const std::string& name);
-
-
-	inline SceneNode* getParentNode() { return parentNode_; }
-
-	void addChildNode(SceneNode* node);
-
-	SceneNode* findChildNode(StringHash nameHash);
-	void removeChildNode(StringHash nameHash, bool purge = true);
-
-	std::vector<SceneNode*> getChildren();
-	
-	void setMesh(Mesh* mesh);
-	void setMaterial(Material* material);
-	void setDrawable(Mesh* mesh, Material* material);
-	bool isDrawable();
-
-	inline Transform& getTransform() { return transform_; }
 	inline std::string getName() { return name_; }
 
-	inline Drawable& getDrawable() { return drawable_; }
+	void setPosition(const Vector3& position);
+	void setRotation(const Vector3& rotation);
+	void setScale(float scale);
+	void setScale(const Vector3& scale);
+
+	void translate(const Vector3& delta);
+	void rotate(const Vector3& delta);
+
+	inline Vector3 getLocalPosition() { return position_; }
+	inline Vector3 getLocalRotation() { return rotation_; }
+	inline Vector3 getLocalScale() { return scale_; }
+
+	Matrix4 getLocalTransform();
+
+	Matrix4 getWorldTransform();
+
+	inline bool isRootNode() { return parentNode_ == nullptr; }
+	inline SceneNode* getParentNode() { return parentNode_; }
+
+	SceneNode* createChild(const std::string& name);
+	void addChild(SceneNode* node);
+
+	SceneNode* findChild(StringHash nameHash);
+	void removeChild(StringHash nameHash, bool purge = true);
+	std::vector<SceneNode*> getChildren();
+
+	void addComponent(Component* component);
+
+	bool hasComponent(const std::type_index& type);
+	Component* getComponent(const std::type_index& type);
+	void removeComponent(const std::type_index& type, bool purge = true);
+	std::vector<Component*> getComponents();
+
+	template <class T> bool hasComponent();
+	template <class T> T* getComponent();
+	template <class T> void removeComponent();
 
 private:
 	std::string name_;
 	StringHash nameHash_;
 
+	bool dirty_;
+	Matrix4 worldTransform_;
+
+	Vector3 position_;
+	Vector3 rotation_; // in degrees
+	Vector3 scale_;
+
 	SceneNode* parentNode_;
 	std::map<StringHash, SceneNode*> childrenNode_;
 
-	Transform transform_;
+	std::map<std::type_index, Component*> components_;
 
-	Drawable drawable_;
+	void markDirty();
+
+	void updateWorldTransform();
 };
+
+template<class T>
+inline bool SceneNode::hasComponent()
+{
+	return hasComponent(typeid(T));
+}
+
+template<class T>
+inline T* SceneNode::getComponent()
+{
+	return static_cast<T*>(getComponent(typeid(T)));
+}
+
+template<class T>
+inline void SceneNode::removeComponent()
+{
+	removeComponent(typeid(T));
+}

@@ -66,6 +66,8 @@ public:
 	void addQuad(const Vector3& center, float width, float height, const Color& color);
 
 	void addBoundingBox(const BoundingBox& box, const Matrix4& transform, const Color& color, bool solid = false);
+	void addBoundingBox(const BoundingBox& box, const Color& color, bool solid = false);
+
 	void addFrustum(const Frustum& frustum, const Color& color);
 
 	void render();

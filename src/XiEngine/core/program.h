@@ -2,6 +2,8 @@
 
 #include "../scene/sceneNode.h"
 
+class QuadTree;
+
 class Program
 {
 public:
@@ -11,9 +13,6 @@ public:
 private:
 	bool mouseLocked = true;
 
-	SceneNode* axis;
-
-	SceneNode* myEntity;
-	SceneNode* myEntity2;
-	SceneNode* myEntity3;
+	
+	QuadTree* terrain;
 };

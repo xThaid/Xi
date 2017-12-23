@@ -35,6 +35,9 @@ private:
 	void setup();
 	void cleanUp();
 
+	void drawDebug(Scene* scene);
+	void drawDebug(SceneNode* node);
+	
 	void renderPushedCommands(Camera* camera);
 
 	void renderSceneNode(SceneNode* node);

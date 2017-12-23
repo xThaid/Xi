@@ -1,115 +1,25 @@
 #include "sceneNode.h"
 
+#include "../scene/component.h"
 #include "../utils/logger.h"
-
-Transform::Transform(SceneNode* owner) :
-	owner_(owner),
-	dirty_(false),
-	position_(Vector3(0.0f)),
-	rotation_(Vector3(0.0f)),
-	scale_(Vector3(1.0f)),
-	transform_(Matrix4())
-{
-}
-
-void Transform::operator=(const Transform& copyFrom)
-{
-	position_ = copyFrom.position_;
-	rotation_ = copyFrom.rotation_;
-	scale_ = copyFrom.scale_;
-	dirty_ = true;
-}
-
-void Transform::translate(Vector3 vec)
-{
-	position_ += vec;
-	dirty_ = true;
-}
-
-void Transform::rotate(Vector3 angle)
-{
-	rotation_ += angle;
-	dirty_ = true;
-}
-
-void Transform::setPosition(Vector3 position)
-{
-	position_ = position;
-	dirty_ = true;
-}
-
-void Transform::setRotation(Vector3 rotation)
-{
-	rotation_ = rotation;
-	dirty_ = true;
-}
-
-void Transform::setScale(float scale)
-{
-	scale_ = Vector3(scale);
-	dirty_ = true;
-}
-
-void Transform::setScale(Vector3 scale)
-{
-	scale_ = scale;
-	dirty_ = true;
-}
-
-Matrix4 Transform::getTransform()
-{
-	if (dirty_)
-	{
-		updateTransform();
-	}
-
-	return transform_;
-}
-
-void Transform::updateTransform()
-{
-	if (dirty_)
-	{
-		transform_ = Matrix4();
-		transform_.translate(position_);
-
-		transform_.rotateX(radToDeg(rotation_.x_));
-		transform_.rotateY(radToDeg(rotation_.y_));
-		transform_.rotateZ(radToDeg(rotation_.z_));
-
-		transform_.scale(scale_);
-	
-		if (owner_->getParentNode() != nullptr)
-		{
-			Transform& parentTransform = owner_->getParentNode()->getTransform();
-			transform_ = parentTransform.transform_ * transform_;
-		}
-	}
-
-	for (SceneNode* child : owner_->getChildren())
-	{
-		Transform& childTranform = child->getTransform();
-		if (dirty_)
-		{
-			childTranform.dirty_ = true;
-		}
-
-		childTranform.updateTransform();
-	}
-
-	dirty_ = false;
-}
 
 SceneNode::SceneNode(const std::string& name) :
 	name_(name),
 	nameHash_(name),
-	transform_(this)
+	dirty_(false),
+	worldTransform_(Matrix4()),
+	position_(0.0f),
+	rotation_(0.0f),
+	scale_(1.0f)
 {
 }
 
 SceneNode::~SceneNode()
 {
 	for (std::map<StringHash, SceneNode*>::iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
+		delete it->second;
+
+	for (std::map<std::type_index, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
 		delete it->second;
 }
 
@@ -122,8 +32,6 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	SceneNode* myClone = new SceneNode(newName);
 	
 	myClone->parentNode_ = parentNode_;
-	myClone->drawable_ = drawable_;
-	myClone->transform_ = transform_;
 
 	for (std::map<StringHash, SceneNode*>::const_iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
 	{
@@ -135,15 +43,80 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	return myClone;
 }
 
-void SceneNode::setName(const std::string& name)
+void SceneNode::setPosition(const Vector3& position)
 {
-	name_ = name;
-	nameHash_ = name;
+	position_ = position;
 
-	parentNode_->addChildNode(this);
+	markDirty();
 }
 
-void SceneNode::addChildNode(SceneNode* node)
+void SceneNode::setRotation(const Vector3& rotation)
+{
+	rotation_ = rotation;
+
+	markDirty();
+}
+
+void SceneNode::setScale(float scale)
+{
+	setScale(Vector3(scale, scale, scale));
+}
+
+void SceneNode::setScale(const Vector3& scale)
+{
+	if (scale.x_ == 0.0f || scale.y_ == 0.0f || scale.z_ == 0.0f)
+		return;
+
+	scale_ = scale;
+
+	markDirty();
+}
+
+void SceneNode::translate(const Vector3& delta)
+{
+	position_ += delta;
+
+	markDirty();
+}
+
+void SceneNode::rotate(const Vector3& delta)
+{
+	rotation_ += delta;
+
+	markDirty();
+}
+
+Matrix4 SceneNode::getLocalTransform()
+{
+	Matrix4 transform = Matrix4();
+	transform.translate(position_);
+
+	transform.rotateX(radToDeg(rotation_.x_));
+	transform.rotateY(radToDeg(rotation_.y_));
+	transform.rotateZ(radToDeg(rotation_.z_));
+
+	transform.scale(scale_);
+
+	return transform;
+}
+
+Matrix4 SceneNode::getWorldTransform()
+{
+	if (dirty_)
+		updateWorldTransform();
+
+	return worldTransform_;
+}
+
+SceneNode* SceneNode::createChild(const std::string& name)
+{
+	SceneNode* child = new SceneNode(name);
+	addChild(child);
+
+	return child;
+}
+
+void SceneNode::addChild(SceneNode* node)
 {
 	if (node == nullptr)
 	{
@@ -154,20 +127,20 @@ void SceneNode::addChildNode(SceneNode* node)
 	if (node == this)
 		return;
 
-	if (findChildNode(node->nameHash_) != nullptr)
+	if (findChild(node->nameHash_) != nullptr)
 	{
 		Logger::warn(name_ + " node has already child with name: " + node->name_);
 		return;
 	}
 
 	if (node->parentNode_)
-		node->parentNode_->removeChildNode(node->nameHash_, false);
+		node->parentNode_->removeChild(node->nameHash_, false);
 
 	node->parentNode_ = this;
 	childrenNode_[node->nameHash_] = node;
 }
 
-SceneNode* SceneNode::findChildNode(StringHash nameHash)
+SceneNode* SceneNode::findChild(StringHash nameHash)
 {
 	std::map<StringHash, SceneNode*>::iterator child = childrenNode_.find(nameHash);
 	if (child == childrenNode_.end())
@@ -176,9 +149,9 @@ SceneNode* SceneNode::findChildNode(StringHash nameHash)
 	return child->second;
 }
 
-void SceneNode::removeChildNode(StringHash nameHash, bool purge)
+void SceneNode::removeChild(StringHash nameHash, bool purge)
 {
-	SceneNode* child = findChildNode(nameHash);
+	SceneNode* child = findChild(nameHash);
 	if (!child)
 		return;
 
@@ -197,23 +170,86 @@ std::vector<SceneNode*> SceneNode::getChildren()
 	return children;
 }
 
-void SceneNode::setMesh(Mesh* mesh)
+void SceneNode::addComponent(Component* component)
 {
-	drawable_.mesh = mesh;
+	std::type_index type = component->getType();
+
+	if (hasComponent(type))
+	{
+		Logger::warn("Scene node " + name_ + " has already component of type " + type.name());
+		return;
+	}
+
+	components_[type] = component;
+
+	component->node_ = this;
+	component->onNodeSet();
 }
 
-void SceneNode::setMaterial(Material* material)
+bool SceneNode::hasComponent(const std::type_index& type)
 {
-	drawable_.material = material;
+	auto result = components_.find(type);
+
+	if (result != components_.end())
+		return true;
+
+	return false;
 }
 
-void SceneNode::setDrawable(Mesh* mesh, Material* material)
+Component* SceneNode::getComponent(const std::type_index& type)
 {
-	drawable_.mesh = mesh;
-	drawable_.material = material;
+	auto result = components_.find(type);
+
+	if (result != components_.end())
+		return result->second;
+
+	return nullptr;
 }
 
-bool SceneNode::isDrawable()
+void SceneNode::removeComponent(const std::type_index& type, bool purge)
 {
-	return drawable_.mesh != nullptr;
+	Component* component = getComponent(type);
+
+	if (!component)
+		return;
+
+	components_.erase(type);
+
+	if (purge)
+		delete component;
+}
+
+std::vector<Component*> SceneNode::getComponents()
+{
+	std::vector<Component*> components;
+	for (auto it = components_.begin(); it != components_.end(); it++)
+		components.push_back(it->second);
+
+	return components;
+}
+
+void SceneNode::markDirty()
+{
+	if (dirty_)
+		return;
+
+	dirty_ = true;
+
+	for (std::map<StringHash, SceneNode*>::iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
+		it->second->markDirty();
+
+	for (std::map<std::type_index, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
+		it->second->onMarkedDirty();
+}
+
+void SceneNode::updateWorldTransform()
+{
+	worldTransform_ = getLocalTransform();
+
+	if (!isRootNode())
+	{
+		worldTransform_ = parentNode_->getWorldTransform() * worldTransform_;
+	}
+
+	dirty_ = false;
 }

@@ -112,6 +112,11 @@ void DebugRenderer::addBoundingBox(const BoundingBox& box, const Matrix4& transf
 	}
 }
 
+void DebugRenderer::addBoundingBox(const BoundingBox& box, const Color& color, bool solid)
+{
+	addBoundingBox(box, Matrix4(), color, solid);
+}
+
 void DebugRenderer::addFrustum(const Frustum& frustum, const Color& color)
 {
 	const Vector3* vertices = frustum.vertices_;

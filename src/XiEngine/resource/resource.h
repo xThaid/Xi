@@ -8,7 +8,6 @@
         static StringHash getTypeStatic() { return StringHash(#typeName); } \
         static const std::string getTypeNameStatic() { return #typeName; }
 
-
 enum ResourceStatus
 {
 	UNLOADED,

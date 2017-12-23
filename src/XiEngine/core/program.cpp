@@ -8,18 +8,29 @@
 #include "../resource/primitives.h"
 #include "../resource/resourceManager.h"
 #include "../scene/scene.h"
-#include "../scene/sceneNodeImporter.h"
+#include "../terrain/quadTree.h"
 #include "../utils/logger.h"
 
 void Program::init()
 {
 	Scene* scene = new Scene();
 
+	terrain = new QuadTree();
+	SceneNode* terrainNode = new SceneNode("terrain");
+	terrainNode->addComponent(terrain);
+
+	scene->getRootNode()->addChild(terrainNode);
+
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
+	FrameInfo info;
+	info.camera_ = Core::getCurrentScene()->getMainCamera();
+
+	terrain->update(info);
+
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();

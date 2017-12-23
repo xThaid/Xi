@@ -3,6 +3,7 @@
 #include "../core/core.h"
 #include "../core/input.h"
 #include "../graphics/camera.h"
+#include "../graphics/drawable.h"
 #include "../graphics/debugRenderer.h"
 #include "../graphics/commandBuffer.h"
 #include "../graphics/graphics.h"
@@ -14,6 +15,7 @@
 #include "../resource/resourceManager.h"
 #include "../scene/sceneNode.h"
 #include "../scene/scene.h"
+#include "../terrain/quadTree.h"
 #include "../utils/logger.h"
 
 
@@ -38,6 +40,7 @@ RenderingEngine::~RenderingEngine()
 void RenderingEngine::render(Scene* scene)
 {
 	debugRenderer_->setView(scene->getMainCamera());
+	drawDebug(scene);
 
 	graphics_->beginFrame();
 
@@ -56,17 +59,11 @@ void RenderingEngine::render(Scene* scene)
 	else
 		debugRenderer_->addFrustum(scene->getMainCamera()->getFrustum(), Color::WHITE);
 
-	debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
-	debugRenderer_->addTriangle(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Color::RED);
+	//debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
+	//debugRenderer_->addTriangle(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Color::RED);
 
-	BoundingBox box(-3.0f, 3.0f);
-	debugRenderer_->addBoundingBox(box, Matrix4(), Color::GREEN);
 
 	debugRenderer_->render();
-
-	//renderSceneNode(scene->getRootNode());
-	//renderPushedCommands(scene->getMainCamera());
-	//commandBuffer_->clear();
 
 	debugRenderer_->handleEndFrame();
 	graphics_->endFrame();
@@ -85,6 +82,20 @@ void RenderingEngine::cleanUp()
 	delete materialLibrary_;
 }
 
+void RenderingEngine::drawDebug(Scene* scene)
+{
+	drawDebug(scene->getRootNode());
+}
+
+void RenderingEngine::drawDebug(SceneNode* node)
+{
+	for (Component* component : node->getComponents())
+		component->drawDebuGeometry(debugRenderer_);
+
+	for (SceneNode* child : node->getChildren())
+		drawDebug(child);
+}
+
 void RenderingEngine::renderPushedCommands(Camera* camera)
 {
 	sendGlobalUniformsToAll(camera);
@@ -97,16 +108,6 @@ void RenderingEngine::renderPushedCommands(Camera* camera)
 
 void RenderingEngine::renderSceneNode(SceneNode* node)
 {
-	node->getTransform().updateTransform();
-
-	if (node->isDrawable())
-	{
-		Material* material = node->getDrawable().material;
-		if (material == nullptr)
-			material = MaterialLibrary::getInstance()->getDebugMaterial();
-
-		commandBuffer_->push(node->getDrawable().mesh, material, node->getTransform().getTransform());
-	}
 
 	for (SceneNode* child : node->getChildren())
 		renderSceneNode(child);
