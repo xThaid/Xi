@@ -4,8 +4,6 @@
 
 namespace Primitives
 {
-	MeshGeometry* line();
-
 	MeshGeometry* quad();
 	MeshGeometry* quad(float width, float height);
 

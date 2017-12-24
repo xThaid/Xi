@@ -2,17 +2,6 @@
 
 namespace Primitives
 {
-	MeshGeometry* line()
-	{
-		std::vector<Vector3>* positions = new std::vector<Vector3>
-		{
-			Vector3(-0.5f, 0.0f, 0.0f),
-			Vector3(0.5f, 0.0f, 0.0f)
-		};
-
-		return new MeshGeometry(PrimitiveTopology::LINES, nullptr, positions, nullptr, nullptr);
-	}
-
 	MeshGeometry* quad()
 	{
 		return quad(1.0f, 1.0f);
@@ -28,7 +17,7 @@ namespace Primitives
 			Vector3( width, -height, 0.0f)
 		};
 
-		std::vector<Vector2>* UV = new std::vector<Vector2>
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>
 		{
 			Vector2(0.0f, 1.0f),
 			Vector2(0.0f, 0.0f),
@@ -36,7 +25,7 @@ namespace Primitives
 			Vector2(1.0f, 0.0f)
 		};
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, nullptr, positions, UV, nullptr);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, nullptr, positions, nullptr, texCoords);
 	}
 
 	MeshGeometry* cube()
@@ -86,51 +75,6 @@ namespace Primitives
 			Vector3(-0.5f,  0.5f,  0.5f),
 		};
 
-		std::vector<Vector2>* UV = new std::vector<Vector2>
-		{
-			Vector2(0.0f, 0.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(0.0f, 0.0f),
-			Vector2(0.0f, 1.0f),
-
-			Vector2(0.0f, 0.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(0.0f, 0.0f),
-
-			Vector2(1.0f, 0.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(0.0f, 0.0f),
-			Vector2(1.0f, 0.0f),
-
-			Vector2(1.0f, 0.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(0.0f, 0.0f),
-
-			Vector2(0.0f, 1.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(0.0f, 0.0f),
-			Vector2(0.0f, 1.0f),
-
-			Vector2(0.0f, 1.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(1.0f, 1.0f),
-			Vector2(1.0f, 0.0f),
-			Vector2(0.0f, 1.0f),
-			Vector2(0.0f, 0.0f),
-		};
-
 		std::vector<Vector3>* normals = new std::vector<Vector3>
 		{
 			Vector3(0.0f,  0.0f, -1.0f),
@@ -176,7 +120,53 @@ namespace Primitives
 			Vector3(0.0f,  1.0f,  0.0f),
 		};
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLES, nullptr, positions, UV, normals);
+
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>
+		{
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 0.0f),
+
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+
+			Vector2(0.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(1.0f, 1.0f),
+			Vector2(1.0f, 0.0f),
+			Vector2(0.0f, 1.0f),
+			Vector2(0.0f, 0.0f),
+		};
+
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, nullptr, positions, normals, texCoords);
 	}
 
 	MeshGeometry* plane(unsigned int xSegments, unsigned int ySegments)
@@ -186,8 +176,8 @@ namespace Primitives
 		float dy = 1.0f / ySegments;
 
 		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
-		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
 		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ySegments; y++)
@@ -195,7 +185,7 @@ namespace Primitives
 			for (unsigned int x = 0; x <= xSegments; x++)
 			{
 				(*positions)[verticesCounter] = Vector3(dx * x * 2.0f - 1.0f, dy * y * 2.0f - 1.0f, 0.0f);
-				(*UV)[verticesCounter] = Vector2(dx * x, 1.0f - y * dy);
+				(*texCoords)[verticesCounter] = Vector2(dx * x, 1.0f - y * dy);
 				(*normals)[verticesCounter] = Vector3(0.0f, 1.0f, 0.0f);
 				
 				verticesCounter++;
@@ -228,7 +218,7 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, normals, texCoords);
 	}
 
 	MeshGeometry* circle(unsigned int edgeSegments, unsigned int ringSegments)
@@ -236,8 +226,8 @@ namespace Primitives
 		int numVertex = (edgeSegments + 1) * (ringSegments + 1);
 
 		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
-		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
 		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ringSegments; y++)
@@ -250,7 +240,7 @@ namespace Primitives
 				float yPos = std::sin(xSegment * M_TWO_PI);
 
 				(*positions)[verticesCounter] = Vector3(xPos * ringDepth, yPos * ringDepth, 0.0f);
-				(*UV)[verticesCounter] = Vector2(xSegment, ringDepth);
+				(*texCoords)[verticesCounter] = Vector2(xSegment, ringDepth);
 				(*normals)[verticesCounter] = Vector3(0.0f, 0.0f, 1.0f);
 				
 				verticesCounter++;
@@ -283,7 +273,7 @@ namespace Primitives
 			oddRow = !oddRow;
 		}
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLE_STRIP, indices, positions, normals, texCoords);
 	}
 
 	MeshGeometry* sphere(unsigned int xSegments, unsigned int ySegments)
@@ -291,8 +281,8 @@ namespace Primitives
 		int numVertex = (xSegments + 1) * (ySegments + 1);
 		
 		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
-		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
 		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>(numVertex);
 
 		int verticesCounter = 0;
 		for (unsigned int y = 0; y <= ySegments; y++)
@@ -307,7 +297,7 @@ namespace Primitives
 				float zPos = std::sin(xSegment * M_TWO_PI) * std::sin(ySegment * M_PI);
 			
 				(*positions)[verticesCounter] = Vector3(xPos, yPos, zPos);
-				(*UV)[verticesCounter] = Vector2(xSegment, ySegment);
+				(*texCoords)[verticesCounter] = Vector2(xSegment, ySegment);
 				(*normals)[verticesCounter] = Vector3(xPos, yPos, zPos);
 			
 				verticesCounter++;
@@ -331,7 +321,7 @@ namespace Primitives
 			}
 		}
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, normals, texCoords);
 	}
 
 	//https://github.com/JoeyDeVries/Cell/blob/master/cell/mesh/torus.cpp
@@ -340,8 +330,8 @@ namespace Primitives
 		int numVertex = (numSteps1 + 1) * (numSteps2 + 1);
 
 		std::vector<Vector3>* positions = new std::vector<Vector3>(numVertex);
-		std::vector<Vector2>* UV = new std::vector<Vector2>(numVertex);
 		std::vector<Vector3>* normals = new std::vector<Vector3>(numVertex);
+		std::vector<Vector2>* texCoords = new std::vector<Vector2>(numVertex);
 
 		
 		float d1 = M_TWO_PI / numSteps1;
@@ -365,8 +355,8 @@ namespace Primitives
 				float s = sin(a2);
 
 				(*positions)[i * (numSteps2 + 1) + j] = p + u * c + v * s;
-				(*UV)[i * (numSteps2 + 1) + j].x_ = ((float)i) / ((float)numSteps1) * M_TWO_PI;
-				(*UV)[i * (numSteps2 + 1) + j].y_ = ((float)j) / ((float)numSteps2);
+				(*texCoords)[i * (numSteps2 + 1) + j].x_ = ((float)i) / ((float)numSteps1) * M_TWO_PI;
+				(*texCoords)[i * (numSteps2 + 1) + j].y_ = ((float)j) / ((float)numSteps2);
 				(*normals)[i * (numSteps2 + 1) + j] = (u * c + v * s).normalized();
 				a2 += d2;
 			}
@@ -395,6 +385,6 @@ namespace Primitives
 			}
 		}
 
-		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, UV, normals);
+		return new MeshGeometry(PrimitiveTopology::TRIANGLES, indices, positions, normals, texCoords);
 	}
 }

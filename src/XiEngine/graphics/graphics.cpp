@@ -1,5 +1,6 @@
 #include "graphics.h"
 
+#include "../graphics/indexBuffer.h"
 #include "../graphics/shader.h"
 #include "../graphics/vertexBuffer.h"
 #include "../graphics/window.h"
@@ -25,6 +26,13 @@ static const unsigned glElementComponents[] =
 	3,
 	4,
 	4
+};
+
+static const unsigned glFillMode[] =
+{
+	GL_FILL,
+	GL_LINE,
+	GL_POINT
 };
 
 void Graphics::getGLPrimitiveType(unsigned int elementCount, PrimitiveTopology topology, unsigned int& primitiveCount, GLenum& glPrimitiveType)
@@ -71,6 +79,7 @@ Graphics::Graphics(Window* window) :
 	boundVBO_(0),
 	vertexBufferDirty_(false),
 	vertexBuffer_(nullptr),
+	indexBuffer_(nullptr),
 	enabledVertexAttributes_(0),
 	shader_(nullptr)
 {
@@ -105,6 +114,9 @@ void Graphics::clear(const Vector3& color)
 
 void Graphics::draw(PrimitiveTopology topology, unsigned int start, unsigned int vertexCount)
 {
+	if (!vertexCount || !vertexBuffer_)
+		return;
+
 	prepareDraw();
 
 	unsigned int primitiveCount;
@@ -117,8 +129,36 @@ void Graphics::draw(PrimitiveTopology topology, unsigned int start, unsigned int
 	numBatches_++;
 }
 
+void Graphics::drawElement(PrimitiveTopology topology, unsigned int indexStart, unsigned int indexCount)
+{
+	if (!indexCount || !indexBuffer_)
+		return;
+
+	prepareDraw();
+
+	unsigned int primitiveCount;
+	GLenum glPrimitiveType;
+	getGLPrimitiveType(indexCount, topology, primitiveCount, glPrimitiveType);
+
+	unsigned int indexSize = indexBuffer_->getIndexSize();
+	GLenum indexType = indexSize == sizeof(unsigned short) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+	glDrawElements(glPrimitiveType, indexCount, indexType, reinterpret_cast<const GLvoid*>(indexStart * indexSize));
+
+	numPrimitives_ += primitiveCount;
+	numBatches_++;
+}
+
 void Graphics::setViewport()
 {
+}
+
+void Graphics::setFillMode(FillMode fillMode)
+{
+	if (fillMode != fillMode_)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, glFillMode[fillMode]);
+		fillMode_ = fillMode;
+	}
 }
 
 void Graphics::setVBO(unsigned int VBO)
@@ -136,6 +176,19 @@ void Graphics::setVertexBuffer(VertexBuffer* vertexBuffer)
 	{
 		vertexBuffer_ = vertexBuffer;
 		vertexBufferDirty_ = true;
+
+		if (vertexBuffer == nullptr)
+			setVBO(0);
+	}
+}
+
+void Graphics::setIndexBuffer(IndexBuffer* indexBuffer)
+{
+	if (indexBuffer_ != indexBuffer)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer ? indexBuffer->getEBO() : 0);
+
+		indexBuffer_ = indexBuffer;
 	}
 }
 

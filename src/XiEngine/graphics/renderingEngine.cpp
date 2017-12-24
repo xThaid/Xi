@@ -6,6 +6,7 @@
 #include "../graphics/drawable.h"
 #include "../graphics/debugRenderer.h"
 #include "../graphics/commandBuffer.h"
+#include "../graphics/geometry.h"
 #include "../graphics/graphics.h"
 #include "../graphics/material.h"
 #include "../graphics/mesh.h"
@@ -40,28 +41,35 @@ RenderingEngine::~RenderingEngine()
 void RenderingEngine::render(Scene* scene)
 {
 	debugRenderer_->setView(scene->getMainCamera());
-	drawDebug(scene);
+
+	static bool debug = false;
+	static bool pressed = false;
+
+	if (Input::getKey(GLFW_KEY_L) && !pressed)
+	{
+		pressed = true;
+		debug = !debug;
+	}
+	else if (!Input::getKey(GLFW_KEY_L) && pressed)
+		pressed = false;
+
+	if(debug)
+		drawDebug(scene);
+
+	sendGlobalUniformsToAll(scene->getMainCamera());
 
 	graphics_->beginFrame();
 
-	static Frustum frust;
-	static bool pressed = false;
 
-	if (Input::getKey(GLFW_KEY_V) && !pressed)
-	{
-		pressed = true;
-		frust = scene->getMainCamera()->getFrustum();
-		scene->getMainCamera()->setFarClip(2000.0f);
-	}
-
-	if (pressed)
-		debugRenderer_->addFrustum(frust, Color::WHITE);
-	else
-		debugRenderer_->addFrustum(scene->getMainCamera()->getFrustum(), Color::WHITE);
-
-	//debugRenderer_->addQuad(Vector3(0.0f), 1.0f, 1.0f, Color::ORANGE);
-	//debugRenderer_->addTriangle(Vector3(0.0f, 0.0f, -1.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f), Color::RED);
-
+	debugRenderer_->addBoundingBox(tempMesh->getBoundingBox(), Color::BLUE);
+	
+	Shader* tempShader = ResourceManager::getInstance()->getResource<Shader>("model shader");
+	tempShader->useShader();
+	tempShader->setMatrix4("model", Matrix4());
+	graphics_->setShader(tempShader);
+	graphics_->setFillMode(FILL_WIREFRAME);
+	tempMesh->getGeometry()->draw(graphics_);
+	graphics_->setFillMode(FILL_SOLID);
 
 	debugRenderer_->render();
 
@@ -73,6 +81,11 @@ void RenderingEngine::setup()
 {
 	ResourceManager::getInstance()->addResource(
 		new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag"));
+	ResourceManager::getInstance()->addResource(
+		new Shader("model shader", "D:/Dev/Repos/Xi/res/shaders/models.vert", "D:/Dev/Repos/Xi/res/shaders/models.frag"));
+
+	tempMesh = new Mesh("kula", Primitives::sphere(30, 30));
+	ResourceManager::getInstance()->addResource(tempMesh);
 }
 
 void RenderingEngine::cleanUp()
@@ -128,7 +141,6 @@ void RenderingEngine::sendGlobalUniforms(Shader* shader, Camera* camera)
 	shader->useShader();
 	shader->setMatrix4("projection", camera->getProjection());
 	shader->setMatrix4("view", camera->getView());
-	shader->setVector3("viewPos", camera->position);
 }
 
 void RenderingEngine::renderCommand(RenderCommand* command)
@@ -145,16 +157,4 @@ void RenderingEngine::renderCommand(RenderCommand* command)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	renderMesh(mesh);
-}
-
-void RenderingEngine::renderMesh(Mesh* mesh)
-{
-	glBindVertexArray(mesh->getVAO());
-
-	if(mesh->getMeshGeometry()->hasIndices())
-		glDrawElements(mesh->getDrawMode(), mesh->getMeshGeometry()->getNumIndices(), GL_UNSIGNED_INT, 0);
-	else
-		glDrawArrays(mesh->getDrawMode(), 0, mesh->getMeshGeometry()->getNumVertices());
 }

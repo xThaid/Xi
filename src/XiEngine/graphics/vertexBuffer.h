@@ -19,6 +19,7 @@ public:
 
 	inline std::vector<std::pair<VertexElement, unsigned int> >& getElements() { return elements_; }
 	inline unsigned int getVertexSize() { return vertexSize_; }
+	inline unsigned int getVertexCount() { return vertexCount_; }
 
 private:
 	Graphics* graphics_;

@@ -42,6 +42,7 @@ bool VertexBuffer::setData(const void* data)
 	if (VBO_)
 	{
 		graphics_->setVBO(VBO_);
+	
 		glBufferData(GL_ARRAY_BUFFER, vertexCount_ * vertexSize_, data, GL_STATIC_DRAW);
 	}
 
@@ -52,7 +53,9 @@ void VertexBuffer::release()
 {
 	if (VBO_)
 	{
-		graphics_->setVBO(0);
+		if(graphics_->getVertexBuffer() == this)
+			graphics_->setVBO(0);
+
 		glDeleteBuffers(1, &VBO_);
 		
 		VBO_ = 0;

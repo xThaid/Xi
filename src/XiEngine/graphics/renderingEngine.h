@@ -17,6 +17,8 @@ class Shader;
 class RenderingEngine
 {
 public:
+	Mesh* tempMesh;
+
 	RenderingEngine();
 	~RenderingEngine();
 
@@ -46,5 +48,4 @@ private:
 	void sendGlobalUniforms(Shader* shader, Camera* camera);
 
 	void renderCommand(RenderCommand* command);
-	void renderMesh(Mesh* mesh);
 };

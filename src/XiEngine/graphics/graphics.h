@@ -6,10 +6,10 @@
 #include "../graphics/graphicsDefs.h"
 #include "../math/ximath.h"
 
-class Window;
-
-class VertexBuffer;
+class IndexBuffer;
 class Shader;
+class VertexBuffer;
+class Window;
 
 class Graphics
 {
@@ -25,14 +25,21 @@ public:
 	void clear(const Vector3& color);
 
 	void draw(PrimitiveTopology topology, unsigned int start, unsigned int vertexCount);
+	void drawElement(PrimitiveTopology topology, unsigned int indexStart, unsigned int indexCount);
 
 	void setViewport();
+
+	void setFillMode(FillMode fillMode);
 
 	void setVBO(unsigned int VBO);
 
 	void setVertexBuffer(VertexBuffer* vertexBuffer);
+	void setIndexBuffer(IndexBuffer* indexBuffer);
 
 	void setShader(Shader* shader);
+
+	inline VertexBuffer* getVertexBuffer() { return vertexBuffer_; }
+	inline IndexBuffer* getIndexBuffer() { return indexBuffer_; }
 
 private:
 	static Graphics* instance_;
@@ -44,11 +51,15 @@ private:
 	unsigned int numPrimitives_;
 	unsigned int numBatches_;
 
+	FillMode fillMode_;
+
 	unsigned int boundVAO_;
 	unsigned int boundVBO_;
 
 	bool vertexBufferDirty_;
 	VertexBuffer* vertexBuffer_;
+
+	IndexBuffer* indexBuffer_;
 
 	unsigned int enabledVertexAttributes_;
 

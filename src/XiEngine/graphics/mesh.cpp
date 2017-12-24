@@ -1,19 +1,22 @@
 #include "mesh.h"
 
-#include <glad\glad.h>
+#include <glad/glad.h>
 
+#include "../graphics/indexBuffer.h"
+#include "../graphics/geometry.h"
+#include "../graphics/vertexBuffer.h"
 #include "../utils/logger.h"
 
 MeshGeometry::MeshGeometry(PrimitiveTopology topology,
 	std::vector<unsigned int>* indices,
 	std::vector<Vector3>* positions,
-	std::vector<Vector2>* UV,
-	std::vector<Vector3>* normals) :
+	std::vector<Vector3>* normals,
+	std::vector<Vector2>* texCoords) :
 	topology_(topology),
 	indices_(indices),
 	positions_(positions),
-	UV_(UV),
-	normals_(normals)
+	normals_(normals),
+	texCoords_(texCoords)
 {
 }
 
@@ -24,10 +27,10 @@ MeshGeometry::~MeshGeometry()
 
 	if (positions_ != nullptr)
 		delete positions_;
-	if (UV_ != nullptr)
-		delete UV_;
 	if (normals_ != nullptr)
 		delete normals_;
+	if (texCoords_ != nullptr)
+		delete texCoords_;
 }
 
 bool MeshGeometry::hasIndices()
@@ -40,14 +43,14 @@ bool MeshGeometry::hasPositions()
 	return positions_ != nullptr && positions_->size() >= 0;
 }
 
-bool MeshGeometry::hasUV()
-{
-	return UV_ != nullptr && UV_->size() >= 0;
-}
-
 bool MeshGeometry::hasNormals()
 {
 	return normals_ != nullptr && normals_->size() >= 0;
+}
+
+bool MeshGeometry::hasTexCoords()
+{
+	return texCoords_ != nullptr && texCoords_->size() >= 0;
 }
 
 unsigned int* MeshGeometry::getIndicesData()
@@ -55,8 +58,36 @@ unsigned int* MeshGeometry::getIndicesData()
 	return &(*indices_)[0];
 }
 
-void MeshGeometry::prepareData(std::vector<float>& data, bool interleaved)
+float* MeshGeometry::prepareVertexData()
 {
+	unsigned int vertexSize = 3;
+	if (hasNormals()) vertexSize += 3;
+	if (hasTexCoords()) vertexSize += 2;
+
+	float* data = new float[getNumVertices() * vertexSize];
+
+	unsigned int dataCounter = 0;
+	for (unsigned int i = 0; i < getNumVertices(); i++)
+	{
+		data[dataCounter++] = (*positions_)[i].x_;
+		data[dataCounter++] = (*positions_)[i].y_;
+		data[dataCounter++] = (*positions_)[i].z_;
+
+		if (hasNormals())
+		{
+			data[dataCounter++] = (*normals_)[i].x_;
+			data[dataCounter++] = (*normals_)[i].y_;
+			data[dataCounter++] = (*normals_)[i].z_;
+		}
+
+		if (hasTexCoords())
+		{
+			data[dataCounter++] = (*texCoords_)[i].x_;
+			data[dataCounter++] = (*texCoords_)[i].y_;
+		}
+	}
+
+	return data;
 }
 
 bool MeshGeometry::isCorrect()
@@ -64,10 +95,10 @@ bool MeshGeometry::isCorrect()
 	if (!hasPositions())
 		return false;
 
-	if (hasUV() && UV_->size() != getNumVertices())
+	if (hasNormals() && normals_->size() != getNumVertices())
 		return false;
 
-	if (hasNormals() && normals_->size() != getNumVertices())
+	if (hasTexCoords() && texCoords_->size() != getNumVertices())
 		return false;
 
 	return true;
@@ -76,18 +107,17 @@ bool MeshGeometry::isCorrect()
 unsigned int MeshGeometry::getMemoryUse()
 {
 	unsigned int memoryUse = sizeof(Vector3) * getNumVertices();
-	if (hasUV()) memoryUse += sizeof(Vector2) * getNumVertices();
-	if (hasNormals()) memoryUse += sizeof(Vector3) * getNumVertices();
 	if (hasIndices()) memoryUse += sizeof(unsigned int) * getNumIndices();
-
+	if (hasNormals()) memoryUse += sizeof(Vector3) * getNumVertices();
+	if (hasTexCoords()) memoryUse += sizeof(Vector2) * getNumVertices();
+	
 	return memoryUse;
 }
 
 Mesh::Mesh(const std::string& name, MeshGeometry* meshGeometry) :
 	Resource(name),
 	meshGeometry_(meshGeometry),
-	VAO_(0),
-	drawMode_(0)
+	geometry_(nullptr)
 {
 }
 	
@@ -104,114 +134,39 @@ bool Mesh::beginLoad()
 
 	setMemoryUse(meshGeometry_->getMemoryUse());
 
+	boundingBox_.define(meshGeometry_->getPositions(), meshGeometry_->getNumVertices());
+
 	return true;
 }
 
 bool Mesh::endLoad()
 {
-	parseTopology();
-	return uploadToGPU(true);
-}
+	unsigned int elementMask = MASK_POSITION;
+	if (meshGeometry_->hasNormals()) elementMask |= MASK_NORMAL;
+	if (meshGeometry_->hasTexCoords()) elementMask |= MASK_TEXCOORD;
 
-void Mesh::release()
-{
-	glDeleteBuffers(1, &VBO_);
-	glDeleteBuffers(1, &EBO_);
+	VertexBuffer* vertexBuffer = new VertexBuffer(elementMask);
+	vertexBuffer->create(meshGeometry_->getNumVertices());
 
-	glDeleteVertexArrays(1, &VAO_);
-}
+	float* data = meshGeometry_->prepareVertexData();
 
-bool Mesh::uploadToGPU(bool interleaved)
-{
-	std::vector<float> data;
-	meshGeometry_->prepareData(data, interleaved);
+	vertexBuffer->setData((void*) data);
 
-	glGenVertexArrays(1, &VAO_);
-	glGenBuffers(1, &VBO_);
-	glGenBuffers(1, &EBO_);
-
-	glBindVertexArray(VAO_);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_);
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-
+	IndexBuffer* indexBuffer = nullptr;
+	
 	if (meshGeometry_->hasIndices())
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO_);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshGeometry_->getNumIndices() * sizeof(unsigned int), meshGeometry_->getIndicesData(), GL_STATIC_DRAW);
+		indexBuffer = new IndexBuffer();
+		indexBuffer->create(meshGeometry_->getNumIndices(), true);
+		indexBuffer->setData(meshGeometry_->getIndicesData());
 	}
 
-	if (interleaved)
-	{
-		unsigned int      stride  = 3 * sizeof(float);
-		if (meshGeometry_->hasUV())      stride += 2 * sizeof(float);
-		if (meshGeometry_->hasNormals()) stride += 3 * sizeof(float);
-	
-		unsigned int offset = 0;
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid*)offset);
-		offset += 3 * sizeof(float);
-		
-		if (meshGeometry_->hasUV())
-		{
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)offset);
-			offset += 2 * sizeof(float);
-		}
-
-		if (meshGeometry_->hasNormals())
-		{
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (GLvoid*)offset);
-			offset += 3 * sizeof(float);
-		}
-	}
-	else
-	{
-		unsigned int numVertex = meshGeometry_->getNumVertices();
-		unsigned int offset = 0;
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)offset);
-		offset += numVertex * sizeof(float) * 3;
-		if (meshGeometry_->hasUV())
-		{
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (GLvoid*)offset);
-			offset += numVertex * sizeof(float) * 2;
-		}
-		if (meshGeometry_->hasNormals())
-		{
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)offset);
-			offset += numVertex * sizeof(float) * 3;
-		}
-	}
+	geometry_ = new Geometry(meshGeometry_->getPrimitiveTopology(), vertexBuffer, indexBuffer);
 
 	return true;
 }
 
-void Mesh::parseTopology()
+void Mesh::release()
 {
-	switch (meshGeometry_->getPrimitiveTopology())
-	{
-	case PrimitiveTopology::POINTS:
-		drawMode_ = GL_POINTS;
-		break;
-	case PrimitiveTopology::LINES:
-		drawMode_ = GL_LINES;
-		break;
-	case PrimitiveTopology::LINE_STRIP:
-		drawMode_ = GL_LINE_STRIP;
-		break;
-	case PrimitiveTopology::TRIANGLES:
-		drawMode_ = GL_TRIANGLES;
-		break;
-	case PrimitiveTopology::TRIANGLE_STRIP:
-		drawMode_ = GL_TRIANGLE_STRIP;
-		break;
-	case PrimitiveTopology::TRIANGLE_FAN:
-		drawMode_ = GL_TRIANGLE_FAN;
-		break;
-	}
+	delete geometry_;
 }
