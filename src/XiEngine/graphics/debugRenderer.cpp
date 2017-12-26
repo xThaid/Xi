@@ -201,6 +201,8 @@ void DebugRenderer::render()
 	
 	graphics->setShader(shader);
 	graphics->setVertexBuffer(vertexBuffer_);
+	
+	graphics->setDepthTest(CMP_ALWAYS);
 
 	if (lines_.size() > 0)
 	{
@@ -211,6 +213,8 @@ void DebugRenderer::render()
 	{
 		graphics->draw(PrimitiveTopology::TRIANGLES, lines_.size() * 2, triangles_.size() * 3);
 	}
+
+	graphics->setDepthTest(CMP_LESSEQUAL);
 }
 
 void DebugRenderer::handleEndFrame()

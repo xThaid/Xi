@@ -8,6 +8,17 @@
 
 Graphics* Graphics::instance_ = nullptr;
 
+static const unsigned glCmpFunc[] =
+{
+	GL_ALWAYS,
+	GL_EQUAL,
+	GL_NOTEQUAL,
+	GL_LESS,
+	GL_LEQUAL,
+	GL_GREATER,
+	GL_GEQUAL
+};
+
 static const unsigned glElementTypes[] =
 {
 	GL_INT,
@@ -75,17 +86,13 @@ Graphics::Graphics(Window* window) :
 	window_(window),
 	numPrimitives_(0),
 	numBatches_(0),
-	boundVAO_(0),
-	boundVBO_(0),
-	vertexBufferDirty_(false),
-	vertexBuffer_(nullptr),
-	indexBuffer_(nullptr),
-	enabledVertexAttributes_(0),
-	shader_(nullptr)
+	vertexBufferDirty_(false)
 {
 	instance_ = this;
 
 	init();
+
+	resetState();
 }
 
 Graphics::~Graphics()
@@ -161,6 +168,15 @@ void Graphics::setFillMode(FillMode fillMode)
 	}
 }
 
+void Graphics::setDepthTest(CompareMode mode)
+{
+	if (mode != depthTestMode_)
+	{
+		glDepthFunc(glCmpFunc[mode]);
+		depthTestMode_ = mode;
+	}
+}
+
 void Graphics::setVBO(unsigned int VBO)
 {
 	if (boundVBO_ != VBO)
@@ -226,7 +242,6 @@ void Graphics::init()
 	Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
 
 	glViewport(0, 0, window_->getRenderWidth(), window_->getRenderHeight());
-	glEnable(GL_DEPTH_TEST);
 
 	createVAO();
 }
@@ -236,6 +251,24 @@ void Graphics::release()
 	destroyVAO();
 
 	glfwTerminate();
+}
+
+void Graphics::resetState()
+{
+	depthTestMode_ = CMP_ALWAYS;
+	fillMode_ = FILL_SOLID;
+
+	boundVAO_ = 0;
+	boundVBO_ = 0;
+
+	vertexBuffer_ = nullptr;
+	indexBuffer_ = nullptr;
+
+	enabledVertexAttributes_ = 0;
+	shader_ = nullptr;
+
+	glEnable(GL_DEPTH_TEST);
+	setDepthTest(CMP_LESSEQUAL);
 }
 
 void Graphics::prepareDraw()

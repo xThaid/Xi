@@ -12,6 +12,18 @@ enum class PrimitiveTopology
 	TRIANGLE_FAN,
 };
 
+enum CompareMode
+{
+	CMP_ALWAYS = 0,
+	CMP_EQUAL,
+	CMP_NOTEQUAL,
+	CMP_LESS,
+	CMP_LESSEQUAL,
+	CMP_GREATER,
+	CMP_GREATEREQUAL,
+	MAX_COMPAREMODES
+};
+
 enum FillMode
 {
 	FILL_SOLID = 0,

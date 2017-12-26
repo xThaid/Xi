@@ -30,6 +30,8 @@ public:
 	void setViewport();
 
 	void setFillMode(FillMode fillMode);
+	
+	void setDepthTest(CompareMode mode);
 
 	void setVBO(unsigned int VBO);
 
@@ -53,6 +55,8 @@ private:
 
 	FillMode fillMode_;
 
+	CompareMode depthTestMode_;
+
 	unsigned int boundVAO_;
 	unsigned int boundVBO_;
 
@@ -67,6 +71,8 @@ private:
 
 	void init();
 	void release();
+
+	void resetState();
 
 	void prepareDraw();
 
