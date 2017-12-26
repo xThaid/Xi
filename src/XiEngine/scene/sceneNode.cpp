@@ -1,9 +1,11 @@
 #include "sceneNode.h"
 
 #include "../scene/component.h"
+#include "../scene/scene.h"
 #include "../utils/logger.h"
 
-SceneNode::SceneNode(const std::string& name) :
+SceneNode::SceneNode(Scene* scene, const std::string& name) :
+	scene_(scene),
 	name_(name),
 	nameHash_(name),
 	dirty_(false),
@@ -19,7 +21,7 @@ SceneNode::~SceneNode()
 	for (std::map<StringHash, SceneNode*>::iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
 		delete it->second;
 
-	for (std::map<std::type_index, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
+	for (std::map<StringHash, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
 		delete it->second;
 }
 
@@ -29,7 +31,7 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	if (!cloneName)
 		newName += "_clone";
 
-	SceneNode* myClone = new SceneNode(newName);
+	SceneNode* myClone = new SceneNode(scene_, newName);
 	
 	myClone->parentNode_ = parentNode_;
 
@@ -41,6 +43,15 @@ SceneNode* SceneNode::clone(bool cloneName) const
 	}
 
 	return myClone;
+}
+
+void SceneNode::update()
+{
+	for (auto& component : components_)
+		component.second->update();
+
+	for (auto& child : childrenNode_)
+		child.second->update();
 }
 
 void SceneNode::setPosition(const Vector3& position)
@@ -110,7 +121,7 @@ Matrix4 SceneNode::getWorldTransform()
 
 SceneNode* SceneNode::createChild(const std::string& name)
 {
-	SceneNode* child = new SceneNode(name);
+	SceneNode* child = new SceneNode(scene_, name);
 	addChild(child);
 
 	return child;
@@ -172,11 +183,11 @@ std::vector<SceneNode*> SceneNode::getChildren()
 
 void SceneNode::addComponent(Component* component)
 {
-	std::type_index type = component->getType();
+	StringHash type = component->getType();
 
 	if (hasComponent(type))
 	{
-		Logger::warn("Scene node " + name_ + " has already component of type " + type.name());
+		Logger::warn("Scene node " + name_ + " has already component of type " + std::to_string(type.getValue()));
 		return;
 	}
 
@@ -186,7 +197,7 @@ void SceneNode::addComponent(Component* component)
 	component->onNodeSet();
 }
 
-bool SceneNode::hasComponent(const std::type_index& type)
+bool SceneNode::hasComponent(StringHash type)
 {
 	auto result = components_.find(type);
 
@@ -196,7 +207,7 @@ bool SceneNode::hasComponent(const std::type_index& type)
 	return false;
 }
 
-Component* SceneNode::getComponent(const std::type_index& type)
+Component* SceneNode::getComponent(StringHash type)
 {
 	auto result = components_.find(type);
 
@@ -206,7 +217,7 @@ Component* SceneNode::getComponent(const std::type_index& type)
 	return nullptr;
 }
 
-void SceneNode::removeComponent(const std::type_index& type, bool purge)
+void SceneNode::removeComponent(StringHash type, bool purge)
 {
 	Component* component = getComponent(type);
 
@@ -219,13 +230,24 @@ void SceneNode::removeComponent(const std::type_index& type, bool purge)
 		delete component;
 }
 
-std::vector<Component*> SceneNode::getComponents()
+std::vector<Component*> SceneNode::getAllComponents()
 {
 	std::vector<Component*> components;
 	for (auto it = components_.begin(); it != components_.end(); it++)
 		components.push_back(it->second);
 
 	return components;
+}
+
+void SceneNode::getComponentsRecursive(StringHash type, std::vector<Component*>& dest)
+{
+	Component* comp = getComponent(type);
+
+	if (comp != nullptr)
+		dest.push_back(comp);
+
+	for (auto& child : childrenNode_)
+		child.second->getComponentsRecursive(type, dest);
 }
 
 void SceneNode::markDirty()
@@ -238,7 +260,7 @@ void SceneNode::markDirty()
 	for (std::map<StringHash, SceneNode*>::iterator it = childrenNode_.begin(); it != childrenNode_.end(); it++)
 		it->second->markDirty();
 
-	for (std::map<std::type_index, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
+	for (std::map<StringHash, Component*>::iterator it = components_.begin(); it != components_.end(); it++)
 		it->second->onMarkedDirty();
 }
 

@@ -104,6 +104,11 @@ Matrix4& Matrix4::translate(const Vector3& v)
 	return *this;
 }
 
+Matrix4& Matrix4::scale(float value)
+{
+	return scale(Vector3(value, value, value));
+}
+
 Matrix4& Matrix4::scale(float x, float y, float z)
 {
 	return scale(Vector3(x, y, z));
@@ -203,7 +208,7 @@ Matrix4 Matrix4::rotationMatrix(float angle, float x, float y, float z)
 	return rotationMatrix(angle, Vector3(x, y, z));
 }
 
-Matrix4 Matrix4::rotationMatrix(float angle, Vector3 v)
+Matrix4 Matrix4::rotationMatrix(float angle, const Vector3& v)
 {
 	float c = cosf(angle);
 	float s = sinf(angle);
@@ -233,7 +238,7 @@ Matrix4 Matrix4::translationMatrix(float x, float y, float z)
 	return translationMatrix(Vector3(x, y, z));
 }
 
-Matrix4 Matrix4::translationMatrix(Vector3 v)
+Matrix4 Matrix4::translationMatrix(const Vector3& v)
 {
 	Matrix4 m;
 	m.data[12] = v.x_;
@@ -243,12 +248,17 @@ Matrix4 Matrix4::translationMatrix(Vector3 v)
 	return m;
 }
 
+Matrix4 Matrix4::scaleMatrix(float value)
+{
+	return scaleMatrix(Vector3(value, value, value));
+}
+
 Matrix4 Matrix4::scaleMatrix(float x, float y, float z)
 {
 	return scaleMatrix(Vector3(x, y, z));
 }
 
-Matrix4 Matrix4::scaleMatrix(Vector3 v)
+Matrix4 Matrix4::scaleMatrix(const Vector3& v)
 {
 	Matrix4 m;
 	m.data[0] = v.x_;

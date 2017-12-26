@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../math/boundingBox.h"
 #include "../math/mathDefs.h"
 #include "../math/matrix4.h"
 #include "../math/plane.h"
@@ -34,7 +35,8 @@ public:
 	
 	void setTransform(const Matrix4& transform);
 
-	Intersection intersect(const Vector3& point);
+	Intersection intersect(const Vector3& point) const;
+	Intersection intersect(const BoundingBox& boundingBox) const;
 
 private:
 	Vector3 nearClip_;

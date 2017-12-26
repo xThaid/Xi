@@ -5,6 +5,7 @@
 #include "../core/time.h"
 #include "../graphics/camera.h"
 #include "../graphics/mesh.h"
+#include "../graphics/meshRenderer.h"
 #include "../resource/primitives.h"
 #include "../resource/resourceManager.h"
 #include "../scene/scene.h"
@@ -14,23 +15,25 @@
 void Program::init()
 {
 	Scene* scene = new Scene();
+	SceneNode* root = scene->getRootNode();
 
 	terrain = new QuadTree();
-	SceneNode* terrainNode = new SceneNode("terrain");
+	SceneNode* terrainNode = root->createChild("terrain");
 	terrainNode->addComponent(terrain);
 
-	scene->getRootNode()->addChild(terrainNode);
+	Mesh* tempMesh = new Mesh("kula2", Primitives::torus(3, 1, 50, 50));
+	ResourceManager::getInstance()->addResource(tempMesh);
+	MeshRenderer* meshRender = new MeshRenderer(tempMesh);
+
+	SceneNode* tempNode = root->createChild("torus");
+	tempNode->addComponent(meshRender);
 
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
-	FrameInfo info;
-	info.camera_ = Core::getCurrentScene()->getMainCamera();
-
-	terrain->update(info);
-
+	
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();

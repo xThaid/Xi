@@ -3,13 +3,12 @@
 #include <glad/glad.h> 
 #include <GLFW/glfw3.h>
 
-class CommandBuffer;
 class Camera;
 class DebugRenderer;
+class Geometry;
 class Graphics;
 class MaterialLibrary;
 class Mesh;
-struct RenderCommand;
 class Scene;
 class SceneNode;
 class Shader;
@@ -17,8 +16,6 @@ class Shader;
 class RenderingEngine
 {
 public:
-	Mesh* tempMesh;
-
 	RenderingEngine();
 	~RenderingEngine();
 
@@ -29,15 +26,12 @@ private:
 
 	DebugRenderer* debugRenderer_;
 
-	MaterialLibrary* materialLibrary_;
-	CommandBuffer* commandBuffer_;
-
-	Mesh* lineMesh_;
+	Shader* terrainShader_;
+	Shader* meshShader_;
 
 	void setup();
 	void cleanUp();
 
-	void drawDebug(Scene* scene);
 	void drawDebug(SceneNode* node);
 	
 	void renderPushedCommands(Camera* camera);
@@ -45,7 +39,5 @@ private:
 	void renderSceneNode(SceneNode* node);
 
 	void sendGlobalUniformsToAll(Camera* camera);
-	void sendGlobalUniforms(Shader* shader, Camera* camera);
-
-	void renderCommand(RenderCommand* command);
+	void sendGlobalUniforms(Shader* shader, Camera* viewCamera);
 };

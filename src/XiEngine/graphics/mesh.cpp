@@ -151,6 +151,7 @@ bool Mesh::endLoad()
 	float* data = meshGeometry_->prepareVertexData();
 
 	vertexBuffer->setData((void*) data);
+	delete data;
 
 	IndexBuffer* indexBuffer = nullptr;
 	

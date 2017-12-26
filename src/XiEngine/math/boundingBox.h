@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../math/matrix4.h"
 #include "../math/mathDefs.h"
 #include "../math/vector3.h"
 
@@ -22,6 +23,11 @@ public:
 
 	void merge(const Vector3& point);
 	void merge(const Vector3* vertices, unsigned int numVertices);
+
+	Vector3 center() const;
+	Vector3 size() const;
+
+	BoundingBox transformed(const Matrix4& transform) const;
 
 	void clear();
 };

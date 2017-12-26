@@ -11,7 +11,7 @@ Drawable::~Drawable()
 {
 }
 
-void Drawable::drawDebuGeometry(DebugRenderer* debug)
+void Drawable::drawDebugGeometry(DebugRenderer* debug)
 {
 	debug->addBoundingBox(getWorldBoundingBox(), Color::GREEN);
 }

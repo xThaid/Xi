@@ -40,6 +40,8 @@ public:
 	float length() const;
 	float lengthSquared() const;
 
+	Vector3 abs() const;
+
 	Vector3& normalize();
 	Vector3 normalized() const;
 

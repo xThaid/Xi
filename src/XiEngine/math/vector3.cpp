@@ -112,6 +112,11 @@ float Vector3::lengthSquared() const
 {
 	return x_ * x_ + y_ * y_ + z_ * z_;
 }
+
+Vector3 Vector3::abs() const
+{
+	return Vector3(std::fabsf(x_), std::fabsf(y_), std::fabsf(z_));
+}
 	
 Vector3& Vector3::normalize()
 {

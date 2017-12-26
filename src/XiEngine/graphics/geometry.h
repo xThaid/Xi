@@ -10,13 +10,16 @@ class Geometry
 {
 public:
 	Geometry(PrimitiveTopology topology, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer = nullptr);
+	Geometry(PrimitiveTopology topology, VertexBuffer* vertexBuffer, std::shared_ptr<IndexBuffer>& indexBuffer);
 	~Geometry();
 
 	void draw(Graphics* graphics);
 
+	inline std::shared_ptr<VertexBuffer> getVertexBuffer() { return vertexBuffer_; }
+
 private:
 	PrimitiveTopology topology_;
 	
-	VertexBuffer* vertexBuffer_;
-	IndexBuffer* indexBuffer_;
+	std::shared_ptr<VertexBuffer> vertexBuffer_;
+	std::shared_ptr<IndexBuffer> indexBuffer_;
 };

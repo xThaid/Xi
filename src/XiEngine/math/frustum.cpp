@@ -67,13 +67,29 @@ void Frustum::setTransform(const Matrix4& transform)
 	updateVerticesAndPlanes();
 }
 
-Intersection Frustum::intersect(const Vector3& point)
+Intersection Frustum::intersect(const Vector3& point) const
 {
-	updateVerticesAndPlanes();
-
 	for (unsigned i = 0; i < NUM_FRUSTUM_PLANES; i++)
 	{
 		if (planes_[i].distance(point) < 0.0f)
+			return OUTSIDE;
+	}
+
+	return INSIDE;
+}
+
+Intersection Frustum::intersect(const BoundingBox& boundingBox) const
+{
+	Vector3 center = boundingBox.center();
+	Vector3 edge = center - boundingBox.min_;
+
+	for (unsigned i = 0; i < NUM_FRUSTUM_PLANES; ++i)
+	{
+		const Plane& plane = planes_[i];
+		float dist = plane.normal_.dotProduct(center) + plane.d_;
+		float absDist = plane.normal_.abs().dotProduct(edge);
+
+		if (dist < -absDist)
 			return OUTSIDE;
 	}
 

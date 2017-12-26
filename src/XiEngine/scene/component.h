@@ -2,6 +2,8 @@
 
 #include "../precompiled.h"
 
+#include "../math/ximath.h"
+
 class DebugRenderer;
 class SceneNode;
 
@@ -11,9 +13,11 @@ public:
 	Component();
 	virtual ~Component();
 
-	virtual void drawDebuGeometry(DebugRenderer* debug) = 0;
+	virtual void update() = 0;
+
+	virtual void drawDebugGeometry(DebugRenderer* debug) = 0;
 	
-	virtual std::type_index getType() = 0;
+	virtual StringHash getType() = 0;
 
 protected:
 	SceneNode* node_;

@@ -73,6 +73,4 @@ private:
 	virtual void release() override;
 
 	virtual const std::string getTypeName() const override { return "Mesh"; }
-
-	bool uploadToGPU();
 };

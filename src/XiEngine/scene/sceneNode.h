@@ -5,17 +5,22 @@
 #include "../math/ximath.h"
 
 class Component;
+class Scene;
 
 class SceneNode
 {
 public:
-	SceneNode(const std::string& name);
+	SceneNode(Scene* scene, const std::string& name);
 	~SceneNode();
 	
 	SceneNode(const SceneNode&) = delete;
 	void operator=(const SceneNode&) = delete;
 
 	SceneNode* clone(bool cloneName = false) const;
+
+	void update();
+
+	inline Scene* getScene() { return scene_; }
 
 	inline std::string getName() { return name_; }
 
@@ -47,16 +52,16 @@ public:
 
 	void addComponent(Component* component);
 
-	bool hasComponent(const std::type_index& type);
-	Component* getComponent(const std::type_index& type);
-	void removeComponent(const std::type_index& type, bool purge = true);
-	std::vector<Component*> getComponents();
+	bool hasComponent(StringHash type);
+	Component* getComponent(StringHash type);
+	void removeComponent(StringHash type, bool purge = true);
+	std::vector<Component*> getAllComponents();
 
-	template <class T> bool hasComponent();
-	template <class T> T* getComponent();
-	template <class T> void removeComponent();
+	void getComponentsRecursive(StringHash type, std::vector<Component*>& dest);
 
 private:
+	Scene* scene_;
+
 	std::string name_;
 	StringHash nameHash_;
 
@@ -70,27 +75,9 @@ private:
 	SceneNode* parentNode_;
 	std::map<StringHash, SceneNode*> childrenNode_;
 
-	std::map<std::type_index, Component*> components_;
+	std::map<StringHash, Component*> components_;
 
 	void markDirty();
 
 	void updateWorldTransform();
 };
-
-template<class T>
-inline bool SceneNode::hasComponent()
-{
-	return hasComponent(typeid(T));
-}
-
-template<class T>
-inline T* SceneNode::getComponent()
-{
-	return static_cast<T*>(getComponent(typeid(T)));
-}
-
-template<class T>
-inline void SceneNode::removeComponent()
-{
-	removeComponent(typeid(T));
-}

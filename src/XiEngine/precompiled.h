@@ -7,5 +7,4 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <typeinfo>
-#include <typeindex>
+#include <memory>

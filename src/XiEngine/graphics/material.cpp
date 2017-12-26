@@ -139,7 +139,6 @@ MaterialLibrary::~MaterialLibrary()
 		delete material.second;
 	}
 
-	delete debugMaterial_;
 	delete defaultMaterial_;
 }
 
@@ -148,7 +147,7 @@ Material* MaterialLibrary::getMaterial(const std::string& name)
 	auto result = materials_.find(name);
 	if (result == materials_.end())
 	{
-		return debugMaterial_;
+		return defaultMaterial_;
 	}
 
 	return result->second;
@@ -168,9 +167,6 @@ void MaterialLibrary::registerMaterial(const std::string& name, Material* materi
 
 void MaterialLibrary::setupDefaultMaterials()
 {
-	debugMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("debug shader"));
-	debugMaterial_->setVector3("color", Vector3(1.0f, 0.0f, 1.0f));
-
 	defaultMaterial_ = new Material(ResourceManager::getInstance()->getResource<Shader>("tempShader"));
 
 	defaultMaterial_->setVector3("light.ambient", Vector3(0.1f, 0.1f, 0.1f));
@@ -180,11 +176,4 @@ void MaterialLibrary::setupDefaultMaterials()
 
 	defaultMaterial_->setInt("material.diffuse", 0);
 	defaultMaterial_->setFloat("material.shininess", 32.0f);
-
-	Material* redDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("redDebug");
-	redDebug->setVector3("color", Vector3(1.0f, 0.0f, 0.0f));
-	Material* greenDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("greenDebug");
-	greenDebug->setVector3("color", Vector3(0.0f, 1.0f, 0.0f));
-	Material* blueDebug = MaterialLibrary::getInstance()->getDebugMaterial()->clone("blueDebug");
-	blueDebug->setVector3("color", Vector3(0.0f, 0.0f, 1.0f));
 }

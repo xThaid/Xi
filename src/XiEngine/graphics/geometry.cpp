@@ -11,12 +11,15 @@ Geometry::Geometry(PrimitiveTopology topology, VertexBuffer* vertexBuffer, Index
 {
 }
 
+Geometry::Geometry(PrimitiveTopology topology, VertexBuffer* vertexBuffer, std::shared_ptr<IndexBuffer>& indexBuffer) :
+	topology_(topology),
+	vertexBuffer_(vertexBuffer),
+	indexBuffer_(indexBuffer)
+{
+}
+
 Geometry::~Geometry()
 {
-	if (vertexBuffer_)
-		delete vertexBuffer_;
-	if (indexBuffer_)
-		delete indexBuffer_;
 }
 
 void Geometry::draw(Graphics* graphics)
@@ -24,11 +27,11 @@ void Geometry::draw(Graphics* graphics)
 	if (!vertexBuffer_)
 		return;
 
-	graphics->setVertexBuffer(vertexBuffer_);
+	graphics->setVertexBuffer(vertexBuffer_.get());
 
 	if (indexBuffer_)
 	{
-		graphics->setIndexBuffer(indexBuffer_);
+		graphics->setIndexBuffer(indexBuffer_.get());
 		graphics->drawElement(topology_, 0, indexBuffer_->getIndexCount());
 	}
 	else

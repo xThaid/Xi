@@ -7,6 +7,7 @@ class StringHash
 public:
 	StringHash();
 	StringHash(unsigned int value);
+	StringHash(const char* str);
 	StringHash(const std::string& str);
 
 	StringHash& operator=(const StringHash& strHash);

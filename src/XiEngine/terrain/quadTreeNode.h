@@ -2,8 +2,11 @@
 
 #include "../math/ximath.h"
 
+struct Batch;
+
+class Camera;
 class DebugRenderer;
-struct FrameInfo;
+class QuadTree;
 class QuadTreePatch;
 
 enum Quadrant
@@ -17,18 +20,26 @@ enum Quadrant
 class QuadTreeNode
 {
 public:
-	QuadTreeNode(QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size);
+	QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size);
 	~QuadTreeNode();
 
-	void update(const FrameInfo& frame);
+	void update(const Vector3& viewPos);
 
+	void getBatches(Camera* cullCamera, std::vector<Batch>& batches);
 	void drawDebugGeometry(DebugRenderer* debug);
 
 	bool isLeaf() const;
 
 	float getScale() const;
 
+	inline QuadTree* getQuadTree() { return owner_; }
+
+	inline Vector3 getWorldCenter() { return Vector3(center_.x_, 0.0f, -center_.y_); }
+	inline float getSize() { return size_; }
+
 private:
+	QuadTree* owner_;
+
 	const QuadTreeNode* parent_;
 	QuadTreeNode* children_[4];
 

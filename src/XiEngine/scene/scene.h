@@ -16,6 +16,7 @@ public:
 	inline SceneNode* getRootNode() { return rootNode_; }
 
 	void update();
+
 private:
 	Camera* mainCamera_;
 

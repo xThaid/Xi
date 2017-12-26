@@ -56,7 +56,6 @@ public:
 	
 	Material* getMaterial(const std::string& name);
 
-	inline Material* getDebugMaterial() { return debugMaterial_; }
 	inline Material* getDefaultMaterial() { return defaultMaterial_; }
 
 private:
@@ -64,7 +63,6 @@ private:
 
 	std::map<std::string, Material*> materials_;
 
-	Material* debugMaterial_;
 	Material* defaultMaterial_;
 
 	void registerMaterial(const std::string& name, Material* material);

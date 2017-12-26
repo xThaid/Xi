@@ -5,18 +5,11 @@
 
 class Camera;
 class Geometry;
-class Material;
 
-struct FrameInfo
-{
-	Camera* camera_;
-};
-
-struct SourceBatch
+struct Batch
 {
 	Geometry* geometry_;
-	Material* material_;
-	Matrix4 worldTransform_;
+	Matrix4 transform_;
 };
 
 class Drawable : public Component
@@ -25,11 +18,13 @@ public:
 	Drawable();
 	virtual ~Drawable();
 
-	virtual void update(const FrameInfo& frame) = 0;
+	virtual void update() = 0;
 
-	virtual void drawDebuGeometry(DebugRenderer* debug) override;
+	virtual void getBatches(Camera* cullCamera, std::vector<Batch>& batches) = 0;
 
-	virtual std::type_index getType() = 0;
+	virtual void drawDebugGeometry(DebugRenderer* debug) override;
+
+	virtual StringHash getType() override { return "Drawable"; }
 
 	BoundingBox getWorldBoundingBox();
 

@@ -5,7 +5,7 @@
 Scene::Scene()
 {
 	mainCamera_ = new Camera();
-	rootNode_ = new SceneNode("root");
+	rootNode_ = new SceneNode(this, "root");
 }
 
 Scene::~Scene()
@@ -15,7 +15,7 @@ Scene::~Scene()
 
 void Scene::update()
 {
-
+	rootNode_->update();
 }
 
 void Scene::destroy()

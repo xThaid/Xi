@@ -10,6 +10,11 @@ StringHash::StringHash(unsigned int value) :
 {
 }
 
+StringHash::StringHash(const char* str) :
+	value(calculate(std::string(str)))
+{
+}
+
 StringHash::StringHash(const std::string& str) :
 	value(calculate(str))
 {
