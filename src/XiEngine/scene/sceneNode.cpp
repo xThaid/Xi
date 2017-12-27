@@ -100,6 +100,7 @@ void SceneNode::rotate(const Vector3& delta)
 Matrix4 SceneNode::getLocalTransform()
 {
 	Matrix4 transform = Matrix4();
+
 	transform.translate(position_);
 
 	transform.rotateX(radToDeg(rotation_.x_));

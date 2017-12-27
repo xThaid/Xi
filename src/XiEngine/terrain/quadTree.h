@@ -3,7 +3,7 @@
 #include "../graphics/drawable.h"
 
 const int QUAD_TREE_PATCH_EDGE_SIZE = 8;
-const int QUAD_TREE_MAX_DEPTH = 8;
+const int QUAD_TREE_MAX_DEPTH = 6;
 const float QUAD_TREE_SPLIT_DISTANCE_SCALE = 2.0f;
 
 class IndexBuffer;

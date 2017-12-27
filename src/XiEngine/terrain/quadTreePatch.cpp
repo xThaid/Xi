@@ -17,6 +17,7 @@ QuadTreePatch::QuadTreePatch(QuadTreeNode* node, unsigned int patchEdgeSize) :
 
 QuadTreePatch::~QuadTreePatch()
 {
+	delete geometry_;
 }
 
 void QuadTreePatch::prepareGeometry()

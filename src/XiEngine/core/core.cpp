@@ -4,6 +4,10 @@
 #include <chrono>
 #include <iomanip>
 
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "program.h"
 #include "time.h"
 #include "input.h"

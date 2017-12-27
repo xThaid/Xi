@@ -44,6 +44,8 @@ public:
 	Camera();
 	~Camera();
 
+	Camera* copy();
+
 	void drawDebugGeometry(DebugRenderer* debug);
 
 	void setNearClip(float nearClip);

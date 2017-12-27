@@ -1,7 +1,6 @@
 #include "meshRenderer.h"
 
 #include "../graphics/camera.h"
-#include "../graphics/material.h"
 #include "../graphics/mesh.h"
 #include "../math/ximath.h"
 #include "../scene/sceneNode.h"

@@ -8,11 +8,10 @@
 
 QuadTree::QuadTree()
 {
-	rootNode_ = new QuadTreeNode(this, nullptr, NORTH_EAST, Vector2(0.0f, 0.0f), 100.0f);
-
 	patchIndexBuffer_ = std::shared_ptr<IndexBuffer>(new IndexBuffer());
-
 	prepareIndexBuffer();
+
+	rootNode_ = new QuadTreeNode(this, nullptr, NORTH_EAST, Vector2(0.0f, 0.0f), 100.0f);
 }
 
 QuadTree::~QuadTree()
@@ -22,7 +21,7 @@ QuadTree::~QuadTree()
 
 void QuadTree::update()
 {
-	rootNode_->update(node_->getScene()->getMainCamera()->position);
+	rootNode_->update(node_->getScene()->getCullCamera()->position);
 }
 
 void QuadTree::getBatches(Camera* cullCamera, std::vector<Batch>& batches)

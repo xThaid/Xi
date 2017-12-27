@@ -12,6 +12,8 @@
 #include "../terrain/quadTree.h"
 #include "../utils/logger.h"
 
+SceneNode* tempNode;
+
 void Program::init()
 {
 	Scene* scene = new Scene();
@@ -24,16 +26,20 @@ void Program::init()
 	Mesh* tempMesh = new Mesh("kula2", Primitives::torus(3, 1, 50, 50));
 	ResourceManager::getInstance()->addResource(tempMesh);
 	MeshRenderer* meshRender = new MeshRenderer(tempMesh);
+	
+	tempNode = root->createChild("torus");
 
-	SceneNode* tempNode = root->createChild("torus");
+	tempNode->setPosition(Vector3(5.0f, 0.0f, 0.0f));
 	tempNode->addComponent(meshRender);
-
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
-	
+	//tempNode->setPosition(Vector3(1.0f, 0.0f, 0.0f) * sinf(Time::getElapsedTime()) * 5.0f);
+	//tempNode->setRotation(Vector3(0.0f, 1.0f, 0.0f) * 0.01f * Time::getElapsedTime());
+	tempNode->setScale(sinf(Time::getElapsedTime() /2.0f) + 2.0f);
+
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();
@@ -48,14 +54,18 @@ void Program::update()
 	if (Input::getKey(GLFW_KEY_ESCAPE))
 		Core::getCurrentCore()->stop();
 
-	if (Input::getKey(GLFW_KEY_W))
-		Core::getCurrentScene()->getMainCamera()->processKeyboard(CameraMovement::FORWARD, Time::getDeltaTime());
-	if (Input::getKey(GLFW_KEY_S))
-		Core::getCurrentScene()->getMainCamera()->processKeyboard(CameraMovement::BACKWARD, Time::getDeltaTime());
-	if (Input::getKey(GLFW_KEY_A))
-		Core::getCurrentScene()->getMainCamera()->processKeyboard(CameraMovement::LEFT, Time::getDeltaTime());
-	if (Input::getKey(GLFW_KEY_D))
-		Core::getCurrentScene()->getMainCamera()->processKeyboard(CameraMovement::RIGHT, Time::getDeltaTime());
+	float speed = 1.0f;
+	if (Input::getKey(GLFW_KEY_LEFT_SHIFT))
+		speed = 10.0f;
 
-	Core::getCurrentScene()->getMainCamera()->processMouse(Input::getMouseDeltaX(), -Input::getMouseDeltaY());
+	if (Input::getKey(GLFW_KEY_W))
+		Core::getCurrentScene()->getViewCamera()->processKeyboard(CameraMovement::FORWARD, Time::getDeltaTime() * speed);
+	if (Input::getKey(GLFW_KEY_S))
+		Core::getCurrentScene()->getViewCamera()->processKeyboard(CameraMovement::BACKWARD, Time::getDeltaTime() * speed);
+	if (Input::getKey(GLFW_KEY_A))
+		Core::getCurrentScene()->getViewCamera()->processKeyboard(CameraMovement::LEFT, Time::getDeltaTime() * speed);
+	if (Input::getKey(GLFW_KEY_D))
+		Core::getCurrentScene()->getViewCamera()->processKeyboard(CameraMovement::RIGHT, Time::getDeltaTime() * speed);
+
+	Core::getCurrentScene()->getViewCamera()->processMouse(Input::getMouseDeltaX(), -Input::getMouseDeltaY());
 }

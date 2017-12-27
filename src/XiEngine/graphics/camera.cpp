@@ -66,9 +66,9 @@ void Camera::processMouse(float xDelta, float yDelta)
 
 void Camera::updateVectors()
 {
-	front.x_ = cosf(degToRad(yaw + 90.0f)) * cosf(degToRad(pitch));
+	front.x_ = cosf(degToRad(yaw - 90.0f)) * cosf(degToRad(pitch));
 	front.y_ = sinf(degToRad(pitch));
-	front.z_ = sinf(degToRad(yaw + 90.0f)) * cosf(degToRad(pitch));
+	front.z_ = sinf(degToRad(yaw - 90.0f)) * cosf(degToRad(pitch));
 	front.normalize();
 
 	right = front.crossProduct(up).normalized();
@@ -91,6 +91,16 @@ Camera::Camera() :
 
 Camera::~Camera()
 {
+}
+
+Camera* Camera::copy()
+{
+	Camera* cp = new Camera();
+	cp->position = position;
+	cp->yaw = yaw;
+	cp->pitch = pitch;
+	cp->updateVectors();
+	return cp;
 }
 
 void Camera::drawDebugGeometry(DebugRenderer* debug)
@@ -187,7 +197,7 @@ void Camera::updateFrustum()
 
 	Matrix4 transform = Matrix4::translationMatrix(position);
 
-	transform.rotateY(degToRad(-yaw));
+	transform.rotateY(degToRad(-yaw - 180.0f));
 	transform.rotateX(degToRad(-pitch));
 
 	frustum_.setTransform(transform);

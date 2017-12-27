@@ -20,6 +20,8 @@ QuadTreeNode::QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadr
 		children_[i] = nullptr;
 
 	patch_->prepareGeometry();
+
+	boundingBox_.define(getWorldCenter() - Vector3(size_, 0.0f, size_) / 2.0f, getWorldCenter() + Vector3(size_, 0.0f, size_) / 2.0f);
 }
 
 QuadTreeNode::~QuadTreeNode()
@@ -36,7 +38,7 @@ QuadTreeNode::~QuadTreeNode()
 
 void QuadTreeNode::update(const Vector3& viewPos)
 {
-	Vector3 nodeCenter = Vector3(center_.x_, 0.0f, -center_.y_);
+	Vector3 nodeCenter = getWorldCenter();
 	float distanceToCamera = (nodeCenter - viewPos).length();
 
 	bool shouldSplit = distanceToCamera < size_ * QUAD_TREE_SPLIT_DISTANCE_SCALE;
@@ -61,6 +63,9 @@ void QuadTreeNode::update(const Vector3& viewPos)
 
 void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
 {
+	if (cullCamera->getFrustum().intersect(boundingBox_) == OUTSIDE)
+		return;
+
 	if (isLeaf())
 	{
 		Batch batch;
@@ -85,7 +90,7 @@ void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
 void QuadTreeNode::drawDebugGeometry(DebugRenderer* debug)
 {
 	if (isLeaf())
-		debug->addQuad(getWorldCenter(), size_, size_, Color::ORANGE);
+		debug->addBoundingBox(boundingBox_, Color::GREEN);
 	else
 	{
 		for (int i = 0; i < 4; i++)
