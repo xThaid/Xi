@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "../math/ximath.h"
+
 class Window
 {
 public:
@@ -23,8 +25,7 @@ public:
 	inline int getWidth() const { return width_; }
 	inline int getHeight() const { return height_; }
 
-	inline int getRenderWidth() const { return renderWidth_; }
-	inline int getRenderHeight() const { return renderHeight_; }
+	inline IntVector2 getRenderSize() { return renderSize_; }
 
 private:
 	GLFWwindow* GLFWWindow_;
@@ -32,6 +33,5 @@ private:
 	const int width_;
 	const int height_;
 
-	int renderWidth_;
-	int renderHeight_;
+	IntVector2 renderSize_;
 };

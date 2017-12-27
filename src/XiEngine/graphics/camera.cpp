@@ -1,6 +1,7 @@
 #include "camera.h"
 
 #include "../graphics/debugRenderer.h"
+#include "../graphics/graphics.h"
 
 Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
 {
@@ -87,6 +88,8 @@ Camera::Camera() :
 	zoom_(1.0f),
 	fillMode_(FILL_SOLID)
 {
+	IntVector2 renderSize = Graphics::getInstance()->getViewport();
+	setAspectRatio((float) renderSize.x_ / renderSize.y_);
 }
 
 Camera::~Camera()

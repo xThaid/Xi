@@ -107,3 +107,25 @@ float Vector2::dotProduct(const Vector2& v) const
 {
 	return (x_ * v.x_ + y_ * v.y_);
 }
+
+IntVector2::IntVector2() :
+	x_(0),
+	y_(0)
+{
+}
+
+IntVector2::IntVector2(int x, int y) :
+	x_(x),
+	y_(y)
+{
+}
+
+bool IntVector2::operator==(const IntVector2& rhs)
+{
+	return x_ == rhs.x_ && y_ == rhs.y_;
+}
+
+bool IntVector2::operator!=(const IntVector2& rhs)
+{
+	return !operator==(rhs);
+}

@@ -1,6 +1,19 @@
 #pragma once
 
 
+class IntVector2
+{
+public:
+	int x_;
+	int y_;
+
+	IntVector2();
+	IntVector2(int x, int y);
+
+	bool operator==(const IntVector2& rhs);
+	bool operator!=(const IntVector2& rhs);
+};
+
 class Vector2
 {
 public:

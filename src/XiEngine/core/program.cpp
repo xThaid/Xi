@@ -29,17 +29,14 @@ void Program::init()
 	
 	tempNode = root->createChild("torus");
 
-	tempNode->setPosition(Vector3(5.0f, 0.0f, 0.0f));
 	tempNode->addComponent(meshRender);
 	Core::getCurrentCore()->setCurrentScene(scene);
 }
 
 void Program::update()
 {
-	//tempNode->setPosition(Vector3(1.0f, 0.0f, 0.0f) * sinf(Time::getElapsedTime()) * 5.0f);
-	//tempNode->setRotation(Vector3(0.0f, 1.0f, 0.0f) * 0.01f * Time::getElapsedTime());
-	tempNode->setScale(sinf(Time::getElapsedTime() /2.0f) + 2.0f);
-
+	tempNode->setRotation(Vector3(0.0f, 1.0f, 0.0f) * 0.01f * Time::getElapsedTime());
+	
 	if (Input::getKey(GLFW_KEY_F8) && !mouseLocked)
 	{
 		Input::lockMouse();

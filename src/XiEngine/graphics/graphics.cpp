@@ -155,9 +155,15 @@ void Graphics::drawElement(PrimitiveTopology topology, unsigned int indexStart, 
 	numBatches_++;
 }
 
-void Graphics::setViewport()
+void Graphics::setViewport(const IntVector2& viewport)
 {
+	if (viewport_ != viewport)
+	{
+		glViewport(0, 0, viewport.x_, viewport.y_);
+		viewport_ = viewport;
+	}
 }
+
 
 void Graphics::setFillMode(FillMode fillMode)
 {
@@ -230,6 +236,8 @@ void Graphics::init()
 
 	window_->create();
 
+	viewport_ = window_->getRenderSize();
+
 	glfwMakeContextCurrent(window_->getGLFWWindow());
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -240,8 +248,6 @@ void Graphics::init()
 
 	Logger::info("Graphics initialization completed");
 	Logger::info("OpenGL version: " + std::string((char*)glGetString(GL_VERSION)));
-
-	glViewport(0, 0, window_->getRenderWidth(), window_->getRenderHeight());
 
 	createVAO();
 }
@@ -269,6 +275,8 @@ void Graphics::resetState()
 
 	glEnable(GL_DEPTH_TEST);
 	setDepthTest(CMP_LESSEQUAL);
+
+	setViewport(viewport_);
 }
 
 void Graphics::prepareDraw()

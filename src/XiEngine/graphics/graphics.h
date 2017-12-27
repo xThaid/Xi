@@ -27,7 +27,7 @@ public:
 	void draw(PrimitiveTopology topology, unsigned int start, unsigned int vertexCount);
 	void drawElement(PrimitiveTopology topology, unsigned int indexStart, unsigned int indexCount);
 
-	void setViewport();
+	void setViewport(const IntVector2& viewport);
 
 	void setFillMode(FillMode fillMode);
 	
@@ -40,6 +40,8 @@ public:
 
 	void setShader(Shader* shader);
 
+	inline IntVector2 getViewport() { return viewport_; }
+
 	inline VertexBuffer* getVertexBuffer() { return vertexBuffer_; }
 	inline IndexBuffer* getIndexBuffer() { return indexBuffer_; }
 
@@ -49,6 +51,8 @@ private:
 	static void getGLPrimitiveType(unsigned int elementCount, PrimitiveTopology topology, unsigned int& primitiveCount, GLenum& glPrimitiveType);
 
 	Window* window_;
+
+	IntVector2 viewport_;
 
 	unsigned int numPrimitives_;
 	unsigned int numBatches_;

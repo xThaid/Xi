@@ -5,8 +5,7 @@
 Window::Window(int width, int height) :
 	width_(width),
 	height_(height),
-	renderWidth_(0),
-	renderHeight_(0)
+	renderSize_(IntVector2(0, 0))
 {
 }
 
@@ -26,7 +25,13 @@ bool Window::create()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 
-	GLFWWindow_ = glfwCreateWindow(width_, height_, "Xi", nullptr, nullptr);
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	
+	GLFWWindow_= glfwCreateWindow(mode->width, mode->height, "Xi", glfwGetPrimaryMonitor(), nullptr);
 
 	if (GLFWWindow_ == nullptr)
 	{
@@ -34,7 +39,11 @@ bool Window::create()
 		return false;
 	}
 
-	glfwGetFramebufferSize(GLFWWindow_, &renderWidth_, &renderHeight_);
+	int renderWidth, renderHeight;
+
+	glfwGetFramebufferSize(GLFWWindow_, &renderWidth, &renderHeight);
+
+	renderSize_ = IntVector2(renderWidth, renderHeight);
 
 	return true;
 }
