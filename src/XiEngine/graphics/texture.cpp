@@ -17,8 +17,8 @@ GLTexture2D::GLTexture2D(unsigned int width, unsigned int height, GLTextureOptio
 {
 	glGenTextures(1, &textureID_);
 
-	bind();
-
+	glBindTexture(GL_TEXTURE_2D, textureID_);
+	
 	glTexImage2D(GL_TEXTURE_2D, 0, options.internalFormat, width, height, 0, options.format, options.type, data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, options.filterMin);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, options.filterMax);
@@ -27,23 +27,12 @@ GLTexture2D::GLTexture2D(unsigned int width, unsigned int height, GLTextureOptio
 	if (options.mipMapping)
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-	unbind();
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 GLTexture2D::~GLTexture2D()
 {
 	glDeleteTextures(1, &textureID_);
-}
-
-void GLTexture2D::bind(unsigned int textureUnit)
-{
-	glActiveTexture(textureUnit);
-	glBindTexture(GL_TEXTURE_2D, textureID_);
-}
-
-void GLTexture2D::unbind()
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture2D::Texture2D(const std::string& name, const std::string& path) :

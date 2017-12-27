@@ -3,33 +3,6 @@
 #include "../graphics/debugRenderer.h"
 #include "../graphics/graphics.h"
 
-Matrix4 lookAt(const Vector3& eye, const Vector3& target, const Vector3& up)
-{
-	Vector3 zAxis = (eye - target).normalized();
-	Vector3 xAxis = up.crossProduct(zAxis).normalized();
-	Vector3 yAxis = zAxis.crossProduct(xAxis);
-
-	Matrix4 res;
-	res.data[0] = xAxis.x_;
-	res.data[4] = xAxis.y_;
-	res.data[8] = xAxis.z_;
-
-	res.data[1] = yAxis.x_;
-	res.data[5] = yAxis.y_;
-	res.data[9] = yAxis.z_;
-
-	res.data[2] = zAxis.x_;
-	res.data[6] = zAxis.y_;
-	res.data[10] = zAxis.z_;
-
-	res.data[12] = -eye.dotProduct(xAxis);
-	res.data[13] = -eye.dotProduct(yAxis);
-	res.data[14] = -eye.dotProduct(zAxis);
-	res.data[15] = 1.0f;
-
-	return res;
-}
-
 void Camera::processKeyboard(CameraMovement direction, float deltaTime)
 {
 	float velocity = cameraSpeed * deltaTime;
@@ -186,7 +159,7 @@ Matrix4 Camera::getView()
 {
 	if (viewDirty_)
 	{
-		view_ = lookAt(position, position + front, up);
+		view_ = Matrix4::lookAtMatrix(position, position + front, up);
 		viewDirty_ = false;
 	}
 

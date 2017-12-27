@@ -26,8 +26,7 @@ public:
 	GLTexture2D(unsigned int width, unsigned int height, GLTextureOptions options, void* data);
 	~GLTexture2D();
 
-	void bind(unsigned int textureUnit = 0);
-	void unbind();
+	inline unsigned int getTextureID() { return textureID_; }
 
 private:
 	GLuint textureID_;

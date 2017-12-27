@@ -7,11 +7,10 @@ class Camera;
 class DebugRenderer;
 class Geometry;
 class Graphics;
-class MaterialLibrary;
-class Mesh;
 class Scene;
 class SceneNode;
 class Shader;
+class UIRenderer;
 
 class RenderingEngine
 {
@@ -24,20 +23,17 @@ public:
 private:
 	Graphics* graphics_;
 
+	UIRenderer* uiRenderer_;
 	DebugRenderer* debugRenderer_;
 
 	Shader* terrainShader_;
 	Shader* meshShader_;
 
 	void setup();
-	void cleanUp();
 
 	void drawDebug(SceneNode* node);
 	
-	void renderPushedCommands(Camera* camera);
-
 	void renderSceneNode(SceneNode* node);
 
-	void sendGlobalUniformsToAll(Camera* camera);
-	void sendGlobalUniforms(Shader* shader, Camera* viewCamera);
+	void sendCameraParametrs(Camera* camera, Shader* shader);
 };

@@ -7,7 +7,9 @@
 #include "../resource/resourceManager.h"
 #include "../utils/logger.h"
 
-DebugRenderer::DebugRenderer()
+DebugRenderer::DebugRenderer(Graphics* graphics) :
+	graphics_(graphics),
+	debugShader_(ResourceManager::getInstance()->getResource<Shader>("debug shader"))
 {
 	vertexBuffer_ = new VertexBuffer(MASK_POSITION | MASK_COLOR);
 }
@@ -138,10 +140,6 @@ void DebugRenderer::addFrustum(const Frustum& frustum, const Color& color)
 
 void DebugRenderer::render()
 {
-	Graphics* graphics = Graphics::getInstance();
-	
-	Shader* shader = ResourceManager::getInstance()->getResource<Shader>("debug shader");
-
 	unsigned int numVertices = lines_.size() * 2 + triangles_.size() * 3;
 
 	vertexBuffer_->create(numVertices);
@@ -194,27 +192,28 @@ void DebugRenderer::render()
 	vertexBuffer_->setData(data);
 	delete data;
 
-	shader->useShader();
-	shader->setMatrix4("model", Matrix4());
-	shader->setMatrix4("view", view_);
-	shader->setMatrix4("projection", projection_);
+
+	graphics_->setShader(debugShader_);
 	
-	graphics->setShader(shader);
-	graphics->setVertexBuffer(vertexBuffer_);
+	debugShader_->setMatrix4("model", Matrix4());
+	debugShader_->setMatrix4("view", view_);
+	debugShader_->setMatrix4("projection", projection_);
 	
-	graphics->setDepthTest(CMP_ALWAYS);
+	graphics_->setVertexBuffer(vertexBuffer_);
+	
+	graphics_->setDepthTest(CMP_ALWAYS);
 
 	if (lines_.size() > 0)
 	{
-		graphics->draw(PrimitiveTopology::LINES, 0, lines_.size() * 2);
+		graphics_->draw(PrimitiveTopology::LINES, 0, lines_.size() * 2);
 	}
 
 	if (triangles_.size() > 0)
 	{
-		graphics->draw(PrimitiveTopology::TRIANGLES, lines_.size() * 2, triangles_.size() * 3);
+		graphics_->draw(PrimitiveTopology::TRIANGLES, lines_.size() * 2, triangles_.size() * 3);
 	}
 
-	graphics->setDepthTest(CMP_LESSEQUAL);
+	graphics_->setDepthTest(CMP_LESSEQUAL);
 }
 
 void DebugRenderer::handleEndFrame()

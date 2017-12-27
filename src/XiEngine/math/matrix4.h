@@ -54,6 +54,10 @@ public:
 	static Matrix4 scaleMatrix(float x, float y, float z);
 	static Matrix4 scaleMatrix(const Vector3& v);
 
+	static Matrix4 orthoMatrix(float left, float right, float bottom, float top);
+	static Matrix4 orthoMatrix(float left, float right, float bottom, float top, float znear, float zfar);
+	static Matrix4 lookAtMatrix(const Vector3& eye, const Vector3& target, const Vector3& up);
+
 private:
 	void copy(const Matrix4& m);
 };

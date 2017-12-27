@@ -7,30 +7,31 @@
 #include "../graphics/debugRenderer.h"
 #include "../graphics/geometry.h"
 #include "../graphics/graphics.h"
-#include "../graphics/mesh.h"
 #include "../graphics/meshRenderer.h"
 #include "../graphics/shader.h"
-#include "../graphics/texture.h"
-#include "../resource/primitives.h"
 #include "../resource/resourceManager.h"
 #include "../scene/sceneNode.h"
 #include "../scene/scene.h"
 #include "../terrain/quadTree.h"
+#include "../ui/label.h"
+#include "../ui/uiRenderer.h"
 #include "../utils/logger.h"
 
 
 RenderingEngine::RenderingEngine() :
 	graphics_(Graphics::getInstance())
 {
-	debugRenderer_ = new DebugRenderer();
-
 	setup();
+
+	uiRenderer_ = new UIRenderer(graphics_, graphics_->getViewport());
+	debugRenderer_ = new DebugRenderer(graphics_);
 }
 
 
 RenderingEngine::~RenderingEngine()
 {
-	cleanUp();
+	delete uiRenderer_;
+	delete debugRenderer_;
 }
 
 void RenderingEngine::render(Scene* scene)
@@ -73,7 +74,8 @@ void RenderingEngine::render(Scene* scene)
 		pressed2 = false;
 
 
-	sendGlobalUniformsToAll(viewCamera);
+	sendCameraParametrs(viewCamera, meshShader_);
+	sendCameraParametrs(viewCamera, terrainShader_);
 
 	std::vector<Component*> drawables;
 	scene->getRootNode()->getComponentsRecursive("Drawable", drawables);
@@ -107,33 +109,37 @@ void RenderingEngine::render(Scene* scene)
 
 	graphics_->setFillMode(FILL_SOLID);
 
+	Label lab("X: " + std::to_string(viewCamera->position.x_), Vector2(0.0f, 30.0f), 0.4f);
+
 	debugRenderer_->addLine(Vector3(0.0f), Vector3(1.0f, 0.0f, 0.0f), Color::RED);
 	debugRenderer_->addLine(Vector3(0.0f), Vector3(0.0f, 1.0f, 0.0f), Color::GREEN);
 	debugRenderer_->addLine(Vector3(0.0f), Vector3(0.0f, 0.0f, 1.0f), Color::BLUE);
 
 	if (debug)
 	{
-		debugRenderer_->addFrustum(scene->getCullCamera()->getFrustum(), Color::WHITE);
+		if(viewCamera != cullCamera)
+			debugRenderer_->addFrustum(scene->getCullCamera()->getFrustum(), Color::WHITE);
 		drawDebug(scene->getRootNode());
 	}
 	debugRenderer_->render();
 	debugRenderer_->handleEndFrame();
+
+	uiRenderer_->renderLabel(&lab);
+
 	graphics_->endFrame();
 }
 
 void RenderingEngine::setup()
 {
-	ResourceManager::getInstance()->addResource(
-		new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag"));
+	Shader* debugShader = new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag");
+	Shader* textShader = new Shader("text shader", "D:/Dev/Repos/Xi/res/shaders/textShader.vert", "D:/Dev/Repos/Xi/res/shaders/textShader.frag");
 	meshShader_ = new Shader("model shader", "D:/Dev/Repos/Xi/res/shaders/models.vert", "D:/Dev/Repos/Xi/res/shaders/models.frag");
-	ResourceManager::getInstance()->addResource(meshShader_);
 	terrainShader_ = new Shader("terrain shader", "D:/Dev/Repos/Xi/res/shaders/terrain.vert", "D:/Dev/Repos/Xi/res/shaders/terrain.frag");
-	ResourceManager::getInstance()->addResource(terrainShader_);
-}
 
-void RenderingEngine::cleanUp()
-{
-	delete debugRenderer_;
+	ResourceManager::getInstance()->addResource(debugShader);
+	ResourceManager::getInstance()->addResource(textShader);
+	ResourceManager::getInstance()->addResource(meshShader_);
+	ResourceManager::getInstance()->addResource(terrainShader_);
 }
 
 void RenderingEngine::drawDebug(SceneNode* node)
@@ -145,30 +151,15 @@ void RenderingEngine::drawDebug(SceneNode* node)
 		drawDebug(child);
 }
 
-void RenderingEngine::renderPushedCommands(Camera* camera)
-{
-	sendGlobalUniformsToAll(camera);
-}
-
 void RenderingEngine::renderSceneNode(SceneNode* node)
 {
 	for (SceneNode* child : node->getChildren())
 		renderSceneNode(child);
 }
 
-void RenderingEngine::sendGlobalUniformsToAll(Camera* camera)
+void RenderingEngine::sendCameraParametrs(Camera* camera, Shader* shader)
 {
-	std::map<StringHash, Resource*>* shaders = ResourceManager::getInstance()->getResources<Shader>();
-	for (auto shader : *shaders)
-	{
-		Shader* castedShader = static_cast<Shader*>(shader.second);
-		sendGlobalUniforms(castedShader, camera);
-	}
-}
-
-void RenderingEngine::sendGlobalUniforms(Shader* shader, Camera* viewCamera)
-{
-	shader->useShader();
-	shader->setMatrix4("projection", viewCamera->getProjection());
-	shader->setMatrix4("view", viewCamera->getView());
+	graphics_->setShader(shader);
+	shader->setMatrix4("projection", camera->getProjection());
+	shader->setMatrix4("view", camera->getView());
 }

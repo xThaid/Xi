@@ -24,14 +24,17 @@ bool Window::create()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	
-	GLFWWindow_= glfwCreateWindow(mode->width, mode->height, "Xi", glfwGetPrimaryMonitor(), nullptr);
+	bool borderless = true;
+
+	GLFWmonitor* monitor = borderless ? glfwGetPrimaryMonitor() : nullptr;
+
+	GLFWWindow_= glfwCreateWindow(mode->width, mode->height, "Xi", monitor, nullptr);
 
 	if (GLFWWindow_ == nullptr)
 	{

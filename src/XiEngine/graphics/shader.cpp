@@ -52,7 +52,7 @@ bool ShaderVariation::compileShader()
 	if (!success)
 	{
 		glGetShaderInfoLog(shaderVariationID_, 512, NULL, infoLog);
-		Logger::error("Shader of type " + std::to_string(shaderType_) + " compilation failed: \n" + std::string(infoLog));
+		Logger::error("Shader " + sourceFile_.getFileName() + " compilation failed: \n" + std::string(infoLog));
 
 		destroyShader();
 
@@ -235,6 +235,15 @@ void Shader::setMatrix4(const std::string& name, Matrix4& value)
 	if (location != -1)
 	{
 		glUniformMatrix4fv(location, 1, false, value.getPointer());
+	}
+}
+
+void Shader::setColor(const std::string& name, const Color& color)
+{
+	int location = getUniformLocation(name);
+	if (location != -1)
+	{
+		glUniform3f(location, color.r, color.g, color.b);
 	}
 }
 

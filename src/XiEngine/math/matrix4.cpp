@@ -266,3 +266,57 @@ Matrix4 Matrix4::scaleMatrix(const Vector3& v)
 	m.data[10] = v.z_;
 	return m;
 }
+
+Matrix4 Matrix4::orthoMatrix(float left, float right, float bottom, float top)
+{
+	Matrix4 m;
+	m.data[0] = 2.0f / (right - left);
+	m.data[5] = 2.0f / (top - bottom);
+	m.data[10] = 1.0f;
+	m.data[12] = -((right + left) / (right - left));
+	m.data[13] = -((top + bottom) / (top - bottom));
+	m.data[15] = 1.0f;
+
+	return m;
+}
+
+Matrix4 Matrix4::orthoMatrix(float left, float right, float bottom, float top, float znear, float zfar)
+{
+	Matrix4 m;
+	m.data[0] = 2.0f / (right - left);
+	m.data[5] = 2.0f / (top - bottom);
+	m.data[10] = -2.0f / (zfar - znear);
+	m.data[12] = -((right + left) / (right - left));
+	m.data[13] = -((top + bottom) / (top - bottom));
+	m.data[14] = -((zfar + znear) / (zfar - znear));
+	m.data[15] = 1.0f;
+
+	return m;
+}
+
+Matrix4 Matrix4::lookAtMatrix(const Vector3& eye, const Vector3& target, const Vector3& up)
+{
+	Vector3 zAxis = (eye - target).normalized();
+	Vector3 xAxis = up.crossProduct(zAxis).normalized();
+	Vector3 yAxis = zAxis.crossProduct(xAxis);
+
+	Matrix4 res;
+	res.data[0] = xAxis.x_;
+	res.data[4] = xAxis.y_;
+	res.data[8] = xAxis.z_;
+
+	res.data[1] = yAxis.x_;
+	res.data[5] = yAxis.y_;
+	res.data[9] = yAxis.z_;
+
+	res.data[2] = zAxis.x_;
+	res.data[6] = zAxis.y_;
+	res.data[10] = zAxis.z_;
+
+	res.data[12] = -eye.dotProduct(xAxis);
+	res.data[13] = -eye.dotProduct(yAxis);
+	res.data[14] = -eye.dotProduct(zAxis);
+	res.data[15] = 1.0f;
+
+	return res;
+}

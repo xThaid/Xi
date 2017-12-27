@@ -100,6 +100,7 @@ public:
 	void setVector3(const std::string& name, Vector3& value);
 	void setVector4(const std::string& name, Vector4& value);
 	void setMatrix4(const std::string& name, Matrix4& value);
+	void setColor(const std::string& name, const Color& color);
 	
 	int getVertexAttributeLocation(VertexElement element);
 	inline unsigned int getUsedVertexAttributes_() { return usedVertexAttributes_; }

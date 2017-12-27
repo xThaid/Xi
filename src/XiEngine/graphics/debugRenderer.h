@@ -6,6 +6,8 @@
 #include "../math/ximath.h"
 
 class Camera;
+class Graphics;
+class Shader;
 class VertexBuffer;
 
 struct DebugLine
@@ -49,7 +51,7 @@ struct DebugTriangle
 class DebugRenderer
 {
 public:
-	DebugRenderer();
+	DebugRenderer(Graphics* graphics);
 	~DebugRenderer();
 
 	void setView(Camera* camera);
@@ -75,6 +77,10 @@ public:
 	void handleEndFrame();
 
 private:
+	Graphics* graphics_;
+
+	Shader* debugShader_;
+
 	VertexBuffer* vertexBuffer_;
 
 	std::vector<DebugLine> lines_;

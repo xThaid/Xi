@@ -3,6 +3,7 @@
 #include "../graphics/indexBuffer.h"
 #include "../graphics/shader.h"
 #include "../graphics/vertexBuffer.h"
+#include "../graphics/texture.h"
 #include "../graphics/window.h"
 #include "../utils/logger.h"
 
@@ -174,12 +175,57 @@ void Graphics::setFillMode(FillMode fillMode)
 	}
 }
 
+void Graphics::setBlendMode(bool blendMode)
+{
+	if (blendMode_ != blendMode)
+	{
+		if (blendMode)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+		}
+
+		blendMode_ = blendMode;
+	}
+}
+
 void Graphics::setDepthTest(CompareMode mode)
 {
 	if (mode != depthTestMode_)
 	{
 		glDepthFunc(glCmpFunc[mode]);
 		depthTestMode_ = mode;
+	}
+}
+
+void Graphics::setTexture(unsigned int index, GLTexture2D* texture)
+{
+	if (index >= 32)
+		return;
+
+	if (textures_[index] != texture)
+	{
+		if (activeTexture_ != index)
+		{
+			glActiveTexture(GL_TEXTURE0 + index);
+			activeTexture_ = index;
+		}
+
+		if (texture)
+		{
+			glBindTexture(GL_TEXTURE_2D, texture->getTextureID());
+			textures_[index] = texture;
+		}
+		else
+		{	
+			glBindTexture(GL_TEXTURE_2D, 0);
+			textures_[index] = nullptr;
+		}
+
 	}
 }
 
@@ -261,9 +307,10 @@ void Graphics::release()
 
 void Graphics::resetState()
 {
-	depthTestMode_ = CMP_ALWAYS;
 	fillMode_ = FILL_SOLID;
-
+	blendMode_ = false;
+	depthTestMode_ = CMP_ALWAYS;
+	
 	boundVAO_ = 0;
 	boundVBO_ = 0;
 

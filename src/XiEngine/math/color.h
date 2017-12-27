@@ -14,6 +14,8 @@ public:
 	
 	unsigned int toUInt() const;
 
+	inline float* getPointer() { return &r; }
+
 	static const Color WHITE;
 	static const Color GRAY;
 	static const Color BLACK;
