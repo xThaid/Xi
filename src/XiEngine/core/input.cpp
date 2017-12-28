@@ -8,7 +8,15 @@ Input::Input(Window* window) :
 {
 	glfwSetKeyCallback(window->getGLFWWindow(), key_callback);
 
+	for (unsigned int i = 0; i < 512; i++)
+		pressed_[i] = false;
+
 	_lockMouse();
+}
+
+void Input::addPressedEvent(unsigned int key, std::function<void(void)> action)
+{
+	Core::getCurrentCore()->input->onPressedEvents_[key].push_back(action);
 }
 
 bool Input::getKey(int key)
@@ -74,7 +82,27 @@ void Input::resetMousePos()
 	mouseDeltaY_ = 0.0f;
 }
 
+void Input::keyCallback(unsigned int key, unsigned int action)
+{
+	auto& res = onPressedEvents_.find(key);
+	if(res != onPressedEvents_.end())
+	{
+		if (action == GLFW_PRESS && !pressed_[key])
+		{
+			for (unsigned int i = 0; i < res->second.size(); i++)
+			{
+				res->second[i]();
+			}
+			pressed_[key] = true;
+		}
+		else
+		{
+			pressed_[key] = false;
+		}
+	}
+}
+
 void Input::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	
+	Core::getCurrentCore()->input->keyCallback(key, action);
 }

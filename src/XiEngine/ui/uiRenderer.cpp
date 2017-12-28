@@ -14,7 +14,8 @@
 
 UIRenderer::UIRenderer(Graphics* graphics, const IntVector2& uiSize) :
 	graphics_(graphics),
-	textShader_(ResourceManager::getInstance()->getResource<Shader>("text shader"))
+	textShader_(ResourceManager::getInstance()->getResource<Shader>("text shader")),
+	uiSize_(uiSize)
 {
 	projectionMatrix_ = Matrix4::orthoMatrix(0.0f, (float) uiSize.x_, 0.0f, (float) uiSize.y_);
 	graphics_->setShader(textShader_);
@@ -36,6 +37,14 @@ UIRenderer::~UIRenderer()
 	delete glyphGeometry_;
 }
 
+void UIRenderer::renderLabels(const std::vector<Label*>& labels)
+{
+	for (Label* label : labels)
+	{
+		renderLabel(label);
+	}
+}
+
 void UIRenderer::renderLabel(Label* label)
 {
 	if (!loadedFont_)
@@ -46,7 +55,7 @@ void UIRenderer::renderLabel(Label* label)
 	graphics_->setShader(textShader_);
 
 	float x = label->getPosition().x_;
-	float y = label->getPosition().y_;
+	float y = (float) uiSize_.y_ - label->getPosition().y_;
 
 	const std::string& text = label->getText();
 	for (unsigned int i = 0; i < text.size(); i++)

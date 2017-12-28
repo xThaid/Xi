@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../scene/sceneNode.h"
-
-class QuadTree;
+class Label;
 
 class Program
 {
@@ -11,8 +9,5 @@ public:
 	void update();
 
 private:
-	bool mouseLocked = true;
-
-	
-	QuadTree* terrain;
+	Label* coordLabels[3];
 };

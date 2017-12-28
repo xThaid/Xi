@@ -25,6 +25,8 @@ public:
 
 	inline bool isRunning() { return running; }
 
+	inline RenderingEngine* getRenderer() { return rendering; }
+
 	static void setCurrentScene(Scene* scene);
 
 	static Core* getCurrentCore();

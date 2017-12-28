@@ -60,10 +60,10 @@ void Core::init()
 	graphics = new Graphics(mainWindow);
 	rendering = new RenderingEngine();
 
-	program = new Program();
-
 	time = new Time();
 	input = new Input(mainWindow);
+
+	program = new Program();
 
 	scene = nullptr;
 
@@ -163,10 +163,10 @@ void Core::update()
 	time->updateDelta();
 	input->update();
 
-	program->update();
-
 	if(scene != nullptr)
 		scene->update();
+
+	program->update();
 
 	glfwPollEvents();
 }

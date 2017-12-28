@@ -1,14 +1,18 @@
 #pragma once
 
-#include <algorithm>
-#include <math.h>
+#include <vector>
 #include <map>
 #include <set>
-#include <string>
-#include <vector>
+
+#include <math.h>
+#include <algorithm>
+
 #include <utility>
 #include <memory>
+
 #include <chrono>
 #include <functional>
+
+#include <string>
 #include <fstream>
 #include <sstream>

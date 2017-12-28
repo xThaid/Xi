@@ -1,6 +1,7 @@
 #include "scene.h"
 
 #include "../graphics/camera.h"
+#include "../ui/label.h"
 
 Scene::Scene()
 {
@@ -12,7 +13,10 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	destroy();
+	delete rootNode_;
+
+	for (Label* label : labels_)
+		delete label;
 }
 
 void Scene::setViewCamera(Camera* camera)
@@ -35,12 +39,12 @@ void Scene::setCullCamera(const std::shared_ptr<Camera>& camera)
 	cullCamera_ = camera;
 }
 
+void Scene::addLabel(Label* label)
+{
+	labels_.push_back(label);
+}
+
 void Scene::update()
 {
 	rootNode_->update();
-}
-
-void Scene::destroy()
-{
-	delete rootNode_;
 }

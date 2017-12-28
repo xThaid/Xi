@@ -20,6 +20,12 @@ public:
 
 	void render(Scene* scene);
 
+	void toggleRenderUI();
+	void setRenderUI(bool renderUI);
+
+	void toggleRenderDebug();
+	void setRenderDebug(bool renderDebug);
+
 private:
 	Graphics* graphics_;
 
@@ -29,7 +35,10 @@ private:
 	Shader* terrainShader_;
 	Shader* meshShader_;
 
-	void setup();
+	bool renderUI_;
+	bool renderDebug_;
+
+	void setupShaders();
 
 	void drawDebug(SceneNode* node);
 	
