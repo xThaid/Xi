@@ -4,28 +4,32 @@
 
 #include <algorithm>
 
-Time::Time()
+Time::Time() :
+	deltaTime_(0.0f),
+	elapsedTime_(0.0f)
 {
-	deltaTime = 0.0f;
-	elapsedTime = 0.0f;
-	previousTime = std::chrono::high_resolution_clock::now();
+	previousTime_ = std::chrono::high_resolution_clock::now();
+}
+
+Time::~Time()
+{
 }
 
 float Time::getDeltaTime()
 {
-	return Core::getCurrentCore()->time->deltaTime;
+	return Core::getCurrentCore()->time->deltaTime_;
 }
 
 float Time::getElapsedTime()
 {
-	return Core::getCurrentCore()->time->elapsedTime;
+	return Core::getCurrentCore()->time->elapsedTime_;
 }
 
 void Time::reset()
 {
-	previousTime = std::chrono::high_resolution_clock::now();
-	deltaTime = 0.0f;
-	elapsedTime = 0.0f;
+	previousTime_ = std::chrono::high_resolution_clock::now();
+	deltaTime_ = 0.0f;
+	elapsedTime_ = 0.0f;
 }
 
 void Time::update()
@@ -35,87 +39,84 @@ void Time::update()
 
 void Time::updateDelta()
 {
-	currentTime = std::chrono::high_resolution_clock::now();
+	currentTime_ = std::chrono::high_resolution_clock::now();
 
-	std::chrono::duration<float> delta = currentTime - previousTime;
-	deltaTime = delta.count() ;
-	elapsedTime += delta.count();
+	std::chrono::duration<float> delta = currentTime_ - previousTime_;
+	deltaTime_ = delta.count() ;
+	elapsedTime_ += delta.count();
 
-	previousTime = currentTime;
+	previousTime_ = currentTime_;
 }
 
-std::vector<Timer*> Timer::timers;
+std::vector<Timer*> Timer::timers_;
 
 void Timer::invokeTimers()
 {
-	for (auto& timer : timers)
+	for (auto& timer : timers_)
 		timer->invoke();
 }
 
 Timer::Timer(std::function<void(void)> action, int period) :
-	action(action),
-	period(period),
-	repeatCount(0),
-	remainingCalls(0)
+	action_(action),
+	period_(period),
+	repeatCount_(0),
+	remainingCalls_(0),
+	enabled_(false)
 {
-	enabled = false;
-	timers.push_back(this);
+	timers_.push_back(this);
 }
 
 Timer::Timer(std::function<void(void)> action, int period, int repeatCount) :
-	action(action),
-	period(period),
-	repeatCount(repeatCount),
-	remainingCalls(repeatCount)
+	action_(action),
+	period_(period),
+	repeatCount_(repeatCount),
+	remainingCalls_(repeatCount),
+	enabled_(false)
 {
-	if (period == 0)
-		throw;
-
-	enabled = false;
-	timers.push_back(this);
+	timers_.push_back(this);
 }
 
 Timer::~Timer()
 {
-	timers.erase(std::find(timers.begin(), timers.end(), this));
+	timers_.erase(std::find(timers_.begin(), timers_.end(), this));
 }
 
 void Timer::start()
 {
-	enabled = true;
-	previousTime = std::chrono::high_resolution_clock::now();
+	enabled_ = true;
+	previousTime_ = std::chrono::high_resolution_clock::now();
 }
 
 void Timer::stop()
 {
-	enabled = false;
+	enabled_ = false;
 }
 
 void Timer::reset()
 {
-	remainingCalls = repeatCount;
+	remainingCalls_ = repeatCount_;
 }
 
 void Timer::changePeriod(int period)
 {
-	this->period = period;
+	period_ = period;
 }
 
 void Timer::invoke()
 {
-	if (enabled)
+	if (enabled_)
 	{
 		std::chrono::time_point<std::chrono::high_resolution_clock> now = std::chrono::high_resolution_clock::now();
-		if ((now - previousTime) >= std::chrono::milliseconds(period))
+		if ((now - previousTime_) >= std::chrono::milliseconds(period_))
 		{
-			previousTime = now;
+			previousTime_ = now;
 
-			if (remainingCalls == 1)
-				enabled = false;
-			else if (remainingCalls > 1)
-				remainingCalls--;
+			if (remainingCalls_ == 1)
+				enabled_ = false;
+			else if (remainingCalls_ > 1)
+				remainingCalls_--;
 
-			action();
+			action_();
 		}
 	}
 }

@@ -1,14 +1,12 @@
 #pragma once
 
-#include <chrono>
-#include <vector>
-#include <functional>
-
+#include "../precompiled.h"
 
 class Time
 {
 public:
 	Time();
+	~Time();
 
 	static float getDeltaTime();
 	static float getElapsedTime();
@@ -18,17 +16,14 @@ public:
 	void updateDelta();
 
 private:
-	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
-	std::chrono::time_point<std::chrono::high_resolution_clock> currentTime;
-	float deltaTime;
-	float elapsedTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime_;
+	std::chrono::time_point<std::chrono::high_resolution_clock> currentTime_;
+	float deltaTime_;
+	float elapsedTime_;
 };
-
-typedef void(*Action)();
 
 class Timer
 {
-	friend class Time;
 public:
 	Timer(std::function<void(void)> action, int period);
 	Timer(std::function<void(void)> action, int period, int repeatCount);
@@ -42,18 +37,20 @@ public:
 	void changePeriod(int period);
 
 private:
-	static std::vector<Timer*> timers;
+	static std::vector<Timer*> timers_;
 	static void invokeTimers();
 
-	bool enabled;
+	bool enabled_;
 
-	std::function<void(void)> action;
-	int period;
+	std::function<void(void)> action_;
+	int period_;
 
-	int repeatCount;
-	int remainingCalls;
+	int repeatCount_;
+	int remainingCalls_;
 
-	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime;
+	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime_;
 
 	void invoke();
+
+	friend class Time;
 };
