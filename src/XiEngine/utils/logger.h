@@ -22,7 +22,7 @@ public:
 	static void trace(const std::string& message);
 
 private:
-	static time_t startTime;
+	static time_t startTime_;
 
 	static bool ERROR_LVL;
 	static bool WARN_LVL;
@@ -30,7 +30,7 @@ private:
 	static bool DEBUG_LVL;
 	static bool TRACE_LVL;
 
-	static int currentLevel;
+	static int currentLevel_;
 
 	static void log(int level, const std::string& message);
 };

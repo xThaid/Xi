@@ -1,38 +1,38 @@
 #include "file.h"
 
-#include "logger.h"
+#include "../utils/logger.h"
 
-File::File(const std::string& filePath)
+File::File(const std::string& filePath) :
+	path_(filePath)
 {
-	path = filePath;
-	int index = path.find_last_of('/');
+	int index = path_.find_last_of('/');
 	if (index != std::string::npos)
 	{
-		fileName = path.substr(index + 1);
-		directory = path.substr(0, index);
+		fileName_ = path_.substr(index + 1);
+		directory_ = path_.substr(0, index);
 	}
 	else
 	{
-		fileName = path;
-		directory = "";
+		fileName_ = path_;
+		directory_ = "";
 	}
 
 	if (!exist())
-		Logger::warn("File " + path + " doesn't exist");
+		Logger::warn("File " + path_ + " doesn't exist");
 }
 
 std::string File::loadText()
 {
-	std::ifstream file;
+	std::ifstream file_;
 
-	file.exceptions(std::ifstream::badbit);
+	file_.exceptions(std::ifstream::badbit);
 
 	try
 	{
-		file.open(path);
+		file_.open(path_);
 		std::stringstream stream;
-		stream << file.rdbuf();
-		file.close();
+		stream << file_.rdbuf();
+		file_.close();
 		return stream.str();
 	}
 	catch (std::ifstream::failure e)
@@ -43,6 +43,6 @@ std::string File::loadText()
 
 bool File::exist()
 {
-	std::ifstream f(path);
+	std::ifstream f(path_);
 	return f.good();
 }

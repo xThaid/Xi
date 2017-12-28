@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glad/glad.h> 
-#include <GLFW\glfw3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 class Window;
 
@@ -21,11 +21,13 @@ public:
 	void update();
 
 private:
-	Window* window;
+	Window* window_;
 
-	float lastMouseX, lastMouseY;
-	float mouseDeltaX, mouseDeltaY;
-	bool isMouseLocked = true;
+	float lastMouseX_, lastMouseY_;
+	float mouseDeltaX_, mouseDeltaY_;
+	bool isMouseLocked_ = true;
+
+	
 
 	void _lockMouse();
 	void _unlockMouse();

@@ -10,19 +10,19 @@ const int Logger::LEVEL_INFO = 3;
 const int Logger::LEVEL_TRACE = 2;
 const int Logger::LEVEL_DEBUG = 1;
 
-bool Logger::ERROR_LVL = currentLevel <= LEVEL_ERROR;
-bool Logger::WARN_LVL = currentLevel <= LEVEL_WARN;
-bool Logger::INFO_LVL = currentLevel <= LEVEL_INFO;
-bool Logger::TRACE_LVL = currentLevel <= LEVEL_TRACE;
-bool Logger::DEBUG_LVL = currentLevel <= LEVEL_DEBUG;
+bool Logger::ERROR_LVL = currentLevel_ <= LEVEL_ERROR;
+bool Logger::WARN_LVL = currentLevel_ <= LEVEL_WARN;
+bool Logger::INFO_LVL = currentLevel_ <= LEVEL_INFO;
+bool Logger::TRACE_LVL = currentLevel_ <= LEVEL_TRACE;
+bool Logger::DEBUG_LVL = currentLevel_ <= LEVEL_DEBUG;
 
-time_t Logger::startTime = time(0);
+time_t Logger::startTime_ = time(0);
 
-int Logger::currentLevel = LEVEL_INFO;
+int Logger::currentLevel_ = LEVEL_INFO;
 
 void Logger::setLevel(int level)
 {
-	Logger::currentLevel = level;
+	Logger::currentLevel_ = level;
 	ERROR_LVL = level <= LEVEL_ERROR;
 	WARN_LVL = level <= LEVEL_WARN;
 	INFO_LVL = level <= LEVEL_INFO;
@@ -59,7 +59,7 @@ void Logger::log(int level, const std::string& message)
 {
 	std::string out;
 
-	int timeInSec = (int) difftime(time(0), startTime);
+	int timeInSec = (int) difftime(time(0), startTime_);
 	int minutes = timeInSec / 60;
 	int seconds = timeInSec % 60;
 		

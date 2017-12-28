@@ -1,12 +1,11 @@
 #include "input.h"
 
+#include "../core/core.h"
 #include "../graphics/window.h"
-#include "core.h"
 
-Input::Input(Window* window)
+Input::Input(Window* window) :
+	window_(window)
 {
-	this->window = window;
-
 	glfwSetKeyCallback(window->getGLFWWindow(), key_callback);
 
 	_lockMouse();
@@ -14,17 +13,17 @@ Input::Input(Window* window)
 
 bool Input::getKey(int key)
 {
-	return glfwGetKey(Core::getCurrentCore()->input->window->getGLFWWindow(), key) != GLFW_RELEASE;
+	return glfwGetKey(Core::getCurrentCore()->input->window_->getGLFWWindow(), key) != GLFW_RELEASE;
 }
 
 float Input::getMouseDeltaX()
 {
-	return Core::getCurrentCore()->input->mouseDeltaX;
+	return Core::getCurrentCore()->input->mouseDeltaX_;
 }
 
 float Input::getMouseDeltaY()
 {
-	return Core::getCurrentCore()->input->mouseDeltaY;
+	return Core::getCurrentCore()->input->mouseDeltaY_;
 }
 
 void Input::lockMouse()
@@ -39,40 +38,40 @@ void Input::unlockMouse()
 
 void Input::update()
 {
-	if (isMouseLocked)
+	if (isMouseLocked_)
 	{
 		double xpos, ypos;
-		glfwGetCursorPos(window->getGLFWWindow(), &xpos, &ypos);
-		mouseDeltaX = (float)xpos - lastMouseX;
-		mouseDeltaY = (float)ypos - lastMouseY;
+		glfwGetCursorPos(window_->getGLFWWindow(), &xpos, &ypos);
+		mouseDeltaX_ = (float)xpos - lastMouseX_;
+		mouseDeltaY_ = (float)ypos - lastMouseY_;
 
-		lastMouseX = (float)xpos;
-		lastMouseY = (float)ypos;
+		lastMouseX_ = (float)xpos;
+		lastMouseY_ = (float)ypos;
 	}
 }
 
 void Input::_lockMouse()
 {
 	resetMousePos();
-	glfwSetInputMode(window->getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	isMouseLocked = true;
+	glfwSetInputMode(window_->getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	isMouseLocked_ = true;
 }
 
 void Input::_unlockMouse()
 {
 	resetMousePos();
-	glfwSetInputMode(Core::getCurrentCore()->input->window->getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	isMouseLocked = false;
+	glfwSetInputMode(Core::getCurrentCore()->input->window_->getGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	isMouseLocked_ = false;
 }
 
 void Input::resetMousePos()
 {
 	double xpos, ypos;
-	glfwGetCursorPos(window->getGLFWWindow(), &xpos, &ypos);
-	lastMouseX = (float)xpos;
-	lastMouseY = (float)ypos;
-	mouseDeltaX = 0.0f;
-	mouseDeltaY = 0.0f;
+	glfwGetCursorPos(window_->getGLFWWindow(), &xpos, &ypos);
+	lastMouseX_ = (float)xpos;
+	lastMouseY_ = (float)ypos;
+	mouseDeltaX_ = 0.0f;
+	mouseDeltaY_ = 0.0f;
 }
 
 void Input::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

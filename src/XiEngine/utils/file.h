@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-#include <fstream>
-#include <sstream>
+#include "../precompiled.h"
 
 class File
 {
@@ -11,14 +9,14 @@ public:
 
 	std::string loadText();
 
-	inline std::string getPath() const { return path; }
-	inline std::string getFileName() const { return fileName; }
-	inline std::string getDirectory() const { return directory; }
+	inline std::string getPath() const { return path_; }
+	inline std::string getFileName() const { return fileName_; }
+	inline std::string getDirectory() const { return directory_; }
 
 	bool exist();
 
 private:
-	std::string path;
-	std::string fileName;
-	std::string directory;
+	std::string path_;
+	std::string fileName_;
+	std::string directory_;
 };
