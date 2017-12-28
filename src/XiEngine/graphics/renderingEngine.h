@@ -26,6 +26,8 @@ public:
 	void toggleRenderDebug();
 	void setRenderDebug(bool renderDebug);
 
+	inline Graphics* getGraphics() { return graphics_; }
+
 private:
 	Graphics* graphics_;
 
