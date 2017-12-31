@@ -23,6 +23,9 @@ QuadTreeNode::QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadr
 	patch_ = new QuadTreePatch(this, QUAD_TREE_PATCH_EDGE_SIZE);
 	patch_->prepareVertices();
 	patch_->prepareGeometry();
+
+	nodeTransform_ = Matrix4::translationMatrix(getWorldCenter());
+	nodeTransform_.scale(size_ / 2.0f, 1.0f, size_ / 2.0f);
 }
 
 QuadTreeNode::~QuadTreeNode()
@@ -79,14 +82,14 @@ void QuadTreeNode::update(const Vector3& viewPos)
 
 void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
 {
-	if (cullCamera->getFrustum().intersect(patch_->getBoundingBox().transformed(getTransform())) == OUTSIDE)
+	if (cullCamera->getFrustum().intersect(patch_->getBoundingBox().transformed(nodeTransform_)) == OUTSIDE)
 		return;
 
 	if (isLeaf())
 	{
 		Batch batch;
 		batch.geometry_ = patch_->getGeometry();
-		batch.transform_ = getTransform();
+		batch.transform_ = nodeTransform_;
 		batch.customIndexBuffer_ = owner_->getPatchTopology(
 			neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]
 		)->getIndexBuffer();
@@ -108,7 +111,7 @@ void QuadTreeNode::drawDebugGeometry(DebugRenderer* debug)
 	{
 		if (false)
 		{
-			debug->addBoundingBox(patch_->getBoundingBox().transformed(getTransform()), Color::GREEN);
+			debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
 		}
 		else
 		{
@@ -132,7 +135,7 @@ float QuadTreeNode::getScale() const
 	return 1.0f / (1 << depth_);
 }
 
-Vector3 QuadTreeNode::localToWorldPos(const Vector2& localPos)
+Vector3 QuadTreeNode::localToFacePos(const Vector2& localPos)
 {
 	Vector3 result(localPos.x_, 0.0f, localPos.y_);
 	result *= size_ / 2.0f;
@@ -141,9 +144,9 @@ Vector3 QuadTreeNode::localToWorldPos(const Vector2& localPos)
 	return result;
 }
 
-float QuadTreeNode::getHeightFromLocalPos(const Vector2& localPos)
+float QuadTreeNode::calcHeightFromLocalPos(const Vector2& localPos)
 {
-	Vector3 worldPos = localToWorldPos(localPos);
+	Vector3 worldPos = localToFacePos(localPos);
 
 	SimplexNoise simplex = SimplexNoise(0.01f, 2.0f);
 	float height = simplex.fractal(8, worldPos.x_, worldPos.z_);
@@ -151,7 +154,7 @@ float QuadTreeNode::getHeightFromLocalPos(const Vector2& localPos)
 	return 5.0f * height;
 }
 
-void QuadTreeNode::setNeighborDual(Side side, QuadTreeNode* neighbor)
+void QuadTreeNode::setNeighbor(Side side, QuadTreeNode* neighbor)
 {
 	neighbors_[side] = neighbor;
 	neighborsDepthDiff_[side] = 0;
@@ -186,10 +189,10 @@ void QuadTreeNode::split()
 	children_[SOUTH_WEST] = new QuadTreeNode(owner_, this, SOUTH_WEST, Vector2(center_.x_ - size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
 	children_[SOUTH_EAST] = new QuadTreeNode(owner_, this, SOUTH_EAST, Vector2(center_.x_ + size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
 
-	children_[NORTH_EAST]->setNeighborDual(WEST, children_[NORTH_WEST]);
-	children_[NORTH_WEST]->setNeighborDual(SOUTH, children_[SOUTH_WEST]);
-	children_[SOUTH_WEST]->setNeighborDual(EAST, children_[SOUTH_EAST]);
-	children_[SOUTH_EAST]->setNeighborDual(NORTH, children_[NORTH_EAST]);
+	children_[NORTH_EAST]->setNeighbor(WEST, children_[NORTH_WEST]);
+	children_[NORTH_WEST]->setNeighbor(SOUTH, children_[SOUTH_WEST]);
+	children_[SOUTH_WEST]->setNeighbor(EAST, children_[SOUTH_EAST]);
+	children_[SOUTH_EAST]->setNeighbor(NORTH, children_[NORTH_EAST]);
 
 	for (unsigned int s = 0; s < 4; s++)
 	{
@@ -206,7 +209,7 @@ void QuadTreeNode::split()
 					if (isOnSide(q, s))
 					{
 						QuadTreeNode* neighbor = neighbors_[s]->children_[reflectQuadrant(q, s)];
-						children_[q]->setNeighborDual((Side) s, neighbor);
+						children_[q]->setNeighbor((Side) s, neighbor);
 						neighbor->propagateDownNeighbor(mirrorSide(s));
 					}
 				}
@@ -225,11 +228,4 @@ void QuadTreeNode::merge()
 		delete children_[q];
 		children_[q] = nullptr;
 	}
-}
-
-Matrix4 QuadTreeNode::getTransform() const
-{
-	Matrix4 patchTransform = Matrix4::translationMatrix(getWorldCenter());
-	patchTransform.scale(size_ / 2.0f, 1.0f, size_ / 2.0f);
-	return patchTransform;
 }

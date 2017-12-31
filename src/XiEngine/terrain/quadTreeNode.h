@@ -40,9 +40,9 @@ public:
 
 	float getScale() const;
 
-	Vector3 localToWorldPos(const Vector2& localPos);
+	Vector3 localToFacePos(const Vector2& localPos);
 
-	float getHeightFromLocalPos(const Vector2& localPos);
+	float calcHeightFromLocalPos(const Vector2& localPos);
 
 	inline QuadTree* getQuadTree() { return owner_; }
 
@@ -61,18 +61,17 @@ private:
 	const Quadrant quadrant_;
 	const unsigned int depth_;
 
+	Matrix4 nodeTransform_;
 	const Vector2 center_;
 	const float size_;
 
 	QuadTreePatch* patch_;
 
-	void setNeighborDual(Side side, QuadTreeNode* neighbor);
+	void setNeighbor(Side side, QuadTreeNode* neighbor);
 	void propagateDownNeighbor(Side side);
 
 	void split();
 	void merge();
-
-	Matrix4 getTransform() const;
 
 	inline static Side mirrorSide(unsigned int side) { return (Side)((side + 2) % 4); }
 	inline static bool isOnSide(unsigned int quadrant, unsigned int side) { return ((4 + quadrant - side) % 4) <= 1; }

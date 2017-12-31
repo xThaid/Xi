@@ -35,7 +35,7 @@ void QuadTreePatch::prepareVertices()
 		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
 		{
 			Vector2 localPos = verticesNumToLocalPos(x, y);
-			float height = node_->getHeightFromLocalPos(localPos);
+			float height = node_->calcHeightFromLocalPos(localPos);
 			heightData_[x * (patchEdgeSize_ + 1) + y] =  height;
 
 			Vector3 point(localPos.x_, height, localPos.y_);
@@ -53,8 +53,8 @@ void QuadTreePatch::prepareVertices()
 			else
 			{
 				normal.y_ = 2.0f;
-				normal.x_ = getHeight(x - 1, y) - getHeight(x + 1, y);
-				normal.z_ = getHeight(x, y - 1) - getHeight(x, y + 1);
+				normal.x_ = (getHeight(x - 1, y) - getHeight(x + 1, y)) / node_->getScale();
+				normal.z_ = (getHeight(x, y - 1) - getHeight(x, y + 1)) / node_->getScale();
 
 				normal.normalize();
 			}
