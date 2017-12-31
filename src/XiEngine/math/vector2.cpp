@@ -40,6 +40,20 @@ Vector2& Vector2::operator-=(const Vector2& v)
 	return *this;
 }
 
+Vector2& Vector2::operator+=(float value)
+{
+	x_ += value;
+	y_ += value;
+	return *this;
+}
+
+Vector2& Vector2::operator-=(float value)
+{
+	x_ -= value;
+	y_ -= value;
+	return *this;
+}
+
 Vector2& Vector2::operator*=(const float& scalar)
 {
 	x_ *= scalar;
@@ -62,6 +76,16 @@ Vector2 Vector2::operator+(const Vector2& v) const
 Vector2 Vector2::operator-(const Vector2& v) const
 {
 	return Vector2(x_ - v.x_, y_ - v.y_);
+}
+
+Vector2 Vector2::operator+(float value)
+{
+	return Vector2(x_ + value, y_ + value);
+}
+
+Vector2 Vector2::operator-(float value)
+{
+	return Vector2(x_ - value, y_ - value);
 }
 
 Vector2 Vector2::operator*(const float& scalar) const
