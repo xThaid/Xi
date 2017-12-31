@@ -5,18 +5,28 @@
 #include "../scene/scene.h"
 #include "../scene/sceneNode.h"
 #include "../terrain/quadTreeNode.h"
+#include "../terrain/quadTreePatch.h"
 
 QuadTree::QuadTree()
 {
-	patchIndexBuffer_ = std::shared_ptr<IndexBuffer>(new IndexBuffer());
-	prepareIndexBuffer();
-
 	rootNode_ = new QuadTreeNode(this, nullptr, NORTH_EAST, Vector2(0.0f, 0.0f), 100.0f);
+
+	for (unsigned int a = 0; a <= QUAD_TREE_MAX_DEPTH_DIFF; a++)
+		for (unsigned int b = 0; b <= QUAD_TREE_MAX_DEPTH_DIFF; b++)
+			for (unsigned int c = 0; c <= QUAD_TREE_MAX_DEPTH_DIFF; c++)
+				for (unsigned int d = 0; d <= QUAD_TREE_MAX_DEPTH_DIFF; d++)
+					topologies_[a][b][c][d] = new QuadTreePatchTopology(QUAD_TREE_PATCH_EDGE_SIZE, a, b, c, d);
 }
 
 QuadTree::~QuadTree()
 {
 	delete rootNode_;
+
+	for (unsigned int a = 0; a <= QUAD_TREE_MAX_DEPTH_DIFF; a++)
+		for (unsigned int b = 0; b <= QUAD_TREE_MAX_DEPTH_DIFF; b++)
+			for (unsigned int c = 0; c <= QUAD_TREE_MAX_DEPTH_DIFF; c++)
+				for (unsigned int d = 0; d <= QUAD_TREE_MAX_DEPTH_DIFF; d++)
+					delete topologies_[a][b][c][d];
 }
 
 void QuadTree::update()
@@ -36,41 +46,4 @@ void QuadTree::drawDebugGeometry(DebugRenderer* debug)
 
 void QuadTree::onWorldBoundingBoxUpdate()
 {
-	worldBoundingBox_ = BoundingBox(-2.0f, 2.0f);
-}
-
-void QuadTree::prepareIndexBuffer()
-{
-	unsigned int indicesCount = QUAD_TREE_PATCH_EDGE_SIZE * 2 * (QUAD_TREE_PATCH_EDGE_SIZE + 1);
-	patchIndexBuffer_->create(indicesCount, true);
-
-	unsigned int* data = new unsigned int[indicesCount];
-
-	bool oddRow = false;
-	int indicesCounter = 0;
-	for (unsigned int y = 0; y < QUAD_TREE_PATCH_EDGE_SIZE; y++)
-	{
-		if (!oddRow)
-		{
-			for (unsigned int x = 0; x <= QUAD_TREE_PATCH_EDGE_SIZE; x++)
-			{
-				data[indicesCounter++] = y * (QUAD_TREE_PATCH_EDGE_SIZE + 1) + x;
-				data[indicesCounter++] = (y + 1) * (QUAD_TREE_PATCH_EDGE_SIZE + 1) + x;
-			}
-		}
-		else
-		{
-			for (int x = QUAD_TREE_PATCH_EDGE_SIZE; x >= 0; x--)
-			{
-				data[indicesCounter++] = (y + 1) * (QUAD_TREE_PATCH_EDGE_SIZE + 1) + x;
-				data[indicesCounter++] = y * (QUAD_TREE_PATCH_EDGE_SIZE + 1) + x;
-			}
-		}
-
-		oddRow = !oddRow;
-	}
-
-	patchIndexBuffer_->setData(data);
-	
-	delete data;
 }

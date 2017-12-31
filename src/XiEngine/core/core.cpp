@@ -100,23 +100,26 @@ void Core::loop()
 	int updates = 0;
 	int frames = 0;
 
-	Timer fpsTimer([&updates, &frames]() -> void
-	{
-		Logger::trace(std::to_string(updates) + "ups, " + std::to_string(frames) + "fps");
-		updates = 0;
-		frames = 0;
-
-	}, 1000);
-	fpsTimer.start();
-
 	std::chrono::time_point<std::chrono::high_resolution_clock> lastTime = std::chrono::high_resolution_clock::now();
+	std::chrono::time_point<std::chrono::high_resolution_clock> lastUP = std::chrono::high_resolution_clock::now();
 
 	while (running)
 	{
 		time->update();
+
+		std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
+
+		if ((currentTime - lastUP).count() > 1000000000)
+		{
+			lastUPS = updates;
+			lastFPS = frames;
+			updates = 0;
+			frames = 0;
+			lastUP = currentTime;
+		}
+
 		if (scene != nullptr)
 		{
-			std::chrono::time_point<std::chrono::high_resolution_clock> currentTime = std::chrono::high_resolution_clock::now();
 			std::chrono::duration<float, std::milli> delta = currentTime - lastTime;
 			lastTime = currentTime;
 

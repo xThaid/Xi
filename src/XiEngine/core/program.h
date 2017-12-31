@@ -10,4 +10,6 @@ public:
 
 private:
 	Label* coordLabels[3];
+	Label* drawLabels[2];
+	Label* updatesLabel[2];
 };

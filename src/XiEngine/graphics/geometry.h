@@ -14,6 +14,7 @@ public:
 	~Geometry();
 
 	void draw(Graphics* graphics);
+	void draw(Graphics* graphics, IndexBuffer* indexBuffer);
 
 	inline std::shared_ptr<VertexBuffer> getVertexBuffer() { return vertexBuffer_; }
 

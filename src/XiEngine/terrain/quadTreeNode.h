@@ -17,6 +17,14 @@ enum Quadrant
 	SOUTH_EAST
 };
 
+enum Side
+{
+	NORTH = 0,
+	WEST,
+	SOUTH,
+	EAST
+};
+
 class QuadTreeNode
 {
 public:
@@ -32,16 +40,23 @@ public:
 
 	float getScale() const;
 
+	Vector3 localToWorldPos(const Vector2& localPos);
+
+	float getHeightFromLocalPos(const Vector2& localPos);
+
 	inline QuadTree* getQuadTree() { return owner_; }
 
-	inline Vector3 getWorldCenter() { return Vector3(center_.x_, 0.0f, -center_.y_); }
-	inline float getSize() { return size_; }
+	inline Vector3 getWorldCenter() const { return Vector3(center_.x_, 0.0f, -center_.y_); }
+	inline float getSize() const { return size_; }
 
 private:
 	QuadTree* owner_;
 
-	const QuadTreeNode* parent_;
+	QuadTreeNode* parent_;
 	QuadTreeNode* children_[4];
+
+	QuadTreeNode* neighbors_[4];
+	unsigned int neighborsDepthDiff_[4];
 
 	const Quadrant quadrant_;
 	const unsigned int depth_;
@@ -51,8 +66,16 @@ private:
 
 	QuadTreePatch* patch_;
 
-	BoundingBox boundingBox_;
+	void setNeighborDual(Side side, QuadTreeNode* neighbor);
+	void propagateDownNeighbor(Side side);
 
 	void split();
 	void merge();
+
+	Matrix4 getTransform() const;
+
+	inline static Side mirrorSide(unsigned int side) { return (Side)((side + 2) % 4); }
+	inline static bool isOnSide(unsigned int quadrant, unsigned int side) { return ((4 + quadrant - side) % 4) <= 1; }
+	inline static Quadrant reflectQuadrant(unsigned int quadrant, unsigned int side) 
+	{ return (Quadrant)(side % 2 ? (quadrant % 2 ? quadrant - 1 : quadrant + 1) : 3 - quadrant); }
 };

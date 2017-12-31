@@ -50,7 +50,7 @@ public:
 	inline IndexBuffer* getIndexBuffer() { return indexBuffer_; }
 
 	inline unsigned int getPrimitivesCount() { return numPrimitives_; }
-	inline unsigned int getNumBatches() { return numBatches_; }
+	inline unsigned int getBatchesCount() { return numBatches_; }
 
 private:
 	static Graphics* instance_;

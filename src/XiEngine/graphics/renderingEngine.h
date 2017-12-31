@@ -26,6 +26,8 @@ public:
 	void toggleRenderDebug();
 	void setRenderDebug(bool renderDebug);
 
+	void toggleWireframe();
+
 	inline Graphics* getGraphics() { return graphics_; }
 
 private:
@@ -39,6 +41,7 @@ private:
 
 	bool renderUI_;
 	bool renderDebug_;
+	bool wireframe_;
 
 	void setupShaders();
 

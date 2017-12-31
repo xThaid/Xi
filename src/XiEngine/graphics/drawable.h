@@ -5,11 +5,13 @@
 
 class Camera;
 class Geometry;
+class IndexBuffer;
 
 struct Batch
 {
 	Geometry* geometry_;
 	Matrix4 transform_;
+	IndexBuffer* customIndexBuffer_ = nullptr;
 };
 
 class Drawable : public Component

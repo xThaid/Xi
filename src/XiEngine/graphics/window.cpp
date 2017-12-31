@@ -30,7 +30,7 @@ bool Window::create()
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	
-	bool borderless = true;
+	bool borderless = false;
 
 	GLFWmonitor* monitor = borderless ? glfwGetPrimaryMonitor() : nullptr;
 

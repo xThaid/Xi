@@ -20,8 +20,9 @@
 
 RenderingEngine::RenderingEngine() :
 	graphics_(Graphics::getInstance()),
-	renderUI_(false),
-	renderDebug_(false)
+	renderUI_(true),
+	renderDebug_(false),
+	wireframe_(false)
 {
 	setupShaders();
 
@@ -61,7 +62,9 @@ void RenderingEngine::render(Scene* scene)
 			drawable->getBatches(cullCamera, meshBatches);
 	}
 
-	graphics_->setFillMode(FILL_WIREFRAME);
+	if (wireframe_)
+		graphics_->setFillMode(FILL_WIREFRAME);
+
 	for (Batch& batch : meshBatches)
 	{
 		graphics_->setShader(meshShader_);
@@ -73,7 +76,8 @@ void RenderingEngine::render(Scene* scene)
 	{
 		graphics_->setShader(terrainShader_);
 		terrainShader_->setMatrix4("model", batch.transform_);
-		batch.geometry_->draw(graphics_);
+		if(batch.customIndexBuffer_)
+		batch.geometry_->draw(graphics_, batch.customIndexBuffer_);
 	}
 
 	graphics_->setFillMode(FILL_SOLID);
@@ -97,7 +101,9 @@ void RenderingEngine::render(Scene* scene)
 
 	if (renderUI_)
 	{
+		graphics_->setDepthTest(CMP_ALWAYS);
 		uiRenderer_->renderLabels(scene->getLabels());
+		graphics_->setDepthTest(CMP_LESSEQUAL);
 	}
 
 	graphics_->endFrame();
@@ -121,6 +127,11 @@ void RenderingEngine::toggleRenderDebug()
 void RenderingEngine::setRenderDebug(bool renderDebug)
 {
 	renderDebug_ = renderDebug;
+}
+
+void RenderingEngine::toggleWireframe()
+{
+	wireframe_ = !wireframe_;
 }
 
 void RenderingEngine::setupShaders()

@@ -27,6 +27,9 @@ public:
 
 	inline RenderingEngine* getRenderer() { return rendering; }
 
+	inline int getLastUPS() { return lastUPS; }
+	inline int getLastFPS() { return lastFPS; }
+
 	static void setCurrentScene(Scene* scene);
 
 	static Core* getCurrentCore();
@@ -50,6 +53,9 @@ private:
 	bool running;
 	int upsLimit;
 	int fpsLimit;
+
+	int lastUPS;
+	int lastFPS;
 
 	void init();
 	void destroy();

@@ -24,15 +24,20 @@ Geometry::~Geometry()
 
 void Geometry::draw(Graphics* graphics)
 {
+	draw(graphics, indexBuffer_.get());
+}
+
+void Geometry::draw(Graphics* graphics, IndexBuffer* indexBuffer)
+{
 	if (!vertexBuffer_)
 		return;
 
 	graphics->setVertexBuffer(vertexBuffer_.get());
 
-	if (indexBuffer_)
+	if (indexBuffer)
 	{
-		graphics->setIndexBuffer(indexBuffer_.get());
-		graphics->drawElement(topology_, 0, indexBuffer_->getIndexCount());
+		graphics->setIndexBuffer(indexBuffer);
+		graphics->drawElement(topology_, 0, indexBuffer->getIndexCount());
 	}
 	else
 	{

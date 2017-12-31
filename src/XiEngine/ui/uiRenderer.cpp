@@ -123,8 +123,9 @@ bool UIRenderer::loadFont(File& file)
 	options.format = GL_RED;
 	options.type = GL_UNSIGNED_BYTE;
 	options.filterMin = GL_LINEAR;
-	options.filterMax = GL_LINEAR;
+	options.filterMax = GL_LINEAR_MIPMAP_LINEAR;
 	options.wrapMethod = GL_CLAMP_TO_EDGE;
+	options.mipMapping = true;
 
 	for (unsigned int c = 0; c < 128; c++)
 		characters_[c].texture_ = nullptr;

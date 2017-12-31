@@ -2,12 +2,14 @@
 
 #include "../graphics/drawable.h"
 
-const int QUAD_TREE_PATCH_EDGE_SIZE = 8;
-const int QUAD_TREE_MAX_DEPTH = 6;
+const int QUAD_TREE_PATCH_EDGE_SIZE = 16;
+const int QUAD_TREE_MAX_DEPTH = 5;
+const int QUAD_TREE_MAX_DEPTH_DIFF = 4;
 const float QUAD_TREE_SPLIT_DISTANCE_SCALE = 2.0f;
 
 class IndexBuffer;
 class QuadTreeNode;
+class QuadTreePatchTopology;
 
 class QuadTree : public Drawable
 {
@@ -21,7 +23,8 @@ public:
 
 	virtual void drawDebugGeometry(DebugRenderer* debug) override;
 
-	inline std::shared_ptr<IndexBuffer> getIndexBuffer() { return patchIndexBuffer_; }
+	inline QuadTreePatchTopology* getPatchTopology(unsigned int detailNorth, unsigned int detailWest, unsigned int detailSouth, unsigned int detailEast) 
+	{ return topologies_[detailNorth][detailWest][detailSouth][detailEast]; }
 
 protected:
 	virtual void onWorldBoundingBoxUpdate() override;
@@ -29,7 +32,5 @@ protected:
 private:
 	QuadTreeNode* rootNode_;
 
-	std::shared_ptr<IndexBuffer> patchIndexBuffer_;
-
-	void prepareIndexBuffer();
+	QuadTreePatchTopology* topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1];
 };
