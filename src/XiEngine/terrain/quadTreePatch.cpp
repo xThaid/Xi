@@ -4,19 +4,25 @@
 #include "../graphics/geometry.h"
 #include "../graphics/graphicsDefs.h"
 #include "../graphics/vertexBuffer.h"
-#include "../terrain/quadTree.h"
+#include "../terrain/quadTreeFace.h"
 #include "../terrain/quadTreeNode.h"
+
+int QuadTreePatch::instances_ = 0;
+QuadTreePatchTopology* QuadTreePatch::topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1] = { { { { 0 } } } };
 
 QuadTreePatch::QuadTreePatch(QuadTreeNode* node, unsigned int patchEdgeSize) :
 	node_(node),
 	patchEdgeSize_(patchEdgeSize)
 {
+	if (!instances_++)
+		generateTopologies();
+
 	VertexBuffer* vertexBuffer = new VertexBuffer(MASK_POSITION | MASK_NORMAL);
 	geometry_ = new Geometry(PrimitiveTopology::TRIANGLES, vertexBuffer, nullptr);
 	
 	unsigned int vertexCount = (patchEdgeSize_ + 1) * (patchEdgeSize_ + 1);
 
-	heightData_ = new float[vertexCount];
+	positions_ = new Vector3[vertexCount];
 	normals_ = new Vector3[vertexCount];
 }
 
@@ -24,8 +30,11 @@ QuadTreePatch::~QuadTreePatch()
 {
 	delete geometry_;
 
-	delete[] heightData_;
+	delete[] positions_;
 	delete[] normals_;
+
+	if (!--instances_)
+		deleteTopologies();
 }
 
 void QuadTreePatch::prepareVertices()
@@ -34,11 +43,16 @@ void QuadTreePatch::prepareVertices()
 	{
 		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
 		{
-			Vector2 localPos = verticesNumToLocalPos(x, y);
-			float height = node_->calcHeightFromLocalPos(localPos);
-			heightData_[x * (patchEdgeSize_ + 1) + y] =  height;
+			Vector2 localPos = Vector2((float)x, (float)y) / (float)patchEdgeSize_;
+			localPos -= 0.5f;
+			localPos *= 2.0f;
 
-			Vector3 point(localPos.x_, height, localPos.y_);
+			Vector2 facePos = node_->localToFacePos(localPos);
+
+			Vector3 point = node_->getFace()->getWorldPosition(facePos);
+			point = node_->getFace()->getTerrain()->projectOnSurface(point);
+
+			positions_[ind(x, y)] = point;
 			boundingBox_.merge(point);
 		}
 	}
@@ -47,18 +61,23 @@ void QuadTreePatch::prepareVertices()
 	{
 		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
 		{
+			Vector2 localPos = Vector2((float)x, (float)y) / (float)patchEdgeSize_;
+			localPos -= 0.5f;
+			localPos *= 2.0f;
+			Vector2 facePos = node_->localToFacePos(localPos);
+
 			Vector3 normal;
-			if (x == 0 || x == patchEdgeSize_ || y == 0 || y == patchEdgeSize_)
-				normal = Vector3(0.0f, 1.0f, 0.0f);
-			else
+			//if (facePos.x_ > 0.99f || facePos.x_ < -0.99f || facePos.y_ > 0.99f || facePos.y_ < -0.99f)
+			//	normal = Vector3(0.0f, 1.0f, 0.0f);
+			//else
 			{
-				normal.y_ = 2.0f;
-				normal.x_ = (getHeight(x - 1, y) - getHeight(x + 1, y)) / node_->getScale();
-				normal.z_ = (getHeight(x, y - 1) - getHeight(x, y + 1)) / node_->getScale();
+				Vector3 v1 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(0.01f, 0.01f)));
+				Vector3 v2 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(-0.01f, 0.01f)));
+				Vector3 v3 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(0.01f, -0.01f)));
 
-				normal.normalize();
+				Plane plane(v1, v2, v3);
+				normal = -plane.normal_.normalize();
 			}
-
 			normals_[x * (patchEdgeSize_ + 1) + y] = normal;
 		}
 	}
@@ -78,13 +97,14 @@ void QuadTreePatch::prepareGeometry()
 	{
 		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
 		{
-			Vector2 localPos = verticesNumToLocalPos(x, y);
-			data[dataCounter++] = localPos.x_;
-			data[dataCounter++] = getHeight(x, y);
-			data[dataCounter++] = localPos.y_;
+			Vector3 position = positions_[ind(x, y)];
 
-			Vector3 normal = getNormal(x, y);
+			data[dataCounter++] = position.x_;
+			data[dataCounter++] = position.y_;
+			data[dataCounter++] = position.z_;
 
+			Vector3 normal = normals_[ind(x, y)];
+			
 			data[dataCounter++] = normal.x_;
 			data[dataCounter++] = normal.y_;
 			data[dataCounter++] = normal.z_;
@@ -95,13 +115,22 @@ void QuadTreePatch::prepareGeometry()
 	delete data;
 }
 
-Vector2 QuadTreePatch::verticesNumToLocalPos(int x, int y)
+void QuadTreePatch::generateTopologies()
 {
-	Vector2 localPos = Vector2((float)x, (float)y) / (float)patchEdgeSize_;
-	localPos -= Vector2(0.5f);
-	localPos *= 2.0f;
+	for (unsigned int a = 0; a <= QUAD_TREE_MAX_DEPTH_DIFF; a++)
+		for (unsigned int b = 0; b <= QUAD_TREE_MAX_DEPTH_DIFF; b++)
+			for (unsigned int c = 0; c <= QUAD_TREE_MAX_DEPTH_DIFF; c++)
+				for (unsigned int d = 0; d <= QUAD_TREE_MAX_DEPTH_DIFF; d++)
+					topologies_[a][b][c][d] = new QuadTreePatchTopology(QUAD_TREE_PATCH_EDGE_SIZE, a, b, c, d);
+}
 
-	return localPos;
+void QuadTreePatch::deleteTopologies()
+{
+	for (unsigned int a = 0; a <= QUAD_TREE_MAX_DEPTH_DIFF; a++)
+		for (unsigned int b = 0; b <= QUAD_TREE_MAX_DEPTH_DIFF; b++)
+			for (unsigned int c = 0; c <= QUAD_TREE_MAX_DEPTH_DIFF; c++)
+				for (unsigned int d = 0; d <= QUAD_TREE_MAX_DEPTH_DIFF; d++)
+					delete topologies_[a][b][c][d];
 }
 
 QuadTreePatchTopology::QuadTreePatchTopology(

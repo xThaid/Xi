@@ -9,7 +9,7 @@
 #include "../resource/primitives.h"
 #include "../resource/resourceManager.h"
 #include "../scene/scene.h"
-#include "../terrain/quadTree.h"
+#include "../terrain/sphericalTerrain.h"
 #include "../ui/label.h"
 #include "../utils/logger.h"
 
@@ -22,11 +22,11 @@ void Program::init()
 
 	SceneNode* root = scene->getRootNode();
 
-	QuadTree* terrain = new QuadTree();
+	Terrain* terrain = new SphericalTerrain(100.0f);
 	SceneNode* terrainNode = root->createChild("terrain");
 	terrainNode->addComponent(terrain);
 
-	//Mesh* tempMesh = new Mesh("kula2", Primitives::torus(3, 1, 50, 50));
+	//Mesh* tempMesh = new Mesh("kula2", Primitives::torus(3, 1, 30, 30));
 	//ResourceManager::getInstance()->addResource(tempMesh);
 	//MeshRenderer* meshRender = new MeshRenderer(tempMesh);
 	//tempNode = root->createChild("torus");
@@ -77,9 +77,9 @@ void Program::update()
 	if (Input::getKey(GLFW_KEY_ESCAPE))
 		core->stop();
 
-	float speed = 1.0f;
+	float speed = 5.0f;
 	if (Input::getKey(GLFW_KEY_LEFT_SHIFT))
-		speed = 10.0f;
+		speed = 50.0f;
 
 	if (Input::getKey(GLFW_KEY_W))
 		scene->getViewCamera()->processKeyboard(CameraMovement::FORWARD, Time::getDeltaTime() * speed);

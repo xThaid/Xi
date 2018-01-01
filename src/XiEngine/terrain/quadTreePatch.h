@@ -2,16 +2,19 @@
 
 #include "../math/ximath.h"
 
+#include "../terrain/terrain.h"
+
 class Geometry;
 class IndexBuffer;
 class QuadTreeNode;
+class QuadTreePatchTopology;
 
 enum Side;
 
 class QuadTreePatch
 {
 public:
-	QuadTreePatch(QuadTreeNode* owner_, unsigned int patchEdgeSize);
+	QuadTreePatch(QuadTreeNode* node, unsigned int patchEdgeSize);
 	~QuadTreePatch();
 	
 	void prepareVertices();
@@ -23,20 +26,26 @@ public:
 	inline BoundingBox& getBoundingBox() { return boundingBox_; }
 	inline Geometry* getGeometry() { return geometry_; }
 
-	inline float getHeight(int x, int y) { return heightData_[x * (patchEdgeSize_ + 1) + y]; }
-	inline Vector3 getNormal(int x, int y) { return normals_[x * (patchEdgeSize_ + 1) + y]; }
+	inline static QuadTreePatchTopology* getTopology(unsigned int detailNorth, unsigned int detailWest, unsigned int detailSouth, unsigned int detailEast)
+	{ return topologies_[detailNorth][detailWest][detailSouth][detailEast]; }
 
 private:
+	static int instances_;
+	static QuadTreePatchTopology* topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1];
+
 	QuadTreeNode* node_;
 
 	BoundingBox boundingBox_;
 	Geometry* geometry_;
 
 	unsigned int patchEdgeSize_;
-	float* heightData_;
+	Vector3* positions_;
 	Vector3* normals_;
 
-	Vector2 verticesNumToLocalPos(int x, int y);
+	void generateTopologies();
+	void deleteTopologies();
+
+	inline unsigned int ind(unsigned int x, unsigned int y) { return x * (patchEdgeSize_ + 1) + y; }
 };
 
 class QuadTreePatchTopology

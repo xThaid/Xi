@@ -12,7 +12,7 @@
 #include "../resource/resourceManager.h"
 #include "../scene/sceneNode.h"
 #include "../scene/scene.h"
-#include "../terrain/quadTree.h"
+#include "../terrain/terrain.h"
 #include "../ui/label.h"
 #include "../ui/uiRenderer.h"
 #include "../utils/logger.h"
@@ -56,7 +56,7 @@ void RenderingEngine::render(Scene* scene)
 	{
 		Drawable* drawable = (Drawable*) component;
 
-		if (dynamic_cast<QuadTree*>(drawable))
+		if (dynamic_cast<Terrain*>(drawable))
 			drawable->getBatches(cullCamera, terrainBatches);
 		else if (dynamic_cast<MeshRenderer*>(drawable))
 			drawable->getBatches(cullCamera, meshBatches);
@@ -76,8 +76,9 @@ void RenderingEngine::render(Scene* scene)
 	{
 		graphics_->setShader(terrainShader_);
 		terrainShader_->setMatrix4("model", batch.transform_);
+		//terrainShader_->setVector3("fViewPos", viewCamera->position);
 		if(batch.customIndexBuffer_)
-		batch.geometry_->draw(graphics_, batch.customIndexBuffer_);
+			batch.geometry_->draw(graphics_, batch.customIndexBuffer_);
 	}
 
 	graphics_->setFillMode(FILL_SOLID);

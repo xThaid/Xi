@@ -1,16 +1,15 @@
 #include "quadTreeNode.h"
 
-#include "../lib/SimplexNoise.h"
-
 #include "../graphics/camera.h"
 #include "../graphics/debugRenderer.h"
 #include "../graphics/drawable.h"
-#include "../terrain/quadTree.h"
+#include "../terrain/quadTreeFace.h"
 #include "../terrain/quadTreePatch.h"
+#include "../terrain/terrain.h"
 #include "../utils/logger.h"
 
-QuadTreeNode::QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size) :
-	owner_(owner),
+QuadTreeNode::QuadTreeNode(QuadTreeFace* face, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size) :
+	face_(face),
 	parent_(parent),
 	children_(),
 	neighbors_(),
@@ -24,8 +23,7 @@ QuadTreeNode::QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadr
 	patch_->prepareVertices();
 	patch_->prepareGeometry();
 
-	nodeTransform_ = Matrix4::translationMatrix(getWorldCenter());
-	nodeTransform_.scale(size_ / 2.0f, 1.0f, size_ / 2.0f);
+	nodeTransform_ = Matrix4();
 }
 
 QuadTreeNode::~QuadTreeNode()
@@ -57,7 +55,7 @@ QuadTreeNode::~QuadTreeNode()
 
 void QuadTreeNode::update(const Vector3& viewPos)
 {
-	Vector3 nodeCenter = getWorldCenter();
+	Vector3 nodeCenter = patch_->getBoundingBox().center();
 	float distanceToCamera = (nodeCenter - viewPos).length();
 
 	bool shouldSplit = distanceToCamera < size_ * QUAD_TREE_SPLIT_DISTANCE_SCALE;
@@ -90,7 +88,7 @@ void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
 		Batch batch;
 		batch.geometry_ = patch_->getGeometry();
 		batch.transform_ = nodeTransform_;
-		batch.customIndexBuffer_ = owner_->getPatchTopology(
+		batch.customIndexBuffer_ = QuadTreePatch::getTopology(
 			neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]
 		)->getIndexBuffer();
 
@@ -109,14 +107,7 @@ void QuadTreeNode::drawDebugGeometry(DebugRenderer* debug)
 {
 	if (isLeaf())
 	{
-		if (false)
-		{
-			debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
-		}
-		else
-		{
-			debug->addQuad(getWorldCenter(), size_, size_, Color::GREEN);
-		}
+		debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
 	}
 	else
 	{
@@ -135,23 +126,12 @@ float QuadTreeNode::getScale() const
 	return 1.0f / (1 << depth_);
 }
 
-Vector3 QuadTreeNode::localToFacePos(const Vector2& localPos)
+Vector2 QuadTreeNode::localToFacePos(const Vector2& localPos)
 {
-	Vector3 result(localPos.x_, 0.0f, localPos.y_);
-	result *= size_ / 2.0f;
-	result += getWorldCenter();
-	
+	Vector2 result = localPos * (size_ / 2.0f);
+	result += Vector2(center_.x_, -center_.y_);
+
 	return result;
-}
-
-float QuadTreeNode::calcHeightFromLocalPos(const Vector2& localPos)
-{
-	Vector3 worldPos = localToFacePos(localPos);
-
-	SimplexNoise simplex = SimplexNoise(0.01f, 2.0f);
-	float height = simplex.fractal(8, worldPos.x_, worldPos.z_);
-
-	return 5.0f * height;
 }
 
 void QuadTreeNode::setNeighbor(Side side, QuadTreeNode* neighbor)
@@ -184,10 +164,10 @@ void QuadTreeNode::split()
 	if (!isLeaf() || depth_ >= QUAD_TREE_MAX_DEPTH)
 		return;
 
-	children_[NORTH_EAST] = new QuadTreeNode(owner_, this, NORTH_EAST, Vector2(center_.x_ + size_ / 4.0f, center_.y_ + size_ / 4.0f), size_ / 2.0f);
-	children_[NORTH_WEST] = new QuadTreeNode(owner_, this, NORTH_WEST, Vector2(center_.x_ - size_ / 4.0f, center_.y_ + size_ / 4.0f), size_ / 2.0f);
-	children_[SOUTH_WEST] = new QuadTreeNode(owner_, this, SOUTH_WEST, Vector2(center_.x_ - size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
-	children_[SOUTH_EAST] = new QuadTreeNode(owner_, this, SOUTH_EAST, Vector2(center_.x_ + size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
+	children_[NORTH_EAST] = new QuadTreeNode(face_, this, NORTH_EAST, Vector2(center_.x_ + size_ / 4.0f, center_.y_ + size_ / 4.0f), size_ / 2.0f);
+	children_[NORTH_WEST] = new QuadTreeNode(face_, this, NORTH_WEST, Vector2(center_.x_ - size_ / 4.0f, center_.y_ + size_ / 4.0f), size_ / 2.0f);
+	children_[SOUTH_WEST] = new QuadTreeNode(face_, this, SOUTH_WEST, Vector2(center_.x_ - size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
+	children_[SOUTH_EAST] = new QuadTreeNode(face_, this, SOUTH_EAST, Vector2(center_.x_ + size_ / 4.0f, center_.y_ - size_ / 4.0f), size_ / 2.0f);
 
 	children_[NORTH_EAST]->setNeighbor(WEST, children_[NORTH_WEST]);
 	children_[NORTH_WEST]->setNeighbor(SOUTH, children_[SOUTH_WEST]);

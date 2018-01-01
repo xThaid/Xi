@@ -6,7 +6,7 @@ struct Batch;
 
 class Camera;
 class DebugRenderer;
-class QuadTree;
+class QuadTreeFace;
 class QuadTreePatch;
 
 enum Quadrant
@@ -28,7 +28,7 @@ enum Side
 class QuadTreeNode
 {
 public:
-	QuadTreeNode(QuadTree* owner, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size);
+	QuadTreeNode(QuadTreeFace* face, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size);
 	~QuadTreeNode();
 
 	void update(const Vector3& viewPos);
@@ -40,17 +40,14 @@ public:
 
 	float getScale() const;
 
-	Vector3 localToFacePos(const Vector2& localPos);
+	Vector2 localToFacePos(const Vector2& localPos);
 
-	float calcHeightFromLocalPos(const Vector2& localPos);
+	inline QuadTreeFace* getFace() { return face_; }
 
-	inline QuadTree* getQuadTree() { return owner_; }
-
-	inline Vector3 getWorldCenter() const { return Vector3(center_.x_, 0.0f, -center_.y_); }
 	inline float getSize() const { return size_; }
 
 private:
-	QuadTree* owner_;
+	QuadTreeFace* face_;
 
 	QuadTreeNode* parent_;
 	QuadTreeNode* children_[4];
