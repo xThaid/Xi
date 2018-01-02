@@ -11,15 +11,25 @@ class QuadTreePatchTopology;
 
 enum Side;
 
+enum PatchStatus
+{
+	UNLOADED = 0,
+	LOADING,
+	RAM_LOADED,
+	READY_TO_USE,
+};
+
 class QuadTreePatch
 {
 public:
-	QuadTreePatch(QuadTreeNode* node, unsigned int patchEdgeSize);
+	QuadTreePatch(unsigned int ID, QuadTreeNode* node, unsigned int edgeSize);
 	~QuadTreePatch();
 	
-	void prepareVertices();
-
 	void prepareGeometry();
+
+	PatchStatus getStatus() const;
+
+	inline unsigned int getID() { return ID_; }
 
 	inline QuadTreeNode* getNode() { return node_; }
 
@@ -33,19 +43,26 @@ private:
 	static int instances_;
 	static QuadTreePatchTopology* topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1];
 
+	unsigned int ID_;
+
 	QuadTreeNode* node_;
+	QuadTreePatch* parentPatch_;
+
+	std::atomic<PatchStatus> status_;
 
 	BoundingBox boundingBox_;
 	Geometry* geometry_;
 
-	unsigned int patchEdgeSize_;
+	unsigned int edgeSize_;
 	Vector3* positions_;
 	Vector3* normals_;
 
 	void generateTopologies();
 	void deleteTopologies();
 
-	inline unsigned int ind(unsigned int x, unsigned int y) { return x * (patchEdgeSize_ + 1) + y; }
+	inline unsigned int ind(unsigned int x, unsigned int y) { return x * (edgeSize_ + 1) + y; }
+
+	friend class TerrainGenerator;
 };
 
 class QuadTreePatchTopology

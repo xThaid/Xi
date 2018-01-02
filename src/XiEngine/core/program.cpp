@@ -10,6 +10,7 @@
 #include "../resource/resourceManager.h"
 #include "../scene/scene.h"
 #include "../terrain/sphericalTerrain.h"
+#include "../terrain/terrainGenerator.h"
 #include "../ui/label.h"
 #include "../utils/logger.h"
 
@@ -22,7 +23,7 @@ void Program::init()
 
 	SceneNode* root = scene->getRootNode();
 
-	Terrain* terrain = new SphericalTerrain(100.0f);
+	terrain = new SphericalTerrain(100.0f);
 	SceneNode* terrainNode = root->createChild("terrain");
 	terrainNode->addComponent(terrain);
 
@@ -44,6 +45,10 @@ void Program::init()
 	updatesLabel[0] = new Label("UPS: ", Vector2(0.0f, 120.0f), 0.3f);
 	updatesLabel[1] = new Label("FPS: ", Vector2(0.0f, 135.0f), 0.3f);
 	scene->addLabel(updatesLabel[0]); scene->addLabel(updatesLabel[1]);
+
+	terrainLabel[0] = new Label("Terrain", Vector2(0.0f, 165.0f), 0.3f);
+	terrainLabel[1] = new Label("Queue: ", Vector2(0.0f, 180.0f), 0.3f);
+	scene->addLabel(terrainLabel[0]); scene->addLabel(terrainLabel[1]);
 
 	Input::addPressedEvent(GLFW_KEY_O, []() -> void {
 		Core::getCurrentCore()->getRenderer()->toggleRenderUI();
@@ -101,4 +106,6 @@ void Program::update()
 
 	updatesLabel[0]->setText("UPS: " + std::to_string(core->getLastUPS()));
 	updatesLabel[1]->setText("FPS: " + std::to_string(core->getLastFPS()));
+
+	terrainLabel[1]->setText("Queue: " + std::to_string(terrain->getTerrainGenerator()->queueSize()));
 }

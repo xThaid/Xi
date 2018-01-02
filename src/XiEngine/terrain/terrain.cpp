@@ -7,14 +7,19 @@
 #include "../terrain/quadTreeFace.h"
 #include "../terrain/quadTreeNode.h"
 #include "../terrain/quadTreePatch.h"
+#include "../terrain/terrainGenerator.h"
 
-Terrain::Terrain()
+Terrain::Terrain() :
+	nextPatchID_(0)
 {
-
+	generator_ = new TerrainGenerator(this);
 }
 
 Terrain::~Terrain()
 {
+	delete generator_;
+	generator_ = nullptr;
+
 	for (QuadTreeFace* face : faces_)
 		delete face;
 }
@@ -40,6 +45,11 @@ void Terrain::drawDebugGeometry(DebugRenderer* debug)
 Camera* Terrain::getCullCamera()
 {
 	return node_->getScene()->getCullCamera().get();
+}
+
+unsigned int Terrain::getNextPatchID()
+{
+	return nextPatchID_++;
 }
 
 void Terrain::onWorldBoundingBoxUpdate()

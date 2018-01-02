@@ -3,13 +3,14 @@
 #include "../graphics/drawable.h"
 
 const int QUAD_TREE_PATCH_EDGE_SIZE = 16;
-const int QUAD_TREE_MAX_DEPTH = 3;
+const int QUAD_TREE_MAX_DEPTH = 4;
 const int QUAD_TREE_MAX_DEPTH_DIFF = 4;
 const float QUAD_TREE_SPLIT_DISTANCE_SCALE = 200.0f;
 
 class Camera;
 class QuadTreeFace;
 class QuadTreeNode;
+class TerrainGenerator;
 
 class Terrain : public Drawable
 {
@@ -28,8 +29,16 @@ public:
 
 	Camera* getCullCamera();
 
+	unsigned int getNextPatchID();
+
+	inline TerrainGenerator* getTerrainGenerator() { return generator_; }
+
 protected:
+	TerrainGenerator* generator_;
+
 	std::vector<QuadTreeFace*> faces_;
+
+	unsigned int nextPatchID_;
 
 	virtual void onWorldBoundingBoxUpdate() override;
 

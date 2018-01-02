@@ -5,6 +5,7 @@
 #include "../lib/FastNoise.h"
 
 SphericalTerrain::SphericalTerrain(float radius) :
+	Terrain(),
 	radius_(radius)
 {
 	faces_.push_back(new QuadTreeFace(this, FACE_TOP, 1.0f));

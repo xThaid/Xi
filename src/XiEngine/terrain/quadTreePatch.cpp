@@ -10,17 +10,22 @@
 int QuadTreePatch::instances_ = 0;
 QuadTreePatchTopology* QuadTreePatch::topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1][QUAD_TREE_MAX_DEPTH_DIFF + 1] = { { { { 0 } } } };
 
-QuadTreePatch::QuadTreePatch(QuadTreeNode* node, unsigned int patchEdgeSize) :
+QuadTreePatch::QuadTreePatch(unsigned int ID, QuadTreeNode* node, unsigned int edgeSize) :
+	ID_(ID),
 	node_(node),
-	patchEdgeSize_(patchEdgeSize)
+	status_(UNLOADED),
+	edgeSize_(edgeSize)
 {
+	if (node_->getParent())
+		parentPatch_ = node_->getParent()->getPatch();
+
 	if (!instances_++)
 		generateTopologies();
 
 	VertexBuffer* vertexBuffer = new VertexBuffer(MASK_POSITION | MASK_NORMAL);
 	geometry_ = new Geometry(PrimitiveTopology::TRIANGLES, vertexBuffer, nullptr);
 	
-	unsigned int vertexCount = (patchEdgeSize_ + 1) * (patchEdgeSize_ + 1);
+	unsigned int vertexCount = (edgeSize_ + 1) * (edgeSize_ + 1);
 
 	positions_ = new Vector3[vertexCount];
 	normals_ = new Vector3[vertexCount];
@@ -37,82 +42,44 @@ QuadTreePatch::~QuadTreePatch()
 		deleteTopologies();
 }
 
-void QuadTreePatch::prepareVertices()
-{
-	for (unsigned int x = 0; x <= patchEdgeSize_; x++)
-	{
-		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
-		{
-			Vector2 localPos = Vector2((float)x, (float)y) / (float)patchEdgeSize_;
-			localPos -= 0.5f;
-			localPos *= 2.0f;
-
-			Vector2 facePos = node_->localToFacePos(localPos);
-
-			Vector3 point = node_->getFace()->getWorldPosition(facePos);
-			point = node_->getFace()->getTerrain()->projectOnSurface(point);
-
-			positions_[ind(x, y)] = point;
-			boundingBox_.merge(point);
-		}
-	}
-
-	for (unsigned int x = 0; x <= patchEdgeSize_; x++)
-	{
-		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
-		{
-			Vector2 localPos = Vector2((float)x, (float)y) / (float)patchEdgeSize_;
-			localPos -= 0.5f;
-			localPos *= 2.0f;
-			Vector2 facePos = node_->localToFacePos(localPos);
-
-			Vector3 normal;
-			//if (facePos.x_ > 0.99f || facePos.x_ < -0.99f || facePos.y_ > 0.99f || facePos.y_ < -0.99f)
-			//	normal = Vector3(0.0f, 1.0f, 0.0f);
-			//else
-			{
-				Vector3 v1 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(0.01f, 0.01f)));
-				Vector3 v2 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(-0.01f, 0.01f)));
-				Vector3 v3 = node_->getFace()->getTerrain()->projectOnSurface(node_->getFace()->getWorldPosition(facePos + Vector2(0.01f, -0.01f)));
-
-				Plane plane(v1, v2, v3);
-				normal = -plane.normal_.normalize();
-			}
-			normals_[x * (patchEdgeSize_ + 1) + y] = normal;
-		}
-	}
-}
-
 void QuadTreePatch::prepareGeometry()
 {
+	if (status_.load() != RAM_LOADED)
+		return;
+
 	std::shared_ptr<VertexBuffer> vertexBuffer = geometry_->getVertexBuffer();
 	
-	unsigned int vertexCount = (patchEdgeSize_ + 1) * (patchEdgeSize_ + 1);
+	unsigned int vertexCount = (edgeSize_ + 1) * (edgeSize_ + 1);
 	vertexBuffer->create(vertexCount);
 
 	float* data = new float[vertexCount * 6];
 	
 	unsigned int dataCounter = 0;
-	for (unsigned int x = 0; x <= patchEdgeSize_; x++)
+	for (unsigned int i = 0; i < vertexCount; i++)
 	{
-		for (unsigned int y = 0; y <= patchEdgeSize_; y++)
-		{
-			Vector3 position = positions_[ind(x, y)];
 
-			data[dataCounter++] = position.x_;
-			data[dataCounter++] = position.y_;
-			data[dataCounter++] = position.z_;
+		Vector3 position = positions_[i];
 
-			Vector3 normal = normals_[ind(x, y)];
+		data[dataCounter++] = position.x_;
+		data[dataCounter++] = position.y_;
+		data[dataCounter++] = position.z_;
+
+		Vector3 normal = normals_[i];
 			
-			data[dataCounter++] = normal.x_;
-			data[dataCounter++] = normal.y_;
-			data[dataCounter++] = normal.z_;
-		}
+		data[dataCounter++] = normal.x_;
+		data[dataCounter++] = normal.y_;
+		data[dataCounter++] = normal.z_;
 	}
 
 	vertexBuffer->setData((void*)data);
 	delete data;
+
+	status_.store(READY_TO_USE);
+}
+
+PatchStatus QuadTreePatch::getStatus() const
+{
+	return status_.load();
 }
 
 void QuadTreePatch::generateTopologies()

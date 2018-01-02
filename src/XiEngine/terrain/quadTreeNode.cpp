@@ -6,6 +6,7 @@
 #include "../terrain/quadTreeFace.h"
 #include "../terrain/quadTreePatch.h"
 #include "../terrain/terrain.h"
+#include "../terrain/terrainGenerator.h"
 #include "../utils/logger.h"
 
 QuadTreeNode::QuadTreeNode(QuadTreeFace* face, QuadTreeNode* parent, Quadrant quadrant, Vector2 center, float size) :
@@ -19,11 +20,11 @@ QuadTreeNode::QuadTreeNode(QuadTreeFace* face, QuadTreeNode* parent, Quadrant qu
 	center_(center),
 	size_(size)
 {
-	patch_ = new QuadTreePatch(this, QUAD_TREE_PATCH_EDGE_SIZE);
-	patch_->prepareVertices();
-	patch_->prepareGeometry();
+	patch_ = new QuadTreePatch(face_->getTerrain()->getNextPatchID(), this, QUAD_TREE_PATCH_EDGE_SIZE);
 
 	nodeTransform_ = Matrix4();
+
+	face_->getTerrain()->getTerrainGenerator()->pushQueue(patch_);
 }
 
 QuadTreeNode::~QuadTreeNode()
@@ -49,12 +50,17 @@ QuadTreeNode::~QuadTreeNode()
 		}
 	}
 
-	if (patch_ != nullptr)
-		delete patch_;
+	if(face_->getTerrain()->getTerrainGenerator() != nullptr)
+		face_->getTerrain()->getTerrainGenerator()->dismiss(patch_->getID());
+
+	delete patch_;
 }
 
 void QuadTreeNode::update(const Vector3& viewPos)
 {
+	if (patch_->getStatus() == RAM_LOADED)
+		patch_->prepareGeometry();
+
 	Vector3 nodeCenter = patch_->getBoundingBox().center();
 	float distanceToCamera = (nodeCenter - viewPos).length();
 
@@ -83,36 +89,38 @@ void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
 	if (cullCamera->getFrustum().intersect(patch_->getBoundingBox().transformed(nodeTransform_)) == OUTSIDE)
 		return;
 
-	if (isLeaf())
+	if (areChildrenReadyToRender())
 	{
-		Batch batch;
-		batch.geometry_ = patch_->getGeometry();
-		batch.transform_ = nodeTransform_;
-		batch.customIndexBuffer_ = QuadTreePatch::getTopology(
-			neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]
-		)->getIndexBuffer();
-
-		batches.push_back(batch);
+		for (unsigned int q = 0; q < 4; q++)
+			children_[q]->getBatches(cullCamera, batches);
 	}
 	else
 	{
-		for (unsigned int q = 0; q < 4; q++)
+		if (patch_->getStatus() == READY_TO_USE)
 		{
-			children_[q]->getBatches(cullCamera, batches);
+			Batch batch;
+			batch.geometry_ = patch_->getGeometry();
+			batch.transform_ = nodeTransform_;
+			batch.customIndexBuffer_ = QuadTreePatch::getTopology(
+				neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]
+			)->getIndexBuffer();
+
+			batches.push_back(batch);
 		}
 	}
 }
 
 void QuadTreeNode::drawDebugGeometry(DebugRenderer* debug)
 {
-	if (isLeaf())
-	{
-		debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
-	}
-	else
+	if (areChildrenReadyToRender())
 	{
 		for (int q = 0; q < 4; q++)
 			children_[q]->drawDebugGeometry(debug);
+	}
+	else
+	{
+		if(patch_->getStatus() >= RAM_LOADED)
+			debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
 	}
 }
 
@@ -203,9 +211,38 @@ void QuadTreeNode::merge()
 	if (isLeaf())
 		return;
 
+	bool canClear = true;
+	for (unsigned int q = 0; q < 4; q++)
+	{
+		if (children_[q]->getPatch()->getStatus() == LOADING)
+			canClear = false;
+	}
+
+	if (!canClear)
+		return;
+
 	for (int q = 0; q < 4; q++)
 	{
 		delete children_[q];
 		children_[q] = nullptr;
 	}
+}
+
+bool QuadTreeNode::areChildrenReadyToRender()
+{
+	bool childrenReady = true;
+	if (isLeaf())
+	{
+		childrenReady = false;
+	}
+	else
+	{
+		for (unsigned int q = 0; q < 4; q++)
+		{
+			if (children_[q]->getPatch()->getStatus() != READY_TO_USE)
+				childrenReady = false;
+		}
+	}
+	
+	return childrenReady;
 }

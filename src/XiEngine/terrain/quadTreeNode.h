@@ -42,7 +42,12 @@ public:
 
 	Vector2 localToFacePos(const Vector2& localPos);
 
+	inline bool lieOnNorth() { return isOnSide(quadrant_, NORTH); }
+	inline bool lieOnEast() { return isOnSide(quadrant_, EAST); }
+
 	inline QuadTreeFace* getFace() { return face_; }
+	inline QuadTreeNode* getParent() { return parent_; }
+	inline QuadTreePatch* getPatch() { return patch_; }
 
 	inline float getSize() const { return size_; }
 
@@ -69,6 +74,8 @@ private:
 
 	void split();
 	void merge();
+
+	bool areChildrenReadyToRender();
 
 	inline static Side mirrorSide(unsigned int side) { return (Side)((side + 2) % 4); }
 	inline static bool isOnSide(unsigned int quadrant, unsigned int side) { return ((4 + quadrant - side) % 4) <= 1; }
