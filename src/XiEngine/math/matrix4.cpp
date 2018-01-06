@@ -57,8 +57,15 @@ Matrix4 Matrix4::operator*(const Matrix4& m) const
 
 Vector3 Matrix4::operator*(const Vector3& v) const
 {
-	Vector4 result = *this * Vector4(v, 1.0f);
-	return result.xyz();
+	Vector3 result;
+
+	float invW = 1.0f / (data[3] * v.x_ + data[7] * v.y_ + data[11] * v.z_ + data[15]);
+
+	result.x_ = (data[0] * v.x_ + data[4] * v.y_ + data[8] * v.z_ + data[12]) * invW;
+	result.y_ = (data[1] * v.x_ + data[5] * v.y_ + data[9] * v.z_ + data[13]) * invW;
+	result.z_ = (data[2] * v.x_ + data[6] * v.y_ + data[10] * v.z_ + data[14]) * invW;
+
+	return result;
 }
 
 Vector4 Matrix4::operator*(const Vector4& v) const

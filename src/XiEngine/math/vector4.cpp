@@ -138,3 +138,8 @@ float Vector4::dotProduct(const Vector4& v) const
 {
 	return x_ * v.x_ + y_ * v.y_ + z_ * v.z_ + w_ * v.w_;
 }
+
+std::string Vector4::toString() const
+{
+	return std::to_string(x_) + " " + std::to_string(y_) + " " + std::to_string(z_) + " " + std::to_string(w_);
+}

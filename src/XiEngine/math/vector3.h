@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class Vector2;
 
 class Vector3
@@ -47,5 +49,7 @@ public:
 
 	float dotProduct(const Vector3& v) const;
 	Vector3 crossProduct(const Vector3& v) const;
+
+	std::string toString() const;
 };
 

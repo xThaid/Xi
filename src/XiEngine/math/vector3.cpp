@@ -141,3 +141,8 @@ Vector3 Vector3::crossProduct(const Vector3& v) const
 {
 	return Vector3(y_ * v.z_ - z_ * v.y_, z_ * v.x_ - x_ * v.z_, x_ * v.y_ - y_ * v.x_);
 }
+
+std::string Vector3::toString() const
+{
+	return std::to_string(x_) + " " + std::to_string(y_) + " " + std::to_string(z_);
+}

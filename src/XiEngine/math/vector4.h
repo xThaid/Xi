@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 
 class Vector3;
 
@@ -41,4 +42,6 @@ public:
 	Vector4 normalized() const;
 
 	float dotProduct(const Vector4& v) const;
+
+	std::string toString() const;
 };

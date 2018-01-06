@@ -132,6 +132,11 @@ float Vector2::dotProduct(const Vector2& v) const
 	return (x_ * v.x_ + y_ * v.y_);
 }
 
+std::string Vector2::toString() const
+{
+	return std::to_string(x_) + " " + std::to_string(y_);
+}
+
 IntVector2::IntVector2() :
 	x_(0),
 	y_(0)
