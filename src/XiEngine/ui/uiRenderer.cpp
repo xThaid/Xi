@@ -67,12 +67,12 @@ void UIRenderer::renderLabel(Label* label)
 
 		Vector3 dimension = Vector3((float) characters_[c].size_.x_, (float) characters_[c].size_.y_, 1.0f);
 
-		Matrix4 model = Matrix4::translationMatrix(Vector3(xpos, ypos, 0.0f));
+		Matrix3x4 model = Matrix3x4::translationMatrix(Vector3(xpos, ypos, 0.0f));
 		model.scale(dimension * label->getScale());
 		
 		graphics_->setTexture(0, characters_[c].texture_);
 
-		textShader_->setMatrix4("model", model);
+		textShader_->setMatrix3x4("model", model);
 		textShader_->setColor("textColor", label->getColor());
 
 		glyphGeometry_->draw(graphics_);

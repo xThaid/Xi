@@ -36,9 +36,9 @@ public:
 	inline Vector3 getLocalRotation() { return rotation_; }
 	inline Vector3 getLocalScale() { return scale_; }
 
-	Matrix4 getLocalTransform();
+	Matrix3x4 getLocalTransform();
 
-	Matrix4 getWorldTransform();
+	Matrix3x4 getWorldTransform();
 
 	inline bool isRootNode() { return parentNode_ == nullptr; }
 	inline SceneNode* getParentNode() { return parentNode_; }
@@ -66,7 +66,7 @@ private:
 	StringHash nameHash_;
 
 	bool dirty_;
-	Matrix4 worldTransform_;
+	Matrix3x4 worldTransform_;
 
 	Vector3 position_;
 	Vector3 rotation_; // in degrees

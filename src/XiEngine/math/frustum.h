@@ -33,7 +33,7 @@ public:
 	void define(float fov, float aspectRatio, float zoom, float nearZ, float farZ);
 	void defineOrtho(float orthoSize, float aspectRatio, float zoom, float nearZ, float farZ);
 	
-	void setTransform(const Matrix4& transform);
+	void setTransform(const Matrix3x4& transform);
 
 	Intersection intersect(const Vector3& point) const;
 	Intersection intersect(const BoundingBox& boundingBox) const;
@@ -42,7 +42,7 @@ private:
 	Vector3 nearClip_;
 	Vector3 farClip_;
 
-	Matrix4 transform_;
+	Matrix3x4 transform_;
 
 	void updateVerticesAndPlanes();
 };

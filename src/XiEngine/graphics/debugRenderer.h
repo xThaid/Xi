@@ -67,7 +67,7 @@ public:
 
 	void addQuad(const Vector3& center, float width, float height, const Color& color);
 
-	void addBoundingBox(const BoundingBox& box, const Matrix4& transform, const Color& color, bool solid = false);
+	void addBoundingBox(const BoundingBox& box, const Matrix3x4& transform, const Color& color, bool solid = false);
 	void addBoundingBox(const BoundingBox& box, const Color& color, bool solid = false);
 
 	void addFrustum(const Frustum& frustum, const Color& color);
@@ -86,6 +86,6 @@ private:
 	std::vector<DebugLine> lines_;
 	std::vector<DebugTriangle> triangles_;
 
-	Matrix4 view_;
+	Matrix3x4 view_;
 	Matrix4 projection_;
 };

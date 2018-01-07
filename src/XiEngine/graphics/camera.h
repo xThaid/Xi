@@ -71,13 +71,15 @@ public:
 
 	const Frustum& getFrustum();
 
+	Vector2 worldToScreenPoint(const Vector3& worldPos);
+
 	Matrix4 getProjection();
-	Matrix4 getView();
+	Matrix3x4 getView();
 
 private:
 	Frustum frustum_;
 
-	Matrix4 view_;
+	Matrix3x4 view_;
 	Matrix4 projection_;
 
 	bool frustumDirty_;

@@ -229,6 +229,20 @@ void Shader::setVector4(const std::string& name, Vector4& value)
 	}
 }
 
+void Shader::setMatrix3(const std::string& name, Matrix3& value)
+{
+	int location = getUniformLocation(name);
+	if (location != -1)
+	{
+		glUniformMatrix3fv(location, 1, false, value.getPointer());
+	}
+}
+
+void Shader::setMatrix3x4(const std::string& name, Matrix3x4& value)
+{
+	setMatrix4(name, Matrix4(value));
+}
+
 void Shader::setMatrix4(const std::string& name, Matrix4& value)
 {
 	int location = getUniformLocation(name);

@@ -10,8 +10,7 @@ class IndexBuffer;
 struct Batch
 {
 	Geometry* geometry_;
-	Matrix4 transform_;
-	IndexBuffer* customIndexBuffer_ = nullptr;
+	Matrix3x4 transform_;
 };
 
 class Drawable : public Component

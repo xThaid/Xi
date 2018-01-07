@@ -13,6 +13,8 @@
 #include "../scene/sceneNode.h"
 #include "../scene/scene.h"
 #include "../terrain/terrain.h"
+#include "../terrain/quadTreeNode.h"
+#include "../terrain/quadTreePatch.h"
 #include "../ui/label.h"
 #include "../ui/uiRenderer.h"
 #include "../utils/logger.h"
@@ -47,38 +49,26 @@ void RenderingEngine::render(Scene* scene)
 	sendCameraParametrs(viewCamera, meshShader_);
 	sendCameraParametrs(viewCamera, terrainShader_);
 
-	std::vector<Component*> drawables;
-	scene->getRootNode()->getComponentsRecursive("Drawable", drawables);
-
-	std::vector<Batch> meshBatches, terrainBatches;
-
-	for (Component* component : drawables)
-	{
-		Drawable* drawable = (Drawable*) component;
-
-		if (dynamic_cast<Terrain*>(drawable))
-			drawable->getBatches(cullCamera, terrainBatches);
-		else if (dynamic_cast<MeshRenderer*>(drawable))
-			drawable->getBatches(cullCamera, meshBatches);
-	}
-
 	if (wireframe_)
 		graphics_->setFillMode(FILL_WIREFRAME);
 
-	for (Batch& batch : meshBatches)
+	std::vector<Component*> terrains;
+	scene->getRootNode()->getComponentsRecursive("Terrain", terrains);
+
+	std::vector<QuadTreeNode*> nodes;
+	for (Component* comp : terrains)
 	{
-		graphics_->setShader(meshShader_);
-		meshShader_->setMatrix4("model", batch.transform_);
-		batch.geometry_->draw(graphics_);
+		Terrain* terrain = (Terrain*)comp;
+		terrain->cullNodesToRender(cullCamera, nodes);
 	}
 
-	for (Batch& batch : terrainBatches)
+	graphics_->setShader(terrainShader_);
+	for (QuadTreeNode* node : nodes)
 	{
-		graphics_->setShader(terrainShader_);
-		terrainShader_->setMatrix4("model", batch.transform_);
-		//terrainShader_->setVector3("fViewPos", viewCamera->position);
-		if(batch.customIndexBuffer_)
-			batch.geometry_->draw(graphics_, batch.customIndexBuffer_);
+		terrainShader_->setMatrix3x4("model", Matrix3x4());
+		terrainShader_->setBool("fDrawBorders", node->shouldDrawBorders());
+		terrainShader_->setColor("fColor", Color::BLUE);
+		node->getPatch()->getGeometry()->draw(graphics_, node->getPatchTopology()->getIndexBuffer());
 	}
 
 	graphics_->setFillMode(FILL_SOLID);
@@ -167,5 +157,5 @@ void RenderingEngine::sendCameraParametrs(Camera* camera, Shader* shader)
 {
 	graphics_->setShader(shader);
 	shader->setMatrix4("projection", camera->getProjection());
-	shader->setMatrix4("view", camera->getView());
+	shader->setMatrix3x4("view", camera->getView());
 }

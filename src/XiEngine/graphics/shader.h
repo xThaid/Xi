@@ -28,25 +28,6 @@ struct ShaderUniform
 	unsigned int location;
 };
 
-//TODO All shader uniform values take 64 bytes
-struct ShaderUniformValue
-{
-	UniformType type;
-	union
-	{
-		bool bool_;
-		int int_;
-		float float_;
-
-		Vector2 vec2_;
-		Vector3 vec3_;
-		Vector4 vec4_;
-		Matrix4 mat4_;
-	};
-
-	ShaderUniformValue() {}
-};
-
 class ShaderVariation
 {
 public:
@@ -99,6 +80,8 @@ public:
 	void setVector2(const std::string& name, Vector2& value);
 	void setVector3(const std::string& name, Vector3& value);
 	void setVector4(const std::string& name, Vector4& value);
+	void setMatrix3(const std::string& name, Matrix3& value);
+	void setMatrix3x4(const std::string& name, Matrix3x4& value);
 	void setMatrix4(const std::string& name, Matrix4& value);
 	void setColor(const std::string& name, const Color& color);
 	

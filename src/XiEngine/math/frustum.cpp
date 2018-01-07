@@ -1,7 +1,7 @@
 #include "frustum.h"
 
 Frustum::Frustum() :
-	transform_(Matrix4())
+	transform_(Matrix3x4())
 {
 }
 
@@ -60,7 +60,7 @@ void Frustum::defineOrtho(float orthoSize, float aspectRatio, float zoom, float 
 	updateVerticesAndPlanes();
 }
 
-void Frustum::setTransform(const Matrix4& transform)
+void Frustum::setTransform(const Matrix3x4& transform)
 {
 	transform_ = transform;
 

@@ -7,6 +7,7 @@
 #include "../math/vector4.h"
 
 #include "../math/matrix3.h"
+#include "../math/matrix3x4.h"
 #include "../math/matrix4.h"
 
 #include "../math/stringHash.h"

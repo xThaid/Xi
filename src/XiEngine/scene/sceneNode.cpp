@@ -9,7 +9,7 @@ SceneNode::SceneNode(Scene* scene, const std::string& name) :
 	name_(name),
 	nameHash_(name),
 	dirty_(false),
-	worldTransform_(Matrix4()),
+	worldTransform_(Matrix3x4()),
 	position_(0.0f),
 	rotation_(0.0f),
 	scale_(1.0f)
@@ -97,9 +97,9 @@ void SceneNode::rotate(const Vector3& delta)
 	markDirty();
 }
 
-Matrix4 SceneNode::getLocalTransform()
+Matrix3x4 SceneNode::getLocalTransform()
 {
-	Matrix4 transform = Matrix4();
+	Matrix3x4 transform = Matrix3x4();
 
 	transform.translate(position_);
 
@@ -112,7 +112,7 @@ Matrix4 SceneNode::getLocalTransform()
 	return transform;
 }
 
-Matrix4 SceneNode::getWorldTransform()
+Matrix3x4 SceneNode::getWorldTransform()
 {
 	if (dirty_)
 		updateWorldTransform();

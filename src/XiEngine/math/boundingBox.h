@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/matrix4.h"
+#include "../math/matrix3x4.h"
 #include "../math/mathDefs.h"
 #include "../math/vector3.h"
 
@@ -27,7 +27,7 @@ public:
 	Vector3 center() const;
 	Vector3 size() const;
 
-	BoundingBox transformed(const Matrix4& transform) const;
+	BoundingBox transformed(const Matrix3x4& transform) const;
 
 	void clear();
 };

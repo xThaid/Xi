@@ -75,14 +75,14 @@ Vector3 BoundingBox::size() const
 	return max_ - min_;
 }
 
-BoundingBox BoundingBox::transformed(const Matrix4& transform) const
+BoundingBox BoundingBox::transformed(const Matrix3x4& transform) const
 {
 	Vector3 newCenter = transform * center();
 	Vector3 oldEdge = size() * 0.5f;
 	Vector3 newEdge = Vector3(
-		std::abs(transform.data[0]) * oldEdge.x_ + std::abs(transform.data[4]) * oldEdge.y_ + std::abs(transform.data[8]) * oldEdge.z_,
-		std::abs(transform.data[1]) * oldEdge.x_ + std::abs(transform.data[5]) * oldEdge.y_ + std::abs(transform.data[7]) * oldEdge.z_,
-		std::abs(transform.data[2]) * oldEdge.x_ + std::abs(transform.data[6]) * oldEdge.y_ + std::abs(transform.data[10]) * oldEdge.z_
+		std::abs(transform.data[0]) * oldEdge.x_ + std::abs(transform.data[3]) * oldEdge.y_ + std::abs(transform.data[6]) * oldEdge.z_,
+		std::abs(transform.data[1]) * oldEdge.x_ + std::abs(transform.data[4]) * oldEdge.y_ + std::abs(transform.data[7]) * oldEdge.z_,
+		std::abs(transform.data[2]) * oldEdge.x_ + std::abs(transform.data[5]) * oldEdge.y_ + std::abs(transform.data[8]) * oldEdge.z_
 	);
 
 	return BoundingBox(newCenter - newEdge, newCenter + newEdge);

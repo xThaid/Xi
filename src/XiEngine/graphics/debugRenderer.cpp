@@ -72,7 +72,7 @@ void DebugRenderer::addQuad(const Vector3& center, float width, float height, co
 	addLine(v3, v0, color);
 }
 
-void DebugRenderer::addBoundingBox(const BoundingBox& box, const Matrix4& transform, const Color& color, bool solid)
+void DebugRenderer::addBoundingBox(const BoundingBox& box, const Matrix3x4& transform, const Color& color, bool solid)
 {
 	const Vector3& min = box.min_;
 	const Vector3& max = box.max_;
@@ -116,7 +116,7 @@ void DebugRenderer::addBoundingBox(const BoundingBox& box, const Matrix4& transf
 
 void DebugRenderer::addBoundingBox(const BoundingBox& box, const Color& color, bool solid)
 {
-	addBoundingBox(box, Matrix4(), color, solid);
+	addBoundingBox(box, Matrix3x4(), color, solid);
 }
 
 void DebugRenderer::addFrustum(const Frustum& frustum, const Color& color)
@@ -195,8 +195,8 @@ void DebugRenderer::render()
 
 	graphics_->setShader(debugShader_);
 	
-	debugShader_->setMatrix4("model", Matrix4());
-	debugShader_->setMatrix4("view", view_);
+	debugShader_->setMatrix3x4("model", Matrix3x4());
+	debugShader_->setMatrix3x4("view", view_);
 	debugShader_->setMatrix4("projection", projection_);
 	
 	graphics_->setVertexBuffer(vertexBuffer_);

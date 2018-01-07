@@ -147,6 +147,27 @@ const Frustum& Camera::getFrustum()
 	return frustum_;
 }
 
+Vector2 Camera::worldToScreenPoint(const Vector3& worldPos)
+{
+	Vector3 eyeSpace = getView() * worldPos;
+
+	Vector2 res;
+
+	if (eyeSpace.z_ < 0.0f)
+	{
+		Vector3 screenSpace = getProjection() * eyeSpace;
+		res.x_ = screenSpace.x_;
+		res.y_ = screenSpace.y_;
+	}
+	else
+		res = Vector2();
+
+	res.x_ = (res.x_ * 0.5f) + 0.5f;
+	res.y_ = 1.0f - ((res.y_ * 0.5f) + 0.5f);
+
+	return res;
+}
+
 Matrix4 Camera::getProjection()
 {
 	if (projectionDirty_)
@@ -155,11 +176,11 @@ Matrix4 Camera::getProjection()
 	return projection_;
 }
 
-Matrix4 Camera::getView()
+Matrix3x4 Camera::getView()
 {
 	if (viewDirty_)
 	{
-		view_ = Matrix4::lookAtMatrix(position, position + front, up);
+		view_ = Matrix3x4(Matrix4::lookAtMatrix(position, position + front, up));
 		viewDirty_ = false;
 	}
 
@@ -171,7 +192,7 @@ void Camera::updateFrustum()
 	if (projectionDirty_)
 		updateProjection();
 
-	Matrix4 transform = Matrix4::translationMatrix(position);
+	Matrix3x4 transform = Matrix3x4::translationMatrix(position);
 
 	transform.rotateY(degToRad(-yaw - 180.0f));
 	transform.rotateX(degToRad(-pitch));
