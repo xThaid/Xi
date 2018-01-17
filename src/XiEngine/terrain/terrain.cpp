@@ -17,9 +17,6 @@ Terrain::Terrain() :
 
 Terrain::~Terrain()
 {
-	delete generator_;
-	generator_ = nullptr;
-
 	for (QuadTreeFace* face : faces_)
 		delete face;
 }
@@ -30,10 +27,10 @@ void Terrain::update()
 		face->update();
 }
 
-void Terrain::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
+void Terrain::cullNodesToRender(Camera* cullCamera, std::vector<QuadTreeNode*>& nodes)
 {
 	for (QuadTreeFace* face : faces_)
-		face->getBatches(cullCamera, batches);
+		face->cullNodesToRender(cullCamera, nodes);
 }
 
 void Terrain::drawDebugGeometry(DebugRenderer* debug)
@@ -52,6 +49,10 @@ unsigned int Terrain::getNextPatchID()
 	return nextPatchID_++;
 }
 
-void Terrain::onWorldBoundingBoxUpdate()
+void Terrain::onNodeSet()
+{
+}
+
+void Terrain::onMarkedDirty()
 {
 }

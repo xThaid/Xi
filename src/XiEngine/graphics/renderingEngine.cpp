@@ -61,13 +61,14 @@ void RenderingEngine::render(Scene* scene)
 		Terrain* terrain = (Terrain*)comp;
 		terrain->cullNodesToRender(cullCamera, nodes);
 	}
-
+	
 	graphics_->setShader(terrainShader_);
 	for (QuadTreeNode* node : nodes)
 	{
 		terrainShader_->setMatrix3x4("model", Matrix3x4());
 		terrainShader_->setBool("fDrawBorders", node->shouldDrawBorders());
-		terrainShader_->setColor("fColor", Color::BLUE);
+		terrainShader_->setColor("fColor", node->borderColor());
+
 		node->getPatch()->getGeometry()->draw(graphics_, node->getPatchTopology()->getIndexBuffer());
 	}
 

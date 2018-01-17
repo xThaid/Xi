@@ -50,6 +50,11 @@ void TerrainGenerator::mainLoop()
 	{
 		if (queueSize() == 0)
 		{
+			{
+				std::lock_guard<std::mutex> lck(toDismissMutex_);
+				toDismiss_.clear();
+			}
+
 			std::unique_lock<std::mutex> lk(cvMutex_);
 			sleeping_ = true;
 			cv_.wait(lk, [this] {return !sleeping_;});
@@ -68,7 +73,7 @@ void TerrainGenerator::mainLoop()
 
 			}
 
-			if(patch != nullptr)
+			if (patch != nullptr)
 				generate(patch);
 		}
 	}
@@ -83,10 +88,13 @@ void TerrainGenerator::wakeUpThread()
 
 void TerrainGenerator::generate(QuadTreePatch* patch)
 {
-	if (patch->status_.load() != UNLOADED)
+	if (patch->status_.load() != PatchStatus::UNLOADED)
 		return;
 
-	patch->status_.store(LOADING);
+	{
+		std::unique_lock<std::mutex> lck(patch->node_->patchMutex_);
+		patch->status_.store(PatchStatus::LOADING);
+	}
 
 	unsigned int parentOffsetX = patch->node_->lieOnEast() ? (patch->edgeSize_ >> 1) : 0;
 	unsigned int parentOffsetY = !patch->node_->lieOnNorth() ? (patch->edgeSize_ >> 1) : 0;
@@ -95,6 +103,9 @@ void TerrainGenerator::generate(QuadTreePatch* patch)
 	{
 		for (unsigned int y = 0; y <= patch->edgeSize_; y++)
 		{
+			Vector2 texCoord = Vector2((float)x, (float)y) / (float)patch->edgeSize_;
+			patch->texCoord_[patch->ind(x, y)] = texCoord;
+
 			Vector3 point;
 			if (patch->parentPatch_ && (x & 1) == 0 && (y & 1) == 0)
 			{
@@ -102,16 +113,12 @@ void TerrainGenerator::generate(QuadTreePatch* patch)
 			}
 			else
 			{
-				Vector2 localPos = Vector2((float)x, (float)y) / (float)patch->edgeSize_;
-				localPos -= 0.5f;
-				localPos *= 2.0f;
+				Vector2 localPos = (texCoord - 0.5f) * 2.0f;
 
 				Vector2 facePos = patch->node_->localToFacePos(localPos);
 
 				point = patch->node_->getFace()->getWorldPosition(facePos);
-				if (shouldExit_.load())
-					return;
-				point = terrain_->projectOnSurface(point);
+ 				point = terrain_->projectOnSurface(point);
 			}
 
 			patch->positions_[patch->ind(x, y)] = point;
@@ -129,28 +136,22 @@ void TerrainGenerator::generate(QuadTreePatch* patch)
 			Vector2 facePos = patch->node_->localToFacePos(localPos);
 
 			Vector3 normal;
-			//if (facePos.x_ > 0.99f || facePos.x_ < -0.99f || facePos.y_ > 0.99f || facePos.y_ < -0.99f)
-			//	normal = Vector3(0.0f, 1.0f, 0.0f);
-			//else
-			{
-				if (shouldExit_.load())
-					return;
-				Vector3 v1 = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(0.1f, 0.1f)));
-				if (shouldExit_.load())
-					return;
-				Vector3 v2 = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(-0.1f, 0.1f)));
-				if (shouldExit_.load())
-					return;
-				Vector3 v3 = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(0.1f, -0.1f)));
+			Vector3 v1;// = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(0.1f, 0.1f)));
+			Vector3 v2;// = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(-0.1f, 0.1f)));
+			Vector3 v3;// = terrain_->projectOnSurface(patch->node_->getFace()->getWorldPosition(facePos + Vector2(0.1f, -0.1f)));
 
-				Plane plane(v1, v2, v3);
-				normal = -plane.normal_.normalize();
-			}
+			Plane plane(v1, v2, v3);
+			normal = -plane.normal_.normalize();
 			patch->normals_[patch->ind(x, y)] = normal;
 		}
 	}
 
-	patch->status_.store(RAM_LOADED);
+	{
+		std::unique_lock<std::mutex> lck(patch->node_->patchMutex_);
+		patch->status_.store(PatchStatus::RAM_LOADED);
+	}
+
+	patch->node_->patchCV_.notify_one();
 }
 
 bool TerrainGenerator::isDismissed(unsigned int ID)

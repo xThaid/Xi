@@ -2,13 +2,13 @@
 
 #include "../precompiled.h"
 
+#include "../terrain/quadTreeNode.h"
 #include "../math/ximath.h"
 
 struct Batch;
 
 class Camera;
 class DebugRenderer;
-class QuadTreeNode;
 class Terrain;
 
 enum FaceType
@@ -29,11 +29,15 @@ public:
 
 	void update();
 
-	virtual void getBatches(Camera* cullCamera, std::vector<Batch>& batches);
+	void cullNodesToRender(Camera* cullCamera, std::vector<QuadTreeNode*>& nodes);
 
 	void drawDebugGeometry(DebugRenderer* debug);
 
+	void connect(Side side, QuadTreeFace* face);
+
 	Vector3 getWorldPosition(const Vector2& localPoint);
+
+	inline FaceType getFaceType() { return faceType_; }
 
 	inline Terrain* getTerrain() { return terrain_; }
 

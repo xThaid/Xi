@@ -11,7 +11,7 @@ class QuadTreePatchTopology;
 
 enum Side;
 
-enum PatchStatus
+enum class PatchStatus
 {
 	UNLOADED = 0,
 	LOADING,
@@ -36,6 +36,9 @@ public:
 	inline BoundingBox& getBoundingBox() { return boundingBox_; }
 	inline Geometry* getGeometry() { return geometry_; }
 
+	inline unsigned int getEdgeSize() { return edgeSize_; }
+	inline Vector3 getVertex(unsigned int x, unsigned int y) { return positions_[ind(x, y)]; }
+
 	inline static QuadTreePatchTopology* getTopology(unsigned int detailNorth, unsigned int detailWest, unsigned int detailSouth, unsigned int detailEast)
 	{ return topologies_[detailNorth][detailWest][detailSouth][detailEast]; }
 
@@ -56,6 +59,7 @@ private:
 	unsigned int edgeSize_;
 	Vector3* positions_;
 	Vector3* normals_;
+	Vector2* texCoord_;
 
 	void generateTopologies();
 	void deleteTopologies();

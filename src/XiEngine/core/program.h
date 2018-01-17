@@ -15,5 +15,7 @@ private:
 	Label* updatesLabel[2];
 	Label* terrainLabel[2];
 
+	Label* tempLabel[2];
+
 	Terrain* terrain;
 };

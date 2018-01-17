@@ -16,5 +16,7 @@ protected:
 private:
 	float radius_;
 
+	void connectFaces();
+
 	Vector3 cubeToSphere(const Vector3& point) const;
 };

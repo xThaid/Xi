@@ -50,6 +50,10 @@ void Program::init()
 	terrainLabel[1] = new Label("Queue: ", Vector2(0.0f, 180.0f), 0.3f);
 	scene->addLabel(terrainLabel[0]); scene->addLabel(terrainLabel[1]);
 
+	tempLabel[0] = new Label("", Vector2(0.0f, 250.0f), 0.3f);
+	tempLabel[1] = new Label("", Vector2(0.0f, 265.0f), 0.3f);
+	scene->addLabel(tempLabel[0]); scene->addLabel(tempLabel[1]);
+
 	Input::addPressedEvent(GLFW_KEY_O, []() -> void {
 		Core::getCurrentCore()->getRenderer()->toggleRenderUI();
 	});

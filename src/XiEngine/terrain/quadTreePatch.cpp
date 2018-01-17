@@ -13,7 +13,7 @@ QuadTreePatchTopology* QuadTreePatch::topologies_[QUAD_TREE_MAX_DEPTH_DIFF + 1][
 QuadTreePatch::QuadTreePatch(unsigned int ID, QuadTreeNode* node, unsigned int edgeSize) :
 	ID_(ID),
 	node_(node),
-	status_(UNLOADED),
+	status_(PatchStatus::UNLOADED),
 	edgeSize_(edgeSize)
 {
 	if (node_->getParent())
@@ -22,13 +22,14 @@ QuadTreePatch::QuadTreePatch(unsigned int ID, QuadTreeNode* node, unsigned int e
 	if (!instances_++)
 		generateTopologies();
 
-	VertexBuffer* vertexBuffer = new VertexBuffer(MASK_POSITION | MASK_NORMAL);
+	VertexBuffer* vertexBuffer = new VertexBuffer(MASK_POSITION | MASK_NORMAL | MASK_TEXCOORD);
 	geometry_ = new Geometry(PrimitiveTopology::TRIANGLES, vertexBuffer, nullptr);
 	
 	unsigned int vertexCount = (edgeSize_ + 1) * (edgeSize_ + 1);
 
 	positions_ = new Vector3[vertexCount];
 	normals_ = new Vector3[vertexCount];
+	texCoord_ = new Vector2[vertexCount];
 }
 
 QuadTreePatch::~QuadTreePatch()
@@ -37,6 +38,7 @@ QuadTreePatch::~QuadTreePatch()
 
 	delete[] positions_;
 	delete[] normals_;
+	delete[] texCoord_;
 
 	if (!--instances_)
 		deleteTopologies();
@@ -44,7 +46,7 @@ QuadTreePatch::~QuadTreePatch()
 
 void QuadTreePatch::prepareGeometry()
 {
-	if (status_.load() != RAM_LOADED)
+	if (status_.load() != PatchStatus::RAM_LOADED)
 		return;
 
 	std::shared_ptr<VertexBuffer> vertexBuffer = geometry_->getVertexBuffer();
@@ -52,29 +54,27 @@ void QuadTreePatch::prepareGeometry()
 	unsigned int vertexCount = (edgeSize_ + 1) * (edgeSize_ + 1);
 	vertexBuffer->create(vertexCount);
 
-	float* data = new float[vertexCount * 6];
+	float* data = new float[vertexCount * 8];
 	
 	unsigned int dataCounter = 0;
 	for (unsigned int i = 0; i < vertexCount; i++)
 	{
-
-		Vector3 position = positions_[i];
-
-		data[dataCounter++] = position.x_;
-		data[dataCounter++] = position.y_;
-		data[dataCounter++] = position.z_;
-
-		Vector3 normal = normals_[i];
+		data[dataCounter++] = positions_[i].x_;
+		data[dataCounter++] = positions_[i].y_;
+		data[dataCounter++] = positions_[i].z_;
 			
-		data[dataCounter++] = normal.x_;
-		data[dataCounter++] = normal.y_;
-		data[dataCounter++] = normal.z_;
+		data[dataCounter++] = normals_[i].x_;
+		data[dataCounter++] = normals_[i].y_;
+		data[dataCounter++] = normals_[i].z_;
+
+		data[dataCounter++] = texCoord_[i].x_;
+		data[dataCounter++] = texCoord_[i].y_;
 	}
 
 	vertexBuffer->setData((void*)data);
 	delete data;
 
-	status_.store(READY_TO_USE);
+	status_.store(PatchStatus::READY_TO_USE);
 }
 
 PatchStatus QuadTreePatch::getStatus() const

@@ -16,10 +16,10 @@ QuadTreeFace::QuadTreeFace(Terrain* terrain, FaceType faceType, float positionY)
 	switch (faceType_)
 	{
 	case FACE_TOP:
-		orientation_ = Matrix3::rotationZMatrix(degToRad(0.0f));
+		orientation_ = Matrix3::rotationXMatrix(degToRad(0.0f));
 		break;
 	case FACE_BOTTOM:
-		orientation_ = Matrix3::rotationZMatrix(degToRad(180.0f));
+		orientation_ = Matrix3::rotationXMatrix(degToRad(180.0f));
 		break;
 	case FACE_NEAR:
 		orientation_ = Matrix3::rotationXMatrix(degToRad(90.0f));
@@ -48,14 +48,20 @@ void QuadTreeFace::update()
 	rootNode_->update(terrain_->getCullCamera()->position);
 }
 
-void QuadTreeFace::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
+void QuadTreeFace::cullNodesToRender(Camera* cullCamera, std::vector<QuadTreeNode*>& nodes)
 {
-	rootNode_->getBatches(cullCamera, batches);
+	rootNode_->cullNodesToRender(cullCamera, nodes);
 }
 
 void QuadTreeFace::drawDebugGeometry(DebugRenderer* debug)
 {
-	rootNode_->drawDebugGeometry(debug);
+	//rootNode_->drawDebugGeometry(debug);
+}
+
+void QuadTreeFace::connect(Side side, QuadTreeFace* face)
+{
+	if (rootNode_ && face->rootNode_)
+		rootNode_->setNeighbor(side, face->rootNode_);
 }
 
 Vector3 QuadTreeFace::getWorldPosition(const Vector2& localPoint)

@@ -38,4 +38,6 @@ private:
 	void generate(QuadTreePatch* patch);
 
 	bool isDismissed(unsigned int ID);
+
+	friend class Terrain;
 };

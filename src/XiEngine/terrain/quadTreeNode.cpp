@@ -18,11 +18,12 @@ QuadTreeNode::QuadTreeNode(QuadTreeFace* face, QuadTreeNode* parent, Quadrant qu
 	quadrant_(quadrant),
 	depth_(parent ? parent_->depth_ + 1: 0),
 	center_(center),
-	size_(size)
+	size_(size),
+	drawBorders_(false)
 {
 	patch_ = new QuadTreePatch(face_->getTerrain()->getNextPatchID(), this, QUAD_TREE_PATCH_EDGE_SIZE);
 
-	nodeTransform_ = Matrix4();
+	nodeTransform_ = Matrix3x4();
 
 	face_->getTerrain()->getTerrainGenerator()->pushQueue(patch_);
 }
@@ -40,7 +41,7 @@ QuadTreeNode::~QuadTreeNode()
 		if (neighbors_[s])
 		{
 			if (parent_ == neighbors_[s]->parent_)
-				neighbors_[s]->parent_ = nullptr;
+				neighbors_[s]->neighbors_[mirrorSide(s)] = nullptr;
 			else if (depth_ == neighbors_[s]->depth_)
 			{
 				neighbors_[s]->neighbors_[mirrorSide(s)] = parent_;
@@ -51,15 +52,22 @@ QuadTreeNode::~QuadTreeNode()
 	}
 
 	if(face_->getTerrain()->getTerrainGenerator() != nullptr)
+	{
 		face_->getTerrain()->getTerrainGenerator()->dismiss(patch_->getID());
+		std::unique_lock<std::mutex> lk(patchMutex_);
+		patchCV_.wait(lk, [this] {return patch_->getStatus() != PatchStatus::LOADING; });
+	}
 
 	delete patch_;
 }
 
 void QuadTreeNode::update(const Vector3& viewPos)
 {
-	if (patch_->getStatus() == RAM_LOADED)
+	if (patch_->getStatus() == PatchStatus::RAM_LOADED)
 		patch_->prepareGeometry();
+
+	drawBorders_ = true;
+	borderColor_ = Color::BLACK;
 
 	Vector3 nodeCenter = patch_->getBoundingBox().center();
 	float distanceToCamera = (nodeCenter - viewPos).length();
@@ -84,28 +92,53 @@ void QuadTreeNode::update(const Vector3& viewPos)
 	}
 }
 
-void QuadTreeNode::getBatches(Camera* cullCamera, std::vector<Batch>& batches)
+void QuadTreeNode::cullNodesToRender(Camera* cullCamera, std::vector<QuadTreeNode*>& nodes)
 {
 	if (cullCamera->getFrustum().intersect(patch_->getBoundingBox().transformed(nodeTransform_)) == OUTSIDE)
 		return;
 
-	if (areChildrenReadyToRender())
+	Vector2 scr = cullCamera->worldToScreenPoint(patch_->getBoundingBox().center());
+
+	Color col[4] = {
+		Color::RED,
+		Color::YELLOW,
+		Color::WHITE,
+		Color::ORANGE
+	};
+	
+	if (false)
 	{
-		for (unsigned int q = 0; q < 4; q++)
-			children_[q]->getBatches(cullCamera, batches);
+		if (quadrant_ == NORTH_EAST)
+			borderColor_ = Color::BLUE;
+		else
+			borderColor_ = Color::RED;
 	}
 	else
 	{
-		if (patch_->getStatus() == READY_TO_USE)
+		if (abs(scr.x_ - 0.5f) < 0.1f && abs(scr.y_ - 0.5f) < 0.1f)
 		{
-			Batch batch;
-			batch.geometry_ = patch_->getGeometry();
-			batch.transform_ = nodeTransform_;
-			batch.customIndexBuffer_ = QuadTreePatch::getTopology(
-				neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]
-			)->getIndexBuffer();
+			borderColor_ = Color::BLUE;
 
-			batches.push_back(batch);
+			for (unsigned int s = 0; s < 4; s++)
+			{
+				if (neighbors_[s])
+				{
+					neighbors_[s]->borderColor_ = col[s];
+				}
+			}
+		}
+	}
+
+	if (areChildrenReadyToRender())
+	{
+		for (unsigned int q = 0; q < 4; q++)
+			children_[q]->cullNodesToRender(cullCamera, nodes);
+	}
+	else
+	{
+		if (patch_->getStatus() == PatchStatus::READY_TO_USE)
+		{
+			nodes.push_back(this);
 		}
 	}
 }
@@ -119,7 +152,7 @@ void QuadTreeNode::drawDebugGeometry(DebugRenderer* debug)
 	}
 	else
 	{
-		if(patch_->getStatus() >= RAM_LOADED)
+		if(patch_->getStatus() >= PatchStatus::RAM_LOADED)
 			debug->addBoundingBox(patch_->getBoundingBox().transformed(nodeTransform_), Color::GREEN);
 	}
 }
@@ -140,6 +173,11 @@ Vector2 QuadTreeNode::localToFacePos(const Vector2& localPos)
 	result += Vector2(center_.x_, -center_.y_);
 
 	return result;
+}
+
+QuadTreePatchTopology* QuadTreeNode::getPatchTopology()
+{
+	return QuadTreePatch::getTopology(neighborsDepthDiff_[0], neighborsDepthDiff_[1], neighborsDepthDiff_[2], neighborsDepthDiff_[3]);
 }
 
 void QuadTreeNode::setNeighbor(Side side, QuadTreeNode* neighbor)
@@ -214,7 +252,7 @@ void QuadTreeNode::merge()
 	bool canClear = true;
 	for (unsigned int q = 0; q < 4; q++)
 	{
-		if (children_[q]->getPatch()->getStatus() == LOADING)
+		if (children_[q]->getPatch()->getStatus() == PatchStatus::LOADING)
 			canClear = false;
 	}
 
@@ -239,10 +277,83 @@ bool QuadTreeNode::areChildrenReadyToRender()
 	{
 		for (unsigned int q = 0; q < 4; q++)
 		{
-			if (children_[q]->getPatch()->getStatus() != READY_TO_USE)
+			if (children_[q]->getPatch()->getStatus() != PatchStatus::READY_TO_USE)
 				childrenReady = false;
 		}
 	}
 	
 	return childrenReady;
 }
+
+Side QuadTreeNode::mirrorSide(unsigned int side)
+{
+	if (!neighbors_[side])
+		return mirror(side);
+
+	unsigned int f0 = face_->getFaceType();
+	unsigned int f1 = neighbors_[side]->face_->getFaceType();
+
+	if (f0 == f1 || ((f0 <= 2 || f0 == 4) && (f1 <= 2 || f1 == 4)))
+		return mirror(side);
+
+	if (f0 == FACE_TOP || f1 == FACE_TOP)
+		return mirror(side);
+
+	int res = sideMirrors[f0][f1];
+
+	if (res == -1)
+	{
+		Logger::error("Side mirror is -1");
+		return NORTH;
+	}
+
+	return (Side)res;
+}
+
+Quadrant QuadTreeNode::reflectQuadrant(unsigned int quadrant, unsigned int side)
+{
+	if (!neighbors_[side])
+		return reflect(quadrant, side);
+
+	if (!isOnSide(quadrant, side))
+		return NORTH_EAST;
+
+	unsigned int f0 = face_->getFaceType();
+	unsigned int f1 = neighbors_[side]->face_->getFaceType();
+
+	if (f0 == f1 || ((f0 <= 2 || f0 == 4) && (f1 <= 2 || f1 == 4)))
+		return reflect(quadrant, side);
+
+	if (f0 == FACE_TOP || f1 == FACE_TOP)
+		return reflect(quadrant, side);
+
+	int res = quadrantRelfections[f0][f1][quadrant];
+
+	if (res == -1)
+	{
+		Logger::error("Quadrant reflection is -1");
+		return NORTH_EAST;
+	}
+
+	return (Quadrant)res;
+}
+
+const int QuadTreeNode::sideMirrors[6][6] =
+{
+	{ { -1 },{ -1 },{ -1 },{ -1 },{ -1 },{ -1 } },
+	{ { -1 },{ -1 },{ -1 },{ 1 },{ -1 },{ 3 } },
+	{ { -1 },{ -1 },{ -1 },{ 2 },{ -1 },{ 2 } },
+	{ { -1 },{ 1 },{ 1 },{ -1 },{ 1 },{ -1 } },
+	{ { -1 },{ -1 },{ -1 },{ 0 },{ -1 },{ 0 } },
+	{ { -1 },{ 3 },{ 3 },{ -1 },{ 3 },{ -1 } }
+};
+
+const int QuadTreeNode::quadrantRelfections[6][6][4] =
+{
+	{ { -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 } },
+	{ { -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, 2, 1, -1 },{ -1, -1, -1, -1 },{ 3, -1, -1, 0 } },
+	{ { -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, 3, 2, -1 },{ -1, -1, -1, -1 },{ 2, -1, -1, 3 } },
+	{ { -1, -1, -1, -1 },{ -1, 2, 1, -1 },{ -1, -1, 2, 1 },{ -1, -1, -1, -1 },{ 2, 1, -1, -1 },{ -1, -1, -1, -1 } },
+	{ { -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, -1, -1, -1 },{ -1, 1, 0, -1 },{ -1, -1, -1, -1 },{ 0, -1, -1, 1 } },
+	{ { -1, -1, -1, -1 },{ 3, -1, -1, 0 },{ -1, -1, 0, 3 },{ -1, -1, -1, -1 },{ 0, 3, -1, -1 },{ -1, -1, -1, -1 } }
+};
