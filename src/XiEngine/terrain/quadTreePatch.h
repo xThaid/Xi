@@ -3,13 +3,12 @@
 #include "../math/ximath.h"
 
 #include "../terrain/terrain.h"
+#include "quadTreeNode.h"
 
 class Geometry;
 class IndexBuffer;
 class QuadTreeNode;
 class QuadTreePatchTopology;
-
-enum Side;
 
 enum class PatchStatus
 {

@@ -84,7 +84,7 @@ void Input::resetMousePos()
 
 void Input::keyCallback(unsigned int key, unsigned int action)
 {
-	auto& res = onPressedEvents_.find(key);
+	const auto& res = onPressedEvents_.find(key);
 	if(res != onPressedEvents_.end())
 	{
 		if (action == GLFW_PRESS && !pressed_[key])

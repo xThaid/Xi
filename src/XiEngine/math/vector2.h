@@ -25,7 +25,7 @@ public:
 	explicit Vector2(float value);
 	explicit Vector2(float x, float y);
 
-	inline const float* getPointer() { return &x_; }
+	inline const float* getPointer() const { return &x_; }
 
 	void set(float x, float y);
 

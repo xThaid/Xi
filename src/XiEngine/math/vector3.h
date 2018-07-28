@@ -23,7 +23,7 @@ public:
 	explicit Vector3(float x, float y, float z);
 	explicit Vector3(const Vector2& v, float z);
 
-	inline const float* getPointer() { return &x_; }
+	inline const float* getPointer() const { return &x_; }
 
 	void set(float x, float y, float z);
 

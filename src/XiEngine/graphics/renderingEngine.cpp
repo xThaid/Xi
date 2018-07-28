@@ -128,10 +128,11 @@ void RenderingEngine::toggleWireframe()
 
 void RenderingEngine::setupShaders()
 {
-	Shader* debugShader = new Shader("debug shader", "D:/Dev/Repos/Xi/res/shaders/debug.vert", "D:/Dev/Repos/Xi/res/shaders/debug.frag");
-	Shader* textShader = new Shader("text shader", "D:/Dev/Repos/Xi/res/shaders/textShader.vert", "D:/Dev/Repos/Xi/res/shaders/textShader.frag");
-	meshShader_ = new Shader("model shader", "D:/Dev/Repos/Xi/res/shaders/models.vert", "D:/Dev/Repos/Xi/res/shaders/models.frag");
-	terrainShader_ = new Shader("terrain shader", "D:/Dev/Repos/Xi/res/shaders/terrain.vert", "D:/Dev/Repos/Xi/res/shaders/terrain.frag");
+    const std::string path ="/home/thaid/Dev/repos/Xi/res/shaders/";
+	Shader* debugShader = new Shader("debug shader", path + "debug.vert", path + "debug.frag");
+	Shader* textShader = new Shader("text shader", path + "textShader.vert", path + "textShader.frag");
+	meshShader_ = new Shader("model shader", path + "models.vert", path + "models.frag");
+	terrainShader_ = new Shader("terrain shader", path + "terrain.vert", path + "terrain.frag");
 
 	ResourceManager::getInstance()->addResource(debugShader);
 	ResourceManager::getInstance()->addResource(textShader);

@@ -23,9 +23,9 @@ void Program::init()
 
 	SceneNode* root = scene->getRootNode();
 
-	terrain = new SphericalTerrain(100.0f);
-	SceneNode* terrainNode = root->createChild("terrain");
-	terrainNode->addComponent(terrain);
+	//terrain = new SphericalTerrain(100.0f);
+	//SceneNode* terrainNode = root->createChild("terrain");
+	//terrainNode->addComponent(terrain);
 
 	//Mesh* tempMesh = new Mesh("kula2", Primitives::torus(3, 1, 30, 30));
 	//ResourceManager::getInstance()->addResource(tempMesh);
@@ -111,5 +111,5 @@ void Program::update()
 	updatesLabel[0]->setText("UPS: " + std::to_string(core->getLastUPS()));
 	updatesLabel[1]->setText("FPS: " + std::to_string(core->getLastFPS()));
 
-	terrainLabel[1]->setText("Queue: " + std::to_string(terrain->getTerrainGenerator()->queueSize()));
+	//terrainLabel[1]->setText("Queue: " + std::to_string(terrain->getTerrainGenerator()->queueSize()));
 }

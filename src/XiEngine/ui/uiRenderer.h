@@ -40,5 +40,5 @@ private:
 
 	void prepareGeometry();
 
-	bool loadFont(File& file);
+	bool loadFont(const File& file);
 };

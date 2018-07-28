@@ -77,12 +77,12 @@ public:
 	void setBool(const std::string& name, bool value);
 	void setInt(const std::string& name, int value);
 	void setFloat(const std::string& name, float value);
-	void setVector2(const std::string& name, Vector2& value);
-	void setVector3(const std::string& name, Vector3& value);
-	void setVector4(const std::string& name, Vector4& value);
-	void setMatrix3(const std::string& name, Matrix3& value);
-	void setMatrix3x4(const std::string& name, Matrix3x4& value);
-	void setMatrix4(const std::string& name, Matrix4& value);
+	void setVector2(const std::string& name, const Vector2& value);
+	void setVector3(const std::string& name, const Vector3& value);
+	void setVector4(const std::string& name, const Vector4& value);
+	void setMatrix3(const std::string& name, const Matrix3& value);
+	void setMatrix3x4(const std::string& name, const Matrix3x4& value);
+	void setMatrix4(const std::string& name, const Matrix4& value);
 	void setColor(const std::string& name, const Color& color);
 	
 	int getVertexAttributeLocation(VertexElement element);

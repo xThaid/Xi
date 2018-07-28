@@ -21,7 +21,7 @@ File::File(const std::string& filePath) :
 		Logger::warn("File " + path_ + " doesn't exist");
 }
 
-std::string File::loadText()
+std::string File::loadText() const
 {
 	std::ifstream file_;
 
@@ -41,7 +41,7 @@ std::string File::loadText()
 	}
 }
 
-bool File::exist()
+bool File::exist() const
 {
 	std::ifstream f(path_);
 	return f.good();

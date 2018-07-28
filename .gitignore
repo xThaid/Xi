@@ -1,12 +1,3 @@
-*.opendb
-*.VC.db
-*.sln
-*.vcxproj*
+.idea/
 
-/.git
-*/.vs
-*/Debug
-*/Release
-*/*/Debug
-*/*/Release
-*/x64
+cmake-build-*/

@@ -194,7 +194,7 @@ void DebugRenderer::render()
 
 
 	graphics_->setShader(debugShader_);
-	
+
 	debugShader_->setMatrix3x4("model", Matrix3x4());
 	debugShader_->setMatrix3x4("view", view_);
 	debugShader_->setMatrix4("projection", projection_);

@@ -23,7 +23,7 @@ UIRenderer::UIRenderer(Graphics* graphics, const IntVector2& uiSize) :
 
 	prepareGeometry();
 
-	loadedFont_ = loadFont(File("D:/Dev/Repos/Xi/res/fonts/arial.ttf"));
+	loadedFont_ = loadFont(File("/home/thaid/Dev/repos/Xi/res/fonts/arial.ttf"));
 }
 
 UIRenderer::~UIRenderer()
@@ -101,7 +101,7 @@ void UIRenderer::prepareGeometry()
 	glyphGeometry_ = new Geometry(PrimitiveTopology::TRIANGLES, vertexBuffer);
 }
 
-bool UIRenderer::loadFont(File& file)
+bool UIRenderer::loadFont(const File& file)
 {
 	if (!file.exist())
 		return false;

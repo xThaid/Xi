@@ -6,6 +6,7 @@
 class ResourceManager;
 class Scene;
 class Program;
+class Input;
 class Time;
 
 class Core

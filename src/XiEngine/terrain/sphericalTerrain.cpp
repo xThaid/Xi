@@ -1,6 +1,6 @@
 #include "sphericalTerrain.h"
 
-#include "../lib/FastNoise.h"
+#include <FastNoise.h>
 
 #include "../terrain/quadTreeFace.h"
 #include "../terrain/terrainGenerator.h"

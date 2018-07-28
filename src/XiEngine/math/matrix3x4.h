@@ -19,7 +19,7 @@ public:
 	explicit Matrix3x4(const Matrix3& m);
 	explicit Matrix3x4(const Matrix4& m);
 
-	inline const float* getPointer() { return &data[0]; }
+	inline const float* getPointer() const { return &data[0]; }
 
 	Matrix3x4& operator*=(const Matrix3x4& m);
 

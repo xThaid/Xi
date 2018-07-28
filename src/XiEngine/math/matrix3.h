@@ -14,7 +14,7 @@ public:
 		
 	Matrix3();
 
-	inline const float* getPointer() { return &data[0]; }
+	inline const float* getPointer() const { return &data[0]; }
 
 	Matrix3& operator*=(const Matrix3& m);
 

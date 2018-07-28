@@ -202,7 +202,7 @@ void Shader::setFloat(const std::string& name, float value)
 	}
 }
 
-void Shader::setVector2(const std::string& name, Vector2& value)
+void Shader::setVector2(const std::string& name, const Vector2& value)
 {
 	int location = getUniformLocation(name);
 	if (location != -1)
@@ -211,7 +211,7 @@ void Shader::setVector2(const std::string& name, Vector2& value)
 	}
 }
 
-void Shader::setVector3(const std::string& name, Vector3& value)
+void Shader::setVector3(const std::string& name, const Vector3& value)
 {
 	int location = getUniformLocation(name);
 	if (location != -1)
@@ -220,7 +220,7 @@ void Shader::setVector3(const std::string& name, Vector3& value)
 	}
 }
 
-void Shader::setVector4(const std::string& name, Vector4& value)
+void Shader::setVector4(const std::string& name, const Vector4& value)
 {
 	int location = getUniformLocation(name);
 	if (location != -1)
@@ -229,7 +229,7 @@ void Shader::setVector4(const std::string& name, Vector4& value)
 	}
 }
 
-void Shader::setMatrix3(const std::string& name, Matrix3& value)
+void Shader::setMatrix3(const std::string& name, const Matrix3& value)
 {
 	int location = getUniformLocation(name);
 	if (location != -1)
@@ -238,12 +238,12 @@ void Shader::setMatrix3(const std::string& name, Matrix3& value)
 	}
 }
 
-void Shader::setMatrix3x4(const std::string& name, Matrix3x4& value)
+void Shader::setMatrix3x4(const std::string& name, const Matrix3x4& value)
 {
 	setMatrix4(name, Matrix4(value));
 }
 
-void Shader::setMatrix4(const std::string& name, Matrix4& value)
+void Shader::setMatrix4(const std::string& name, const Matrix4& value)
 {
 	int location = getUniformLocation(name);
 	if (location != -1)

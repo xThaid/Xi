@@ -17,7 +17,7 @@ public:
 	explicit Vector4(float x, float y, float z, float w);
 	explicit Vector4(const Vector3& v, float w);
 
-	inline const float* getPointer() { return &x_; }
+	inline const float* getPointer() const { return &x_; }
 
 	void set(float x, float y, float z, float w);
 
